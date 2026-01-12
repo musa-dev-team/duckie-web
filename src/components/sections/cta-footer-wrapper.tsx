@@ -6,13 +6,6 @@ import Link from "next/link"
 
 export function CtaFooterWrapper() {
   const { brand, footer, navigation } = content
-  
-  const benefits = [
-    // "Live in under 2 hours",
-    // "SOC 2 Type II certified",
-    // "82% average resolution rate",
-    // "Dedicated implementation support",
-  ]
 
   return (
     <div className="relative">
@@ -35,20 +28,6 @@ export function CtaFooterWrapper() {
               >
                 {content.finalCta.cta}
               </Button>
-            </div>
-
-            {/* Right: Benefits */}
-            <div className="md:ml-auto">
-              {benefits.map((benefit, idx) => (
-                <div key={idx}>
-                  <div className="py-4">
-                    <span className="text-gray-700 font-medium">{benefit}</span>
-                  </div>
-                  {idx !== benefits.length - 1 && (
-                    <div className="h-px bg-gradient-to-r from-gray-300 to-transparent" />
-                  )}
-                </div>
-              ))}
             </div>
           </div>
         </div>
