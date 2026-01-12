@@ -218,7 +218,7 @@ export function Navigation({ variant = "transparent" }: { variant?: "transparent
                     : "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
                 )}
               >
-                Book a Demo
+                Book a demo
               </Button>
             </motion.div>
           )}

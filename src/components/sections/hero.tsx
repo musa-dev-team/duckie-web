@@ -70,14 +70,14 @@ export function Hero() {
             <motion.button
               whileHover={{ 
                 y: -1,
-                boxShadow: '0 0 0 1px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.1), 0 6px 12px rgba(0,0,0,0.12), 0 12px 24px rgba(0,0,0,0.12), 0 0 60px rgba(255,255,255,0.3)',
+                boxShadow: '0 0 0 1px rgba(255,255,255,0.3), 0 1px 12px rgba(0,0,0,0.1), 0 0 40px rgba(255,255,255,0.2)',
               }}
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.2 }}
-              className="inline-flex items-center justify-center rounded-full h-12 px-8 text-base font-medium text-zinc-900"
+              className="inline-flex items-center justify-center rounded-full h-10 px-6 text-sm font-medium text-zinc-900"
               style={{
                 background: 'linear-gradient(to bottom, #ffffff 0%, #f5f5f5 100%)',
-                boxShadow: '0 0 0 1px rgba(255,255,255,0.2), 0 1px 2px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.1), 0 0 40px rgba(255,255,255,0.15)',
+                boxShadow: '0 0 0 1px rgba(255,255,255,0.2), 0 1px 12px rgba(0,0,0,0.08), 0 0 30px rgba(255,255,255,0.1)',
               }}
             >
               {content.ctas.primary}

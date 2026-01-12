@@ -370,7 +370,7 @@ export const content = {
   // CTAs
   // ============================================
   ctas: {
-    primary: "Book a Demo",
+    primary: "Book a demo",
     secondary: "See How It Works",
     tertiary: "Read the Docs",
   },
@@ -382,7 +382,7 @@ export const content = {
   finalCta: {
     headline: "Ready to see Duckie in action?",
     subheadline: "", // Optional - leave empty for minimal look
-    cta: "Book a Demo",
+    cta: "Book a demo",
   },
 
   // ============================================
