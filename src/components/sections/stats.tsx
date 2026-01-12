@@ -64,7 +64,7 @@ export function Stats() {
   const motionStyles: MotionStyle[] = ["overshoot", "smooth", "snappy", "bounce"]
   
   return (
-    <section className="py-20">
+    <section className="pt-24 pb-32">
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-wrap items-baseline justify-center gap-x-16 gap-y-10 md:gap-x-20">
           {stats.map((stat, index) => (

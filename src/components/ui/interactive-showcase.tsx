@@ -260,7 +260,7 @@ export function InteractiveShowcase({
           transition={{ duration: 0.5, ease }}
           className="mb-12"
         >
-          <h2 className="font-serif text-5xl md:text-6xl font-normal text-zinc-50 leading-[1.1] tracking-tight max-w-3xl">
+          <h2 className="font-serif text-5xl lg:text-5xl font-normal text-zinc-50 leading-[1.1] tracking-tight max-w-3xl">
             {sectionTitle}
           </h2>
           {sectionSubtitle && (
@@ -276,7 +276,7 @@ export function InteractiveShowcase({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6, delay: 0.1, ease }}
-          className="rounded-2xl overflow-hidden grid lg:grid-cols-3 shadow-[0_8px_30px_rgb(0,0,0,0.12)] min-h-[600px] border border-white/10"
+          className="rounded-2xl overflow-hidden grid lg:grid-cols-3 shadow-[0_8px_30px_rgb(0,0,0,0.12)] min-h-[650px] border border-white/10"
           style={{ backgroundColor: '#000000' }}
         >
           {imagePosition === 'left' ? (

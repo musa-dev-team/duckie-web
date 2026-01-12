@@ -161,3 +161,35 @@ html {
   background: radial-gradient(ellipse at 65% 55%, rgba(220, 250, 240, 0.7) 0%, rgba(200, 245, 230, 0.4) 40%, transparent 75%);
   animation: glow-fade-3 12s ease-in-out infinite;
 }
+
+/* Infinite scroll animations for integration grid */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(-33.333%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 40s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 40s linear infinite;
+}
+
+.animate-scroll-left:hover,
+.animate-scroll-right:hover {
+  animation-play-state: paused;
+}

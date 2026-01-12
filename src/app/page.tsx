@@ -1,7 +1,7 @@
 import { Hero } from "@/components/sections/hero"
 import HowItWorksCanvas from "@/components/sections/how-it-works-canvas"
 import ImplementationCanvas from "@/components/sections/implementation-canvas"
-import { Integrations } from "@/components/sections/integrations"
+import { Omnichannel } from "@/components/sections/omnichannel"
 import { Stats } from "@/components/sections/stats"
 import { WhatDuckiesDoes } from "@/components/sections/what-duckie-does"
 import { Testimonials } from "@/components/sections/testimonials"
@@ -16,7 +16,7 @@ export default function Home() {
       {/* <ValueCallout /> */}
       <HowItWorksCanvas />
       <ImplementationCanvas />
-      <Integrations />
+      <Omnichannel />
       <Testimonials />
       <CtaFooterWrapper />
     </main>
