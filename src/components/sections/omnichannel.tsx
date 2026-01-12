@@ -138,7 +138,7 @@ export function Omnichannel() {
           
           {/* Content Column */}
           <div>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-zinc-50 mb-4 sm:mb-6">
+            <h2 className="font-serif text-4xl lg:text-5xl font-normal tracking-tight text-zinc-50 mb-4 sm:mb-6">
               One agent.
               <br />
               <span className="text-zinc-400">Every channel. Every language.</span>

@@ -53,7 +53,7 @@ export function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1, ease }}
-          className="overflow-hidden rounded-2xl grid lg:grid-cols-2"
+          className="overflow-hidden rounded-2xl flex flex-col-reverse lg:grid lg:grid-cols-2"
           style={cardStyle}
         >
           {/* Left: Image with padding */}

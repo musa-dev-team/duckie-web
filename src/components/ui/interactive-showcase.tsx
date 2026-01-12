@@ -6,6 +6,20 @@ import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 
+// Hook to detect mobile viewport
+function useIsMobile(breakpoint = 1024) {
+  const [isMobile, setIsMobile] = useState(false)
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < breakpoint)
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [breakpoint])
+  
+  return isMobile
+}
+
 // ============================================
 // TYPES
 // ============================================
@@ -76,10 +90,13 @@ export function InteractiveShowcase({
   const [activeStep, setActiveStep] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
   const [progress, setProgress] = useState(0)
+  const isMobile = useIsMobile()
 
-  // Auto-rotation logic
+  // Auto-rotation logic (disabled on mobile)
+  const shouldAutoRotate = autoRotate && !isMobile
+  
   useEffect(() => {
-    if (!autoRotate) return
+    if (!shouldAutoRotate) return
 
     let startTime = Date.now()
     let animationFrame: number
@@ -104,15 +121,21 @@ export function InteractiveShowcase({
     return () => {
       cancelAnimationFrame(animationFrame)
     }
-  }, [items.length, isHovered, activeStep, autoRotate, rotationDuration])
+  }, [items.length, isHovered, activeStep, shouldAutoRotate, rotationDuration])
 
   const activeItem = items[activeStep]
 
-  // Accordion Panel (Dark Side - 1/3 width)
-  const AccordionPanel = (
-    <div className="p-6 lg:p-8 lg:col-span-1 flex flex-col">
+  // Header Panel - separated for mobile reordering
+  const HeaderPanel = (
+    <div className={cn(
+      "p-6 pt-6 pb-0 lg:p-8 lg:pb-4",
+      // Mobile: first (top)
+      "order-1",
+      // Desktop: column placement based on imagePosition
+      imagePosition === 'left' ? "lg:col-start-3" : "lg:col-start-1"
+    )}>
       {/* Panel Header */}
-      <div className="mb-8">
+      <div className="mb-4 lg:mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div 
             className="w-7 h-7 flex items-center justify-center [&_svg]:w-7 [&_svg]:h-7"
@@ -140,15 +163,26 @@ export function InteractiveShowcase({
           href={ctaHref}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className={cn(buttonVariants({ variant: "outline", size: "sm" }), "mb-8 self-start")}
+          className={cn(buttonVariants({ variant: "outline", size: "sm" }), "self-start")}
         >
           {ctaText}
         </motion.a>
       )}
+    </div>
+  )
 
+  // Accordion Items Panel - separated for mobile reordering
+  const AccordionItemsPanel = (
+    <div className={cn(
+      "p-6 pt-0 lg:p-8 lg:pt-0",
+      // Mobile: last (bottom)
+      "order-3",
+      // Desktop: same column as header, second row
+      imagePosition === 'left' ? "lg:col-start-3" : "lg:col-start-1"
+    )}>
       {/* Accordion Steps */}
       <div 
-        className="space-y-0 mt-auto"
+        className="space-y-0"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -187,25 +221,38 @@ export function InteractiveShowcase({
                   )}
                 </div>
                 
-                {/* Step Description - only show when active */}
-                <AnimatePresence initial={false}>
-                  {isActive && item.description && (
-                    <motion.div 
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ 
-                        height: { duration: 0.3, ease },
-                        opacity: { duration: 0.2, ease }
-                      }}
-                      className="overflow-hidden"
-                    >
-                      <div className="text-zinc-400 text-sm leading-relaxed mt-2">
-                        {item.description}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {/* Step Description - always visible on mobile, accordion on desktop */}
+                {item.description && (
+                  isMobile ? (
+                    // Mobile: Always show descriptions, no height animation
+                    <div className={cn(
+                      "text-sm leading-relaxed mt-2 transition-opacity duration-200",
+                      isActive ? "text-zinc-400" : "text-zinc-600"
+                    )}>
+                      {item.description}
+                    </div>
+                  ) : (
+                    // Desktop: Accordion behavior with height animation
+                    <AnimatePresence initial={false}>
+                      {isActive && (
+                        <motion.div 
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ 
+                            height: { duration: 0.3, ease },
+                            opacity: { duration: 0.2, ease }
+                          }}
+                          className="overflow-hidden"
+                        >
+                          <div className="text-zinc-400 text-sm leading-relaxed mt-2">
+                            {item.description}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  )
+                )}
               </motion.button>
 
               {/* Divider with Progress */}
@@ -216,7 +263,7 @@ export function InteractiveShowcase({
                   isActive ? "bg-white/15" : "bg-white/5"
                 )} />
                 {/* Progress indicator */}
-                {isActive && autoRotate && (
+                {isActive && shouldAutoRotate && (
                   <motion.div
                     className="absolute inset-y-0 left-0 bg-white/60"
                     initial={{ width: "0%" }}
@@ -232,12 +279,15 @@ export function InteractiveShowcase({
     </div>
   )
 
-  // Image Panel (Light Side - 2/3 width)
-  const ImagePanel = (
-    <div className="relative p-6 lg:p-8 flex items-center justify-center lg:col-span-2">
+  // Desktop Image Panel - with background image
+  const DesktopImagePanel = (
+    <div className={cn(
+      "hidden lg:flex relative p-8 items-center justify-center lg:col-span-2 lg:row-span-2",
+      imagePosition === 'left' ? "lg:col-start-1" : "lg:col-start-2"
+    )}>
       {/* Background Image with overlay */}
       <div 
-        className="absolute inset-6 lg:inset-8 rounded-xl overflow-hidden"
+        className="absolute inset-8 rounded-xl overflow-hidden"
         style={{
           boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px rgba(255,255,255,0.04)',
         }}
@@ -276,7 +326,16 @@ export function InteractiveShowcase({
       </div>
       
       {/* Floating Content Card */}
-      <div className="relative w-full max-w-2xl">
+      <div className="relative w-full max-w-2xl overflow-hidden">
+        {renderContent(activeStep, activeItem)}
+      </div>
+    </div>
+  )
+
+  // Mobile Image Panel - just the content card with rounded corners
+  const MobileImagePanel = (
+    <div className="lg:hidden order-2 p-6 bg-transparent">
+      <div className="w-full">
         {renderContent(activeStep, activeItem)}
       </div>
     </div>
@@ -309,7 +368,7 @@ export function InteractiveShowcase({
               {eyebrowLabel}
             </div>
           )}
-          <h2 className="font-serif text-5xl lg:text-5xl font-normal text-zinc-50 leading-[1.1] tracking-tight max-w-3xl">
+          <h2 className="font-serif text-4xl lg:text-5xl font-normal text-zinc-50 leading-[1.1] tracking-tight max-w-3xl">
             {sectionTitle}
           </h2>
           {sectionSubtitle && (
@@ -325,23 +384,19 @@ export function InteractiveShowcase({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6, delay: 0.1, ease }}
-          className="rounded-2xl overflow-hidden grid lg:grid-cols-3 min-h-[650px]"
+          className="rounded-2xl overflow-hidden grid lg:grid-cols-3 lg:grid-rows-[auto_1fr] min-h-[650px]"
           style={{ 
             background: 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 50%), #18181b',
             boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.04)',
           }}
         >
-          {imagePosition === 'left' ? (
-            <>
-              {ImagePanel}
-              {AccordionPanel}
-            </>
-          ) : (
-            <>
-              {AccordionPanel}
-              {ImagePanel}
-            </>
-          )}
+          {/* Order is controlled via CSS classes on each panel */}
+          {/* Mobile: Header (1) → Image (2) → Accordion (3) */}
+          {/* Desktop: Header + Accordion in one column, Image spans 2 columns + 2 rows */}
+          {HeaderPanel}
+          {DesktopImagePanel}
+          {MobileImagePanel}
+          {AccordionItemsPanel}
         </motion.div>
       </div>
     </section>

@@ -16,7 +16,7 @@ export function CtaFooterWrapper() {
           <div className="grid md:grid-cols-2 gap-20 items-center">
             {/* Left: CTA */}
             <div>
-              <h2 className="font-serif text-4xl md:text-5xl font-normal text-gray-900 mb-6">
+              <h2 className="font-serif text-4xl lg:text-5xl font-normal text-gray-900 mb-6">
                 {content.finalCta.headline}
               </h2>
               <p className="text-lg text-gray-600 mb-8">
