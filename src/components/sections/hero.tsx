@@ -1,6 +1,5 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { content } from "@/config/content"
 import { motion } from "framer-motion"
 import Image from "next/image"

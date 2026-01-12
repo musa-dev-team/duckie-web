@@ -40,7 +40,6 @@ const languages = [
   "Português",
   "日本語",
   "한국어",
-  "+40 more",
 ]
 
 const features = [
@@ -138,31 +137,36 @@ function IntegrationGrid() {
 
 export function Omnichannel() {
   return (
-    <section className="relative overflow-hidden pt-36 pb-24">
-      <div className="container mx-auto px-6">
+    <section className="relative overflow-hidden pt-20 pb-16 sm:pt-36 sm:pb-24">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left: Content */}
-          <div>
-            <h2 className="font-serif text-4xl font-normal tracking-tight text-zinc-50 lg:text-5xl mb-6">
+          <div className="overflow-hidden">
+            <h2 className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-zinc-50 lg:text-5xl mb-4 sm:mb-6">
               One agent.
               <br />
               <span className="text-zinc-400">Every channel. Every language.</span>
             </h2>
-            <p className="text-lg text-zinc-400 leading-relaxed mb-8">
+            <p className="text-base sm:text-lg text-zinc-400 leading-relaxed mb-6 sm:mb-8">
               Design your AI agent once and deploy it consistently across email,
               chat, and in-app widgets—in any language your customers speak.
             </p>
 
             {/* Language tags */}
-            <div className="flex flex-wrap gap-2 mb-8">
+            <div className="flex gap-2 mb-6 sm:mb-8 overflow-x-auto sm:overflow-visible sm:flex-wrap pb-2 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
               {languages.map((lang) => (
                 <span
                   key={lang}
-                  className="px-3 py-1.5 rounded-full bg-zinc-900 text-xs font-medium text-zinc-400 ring-1 ring-zinc-800 transition-all duration-300 hover:bg-zinc-800 hover:ring-zinc-700"
+                  className="px-3 py-1.5 rounded-full bg-zinc-900 text-xs font-medium text-zinc-400 ring-1 ring-zinc-800 transition-all duration-300 hover:bg-zinc-800 hover:ring-zinc-700 flex-shrink-0 sm:flex-shrink"
                 >
                   {lang}
                 </span>
               ))}
+              <span
+                className="px-3 py-1.5 rounded-full bg-zinc-900 text-xs font-medium text-zinc-400 ring-1 ring-zinc-800 flex-shrink-0"
+              >
+                +40 more
+              </span>
             </div>
 
             {/* Features list */}
