@@ -2,7 +2,8 @@
 
 :root {
   --font-satoshi: "Satoshi", system-ui, sans-serif;
-  --bg-deep-blue: #02030b;
+  --bg-deep-blue: #090B0F;
+  --bg-interactive-showcase: #080b0f;
 }
 
 body {

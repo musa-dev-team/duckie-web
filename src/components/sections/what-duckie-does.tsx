@@ -3,42 +3,60 @@
 import { InteractiveShowcase } from "@/components/ui/interactive-showcase"
 import { content } from "@/config/content"
 import { AnimatePresence, motion } from "framer-motion"
-import { Check } from "lucide-react"
-import Image from "next/image"
+import { Check, CreditCard, Database, Mail, Shield, Truck } from "lucide-react"
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-// Simplified conversation data
+// Richer example data with multiple actions
 const examples = {
   "Process refund": {
-    customer: "I'd like a refund for order #48291. The item arrived damaged.",
-    duckie: "I've processed a full refund of $49.99 to your Visa ending in 4242. You'll see it within 3-5 business days.",
-    action: "Refund processed",
-    details: "$49.99 → Visa ****4242",
+    request: "Refund for damaged item",
+    ticketId: "#48291",
+    response: "I've processed your refund. You'll see $49.99 back on your card within 3-5 business days.",
+    actions: [
+      { icon: Database, label: "Order verified", detail: "Order #48291" },
+      { icon: CreditCard, label: "Refund issued", detail: "$49.99 → Visa ****4242" },
+      { icon: Mail, label: "Confirmation sent", detail: "sarah@email.com" },
+    ],
   },
   "Cancel subscription": {
-    customer: "I need to cancel my Pro subscription.",
-    duckie: "Your Pro subscription is cancelled. You'll retain access until Jan 31st. Confirmation email sent.",
-    action: "Subscription cancelled",
-    details: "Pro plan → Cancelled",
+    request: "Cancel Pro subscription",
+    ticketId: "#48292",
+    response: "Your subscription is cancelled. You'll keep Pro access until your billing cycle ends on Jan 31st.",
+    actions: [
+      { icon: Database, label: "Account located", detail: "Pro Plan • $29/mo" },
+      { icon: Shield, label: "Subscription cancelled", detail: "Effective Jan 31" },
+      { icon: Mail, label: "Confirmation sent", detail: "Includes reactivation link" },
+    ],
   },
   "Reset password": {
-    customer: "I forgot my password and can't log in.",
-    duckie: "Password reset link sent to j***@gmail.com. The link expires in 24 hours.",
-    action: "Reset email sent",
-    details: "Link expires in 24h",
+    request: "Can't log into account",
+    ticketId: "#48293",
+    response: "I've sent a password reset link to your email. It expires in 24 hours.",
+    actions: [
+      { icon: Database, label: "Account verified", detail: "j***@gmail.com" },
+      { icon: Shield, label: "Reset link generated", detail: "Expires in 24h" },
+      { icon: Mail, label: "Email delivered", detail: "Check inbox & spam" },
+    ],
   },
-  "Update account": {
-    customer: "Can you update my billing email to finance@acme.co?",
-    duckie: "Done! Your billing email is now finance@acme.co. All future invoices will go there.",
-    action: "Email updated",
-    details: "admin@ → finance@",
+  "Update billing": {
+    request: "Change billing email",
+    ticketId: "#48294",
+    response: "Done! All future invoices will be sent to your new billing address.",
+    actions: [
+      { icon: Database, label: "Account updated", detail: "Billing email changed" },
+      { icon: Mail, label: "Confirmation sent", detail: "To both addresses" },
+    ],
   },
-  "Check order status": {
-    customer: "Where's my order? I placed it 3 days ago.",
-    duckie: "Your order #58192 shipped yesterday via FedEx. Scheduled for delivery tomorrow by 8pm.",
-    action: "Order located",
-    details: "FedEx tracking shared",
+  "Track order": {
+    request: "Where is my order?",
+    ticketId: "#48295",
+    response: "Your order shipped yesterday and is scheduled for delivery tomorrow by 8pm.",
+    actions: [
+      { icon: Database, label: "Order located", detail: "Order #58192" },
+      { icon: Truck, label: "Tracking retrieved", detail: "FedEx • In transit" },
+      { icon: Mail, label: "Tracking link sent", detail: "With live updates" },
+    ],
   },
 } as const
 
@@ -47,16 +65,30 @@ type ExampleKey = keyof typeof examples
 export function WhatDuckiesDoes() {
   const exampleKeys = Object.keys(examples) as ExampleKey[]
   
-  // Map examples to accordion items
+  // Map examples to accordion items with cleaner titles
+  const itemTitles: Record<ExampleKey, string> = {
+    "Process refund": "Process refund",
+    "Cancel subscription": "Cancel subscription",
+    "Reset password": "Reset password",
+    "Update billing": "Update billing",
+    "Track order": "Track order",
+  }
+  
   const items = exampleKeys.map((key) => ({
     id: key,
-    title: key,
+    title: itemTitles[key],
   }))
 
-  // Single background image for all items
-  const backgroundImages = Array(exampleKeys.length).fill("/images/ocean-bg-2.jpg")
+  // Background images - one per item
+  const backgroundImages = [
+    "/images/trees-1.jpg",
+    "/images/trees-2.jpg",
+    "/images/trees-3.jpg",
+    "/images/trees-4.jpg",
+    "/images/trees-5.jpg",
+  ]
 
-  // Render content function - returns the chat mockup UI
+  // Render content function - returns the support ticket mockup UI
   const renderContent = (activeIndex: number) => {
     const key = exampleKeys[activeIndex]
     const example = examples[key]
@@ -69,53 +101,112 @@ export function WhatDuckiesDoes() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.25, ease }}
-          className="bg-white rounded-xl shadow-[0_20px_70px_rgba(0,0,0,0.3)] overflow-hidden border border-zinc-200/60"
+          className="rounded-xl overflow-hidden"
+          style={{
+            background: '#111113',
+            boxShadow: `
+              inset 0 1px 0 rgba(255,255,255,0.1),
+              0 0 0 1px rgba(255,255,255,0.1),
+              0 4px 8px rgba(0,0,0,0.4),
+              0 12px 24px rgba(0,0,0,0.4),
+              0 32px 64px rgba(0,0,0,0.5)
+            `.trim().replace(/\s+/g, ' '),
+          }}
         >
-          {/* Header */}
-          <div className="bg-white border-b border-zinc-100 px-5 py-3">
+          {/* Header - solid background, no blur */}
+          <div 
+            className="px-5 py-3"
+            style={{
+              background: 'rgba(17,17,19,0.95)',
+              borderBottom: '1px solid rgba(255,255,255,0.04)',
+            }}
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ background: 'linear-gradient(to bottom right, #000000, #3f3f46)' }}>
-                  D
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-zinc-700" />
+                  <div className="w-3 h-3 rounded-full bg-zinc-700" />
+                  <div className="w-3 h-3 rounded-full bg-zinc-700" />
                 </div>
-                <div>
-                  <div className="font-semibold text-zinc-900 text-sm">Duckie Support Agent</div>
-                  <div className="text-xs text-zinc-500 font-mono">Ticket #48291</div>
-                </div>
+                <span className="text-sm font-medium text-zinc-400">Ticket {example.ticketId}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-xs font-semibold text-zinc-600">Live</span>
+              <div 
+                className="flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium"
+                style={{
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  color: 'rgb(110, 231, 183)',
+                }}
+              >
+                <Check className="w-3 h-3" />
+                Resolved
               </div>
             </div>
           </div>
 
-          {/* Messages */}
-          <div className="p-5 min-h-[320px] space-y-5">
-            {/* Customer message */}
-            <div className="flex justify-end">
-              <div className="max-w-[80%] rounded-xl bg-zinc-100 px-4 py-2.5">
-                <p className="text-sm text-zinc-900">{example.customer}</p>
+          {/* Content */}
+          <div className="p-5 space-y-4">
+            {/* Customer Request */}
+            <div>
+              <div className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Request</div>
+              <div 
+                className="rounded-lg px-4 py-3"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02), 0 0 0 1px rgba(255,255,255,0.03)',
+                }}
+              >
+                <p className="text-sm text-zinc-200">{example.request}</p>
               </div>
             </div>
-            
-            {/* Duckie response */}
-            <div className="flex gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full" style={{ background: 'linear-gradient(to bottom right, #000000, #3f3f46)' }}>
-                <Image src="/logo.svg" alt="" width={16} height={16} className="h-4 w-4" />
+
+            {/* Duckie Response */}
+            <div>
+              <div className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Response</div>
+              <div 
+                className="rounded-lg px-4 py-3"
+                style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02), 0 0 0 1px rgba(255,255,255,0.03)',
+                }}
+              >
+                <p className="text-sm text-zinc-300 leading-relaxed">{example.response}</p>
               </div>
-              <div className="max-w-[80%] space-y-3">
-                <div className="rounded-xl bg-zinc-50 border border-zinc-100 px-4 py-3">
-                  <p className="text-sm text-zinc-900 leading-relaxed">{example.duckie}</p>
-                </div>
-                {/* Action indicator */}
-                <div className="flex items-center gap-2 bg-emerald-50 rounded-lg px-3 py-2 border border-emerald-100">
-                  <Check className="h-4 w-4 text-emerald-600" />
-                  <div>
-                    <div className="text-xs font-semibold text-emerald-700">{example.action}</div>
-                    <div className="text-xs text-emerald-600">{example.details}</div>
-                  </div>
-                </div>
+            </div>
+
+            {/* Actions Taken */}
+            <div>
+              <div className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Actions Completed</div>
+              <div className="space-y-2">
+                {example.actions.map((action, i) => {
+                  const Icon = action.icon
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: i * 0.1, ease }}
+                      className="flex items-center gap-3 rounded-lg px-3 py-2.5"
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.06)',
+                        boxShadow: 'inset 0 1px 0 rgba(16, 185, 129, 0.08), 0 0 0 1px rgba(16, 185, 129, 0.1)',
+                      }}
+                    >
+                      <div 
+                        className="flex items-center justify-center w-7 h-7 rounded-md"
+                        style={{
+                          background: 'rgba(16, 185, 129, 0.15)',
+                        }}
+                      >
+                        <Icon className="w-3.5 h-3.5 text-emerald-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-zinc-200">{action.label}</div>
+                        <div className="text-xs text-zinc-500">{action.detail}</div>
+                      </div>
+                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    </motion.div>
+                  )
+                })}
               </div>
             </div>
           </div>
@@ -128,9 +219,10 @@ export function WhatDuckiesDoes() {
     <InteractiveShowcase
       sectionTitle={content.actions.title}
       sectionSubtitle={content.actions.description}
+      eyebrowLabel="Capabilities"
       panelIcon={
-        <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
         </svg>
       }
       panelTitle="Actions"
@@ -141,6 +233,7 @@ export function WhatDuckiesDoes() {
       imagePosition="right"
       autoRotate={true}
       rotationDuration={undefined}
+      accentGradient="linear-gradient(135deg, #6ee7b7 0%, #ffffff 40%)"
     />
   )
 }

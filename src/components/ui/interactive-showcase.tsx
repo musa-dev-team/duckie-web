@@ -21,6 +21,7 @@ export interface InteractiveShowcaseProps {
   // Section header
   sectionTitle: string
   sectionSubtitle?: string
+  eyebrowLabel?: string
   
   // Panel configuration
   panelIcon: React.ReactNode
@@ -44,6 +45,9 @@ export interface InteractiveShowcaseProps {
   // Auto-rotation settings
   autoRotate?: boolean
   rotationDuration?: number
+  
+  // Accent gradient for icon and title styling
+  accentGradient?: string
 }
 
 const ease = [0.22, 1, 0.36, 1] as const
@@ -55,6 +59,7 @@ const ease = [0.22, 1, 0.36, 1] as const
 export function InteractiveShowcase({
   sectionTitle,
   sectionSubtitle,
+  eyebrowLabel,
   panelIcon,
   panelTitle,
   panelDescription,
@@ -66,6 +71,7 @@ export function InteractiveShowcase({
   imagePosition,
   autoRotate = true,
   rotationDuration = 10000,
+  accentGradient = "linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%)",
 }: InteractiveShowcaseProps) {
   const [activeStep, setActiveStep] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
@@ -108,10 +114,20 @@ export function InteractiveShowcase({
       {/* Panel Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-white/5 backdrop-blur-sm flex items-center justify-center border border-white/10">
+          <div 
+            className="w-7 h-7 flex items-center justify-center [&_svg]:w-7 [&_svg]:h-7"
+            style={{ 
+              color: accentGradient.match(/#[a-fA-F0-9]{6}/g)?.[0] || '#ffffff',
+            }}
+          >
             {panelIcon}
           </div>
-          <span className="text-2xl font-bold text-white tracking-tight">{panelTitle}</span>
+          <span 
+            className="text-2xl font-bold tracking-tight bg-clip-text text-transparent"
+            style={{ backgroundImage: accentGradient }}
+          >
+            {panelTitle}
+          </span>
         </div>
         <p className="text-zinc-400 text-sm leading-relaxed">
           {panelDescription}
@@ -220,14 +236,19 @@ export function InteractiveShowcase({
   const ImagePanel = (
     <div className="relative p-6 lg:p-8 flex items-center justify-center lg:col-span-2">
       {/* Background Image with overlay */}
-      <div className="absolute inset-6 lg:inset-8 rounded-lg overflow-hidden">
+      <div 
+        className="absolute inset-6 lg:inset-8 rounded-xl overflow-hidden"
+        style={{
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px rgba(255,255,255,0.04)',
+        }}
+      >
         <AnimatePresence initial={false}>
           <motion.div
             key={activeStep}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, scale: 1.02 }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease }}
+            transition={{ duration: 1.5, ease }}
             className="absolute inset-0"
           >
             <Image 
@@ -237,9 +258,21 @@ export function InteractiveShowcase({
               className="object-cover"
               unoptimized
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/40" />
+            {/* Multi-layer overlay for depth */}
+            <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-black/20 to-black/50" />
+            {/* Radial vignette */}
+            <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 50%, transparent 0%, rgba(0,0,0,0.4) 100%)' }} />
+            {/* Top highlight for depth */}
+            <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/30 to-transparent" />
           </motion.div>
         </AnimatePresence>
+        {/* Inner border highlight overlay */}
+        <div 
+          className="absolute inset-0 pointer-events-none rounded-xl"
+          style={{
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08), inset 0 0 0 1px rgba(255,255,255,0.03)',
+          }}
+        />
       </div>
       
       {/* Floating Content Card */}
@@ -260,6 +293,22 @@ export function InteractiveShowcase({
           transition={{ duration: 0.5, ease }}
           className="mb-12"
         >
+          {eyebrowLabel && (
+            <div 
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase mb-4"
+              style={{
+                background: `linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)`,
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.06)',
+                color: accentGradient.match(/#[a-fA-F0-9]{6}/g)?.[0] || '#a1a1aa',
+              }}
+            >
+              <span 
+                className="w-1.5 h-1.5 rounded-full"
+                style={{ background: accentGradient.match(/#[a-fA-F0-9]{6}/g)?.[0] || '#a1a1aa' }}
+              />
+              {eyebrowLabel}
+            </div>
+          )}
           <h2 className="font-serif text-5xl lg:text-5xl font-normal text-zinc-50 leading-[1.1] tracking-tight max-w-3xl">
             {sectionTitle}
           </h2>
@@ -276,8 +325,11 @@ export function InteractiveShowcase({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6, delay: 0.1, ease }}
-          className="rounded-2xl overflow-hidden grid lg:grid-cols-3 shadow-[0_8px_30px_rgb(0,0,0,0.12)] min-h-[650px] border border-white/10"
-          style={{ backgroundColor: '#000000' }}
+          className="rounded-2xl overflow-hidden grid lg:grid-cols-3 min-h-[650px]"
+          style={{ 
+            background: 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 50%), #18181b',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.04)',
+          }}
         >
           {imagePosition === 'left' ? (
             <>

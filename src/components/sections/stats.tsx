@@ -64,7 +64,12 @@ export function Stats() {
   const motionStyles: MotionStyle[] = ["overshoot", "smooth", "snappy", "bounce"]
   
   return (
-    <section className="pt-24 pb-32">
+    <section className="relative pt-12 pb-24 bg-[var(--bg-deep-blue)]">
+      {/* Gradient fade to site background at bottom */}
+      <div 
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-32"
+        style={{ background: 'linear-gradient(to bottom, transparent, var(--bg-deep-blue))' }}
+      />
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-wrap items-baseline justify-center gap-x-16 gap-y-10 md:gap-x-20">
           {stats.map((stat, index) => (

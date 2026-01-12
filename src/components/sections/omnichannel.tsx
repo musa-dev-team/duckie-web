@@ -18,18 +18,18 @@ import {
 } from "react-icons/si"
 
 const integrations = [
-  { name: "Zendesk", icon: SiZendesk, color: "#03363D", glow: "#8FCFD6", glowOpacity: 20 },
-  { name: "Intercom", icon: SiIntercom, color: "#016FFF", glow: "#5CE1E6", glowOpacity: 35 },
-  { name: "HubSpot", icon: SiHubspot, color: "#FF7A59", glow: "#FFAB8F", glowOpacity: 25 },
-  { name: "Freshdesk", icon: FreshdeskIcon, glow: "#6FFFB8", glowOpacity: 25 },
-  { name: "Slack", icon: SlackIcon, glow: "#FF8FAA", glowOpacity: 25 },
-  { name: "Discord", icon: DiscordIcon, glow: "#A8AEFF", glowOpacity: 25 },
-  { name: "Jira", icon: JiraIcon, glow: "#6AAFFF", glowOpacity: 35 },
-  { name: "Linear", icon: LinearIcon, glow: "#9BA3FF", glowOpacity: 25 },
-  { name: "Confluence", icon: ConfluenceIcon, glow: "#6AAFFF", glowOpacity: 35 },
-  { name: "Notion", icon: NotionIcon, color: "#ffffff", glow: "#E8E8E8", glowOpacity: 25 },
-  { name: "Google Drive", icon: GoogleDriveIcon, glow: "#FFD966", glowOpacity: 25 },
-  { name: "GitHub", icon: GitHubIcon, color: "#ffffff", glow: "#E8E8E8", glowOpacity: 25 },
+  { name: "Zendesk", icon: SiZendesk, color: "#03363D", glow: "#8FCFD6", glowOpacity: 10 },
+  { name: "Intercom", icon: SiIntercom, color: "#016FFF", glow: "#5CE1E6", glowOpacity: 10 },
+  { name: "HubSpot", icon: SiHubspot, color: "#FF7A59", glow: "#FFAB8F", glowOpacity: 10 },
+  { name: "Freshdesk", icon: FreshdeskIcon, glow: "#6FFFB8", glowOpacity: 10 },
+  { name: "Slack", icon: SlackIcon, glow: "#FF8FAA", glowOpacity: 10 },
+  { name: "Discord", icon: DiscordIcon, glow: "#A8AEFF", glowOpacity: 10 },
+  { name: "Jira", icon: JiraIcon, glow: "#6AAFFF", glowOpacity: 10 },
+  { name: "Linear", icon: LinearIcon, glow: "#9BA3FF", glowOpacity: 10 },
+  { name: "Confluence", icon: ConfluenceIcon, glow: "#6AAFFF", glowOpacity: 10 },
+  { name: "Notion", icon: NotionIcon, color: "#ffffff", glow: "#E8E8E8", glowOpacity: 10 },
+  { name: "Google Drive", icon: GoogleDriveIcon, glow: "#FFD966", glowOpacity: 10 },
+  { name: "GitHub", icon: GitHubIcon, color: "#ffffff", glow: "#E8E8E8", glowOpacity: 10 },
 ]
 
 const languages = [
@@ -138,7 +138,7 @@ function IntegrationGrid() {
 
 export function Omnichannel() {
   return (
-    <section className="relative overflow-hidden pt-36 pb-16">
+    <section className="relative overflow-hidden pt-36 pb-24">
       <div className="container mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left: Content */}

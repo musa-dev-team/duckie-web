@@ -8,16 +8,16 @@ export function CtaFooterWrapper() {
   const { brand, footer, navigation } = content
   
   const benefits = [
-    "Live in under 2 hours",
-    "SOC 2 Type II certified",
-    "82% average resolution rate",
-    "Dedicated implementation support",
+    // "Live in under 2 hours",
+    // "SOC 2 Type II certified",
+    // "82% average resolution rate",
+    // "Dedicated implementation support",
   ]
 
   return (
     <div className="relative">
       {/* ===== CTA SECTION ===== */}
-      <section className="relative bg-white overflow-hidden" data-theme="light">
+      <section className="relative bg-gray-50 overflow-hidden" data-theme="light">
         {/* Main CTA content */}
         <div className="container mx-auto px-6 pt-24 pb-48 relative z-10">
           <div className="grid md:grid-cols-2 gap-20 items-center">
@@ -58,7 +58,7 @@ export function CtaFooterWrapper() {
           <div className="relative flex justify-end pr-8">
             {/* Main text - white to create negative space against the glow */}
             <span 
-              className="relative text-[24vw] font-black leading-[0.75] tracking-tight text-white"
+              className="relative text-[24vw] font-black leading-[0.75] tracking-tight text-gray-50"
               style={{ transform: 'translateY(35%)' }}
             >
               Duckie
@@ -83,7 +83,7 @@ export function CtaFooterWrapper() {
       </div>
 
       {/* ===== FOOTER SECTION ===== */}
-      <footer className="relative bg-white">
+      <footer className="relative bg-gray-50">
         {/* Fading divider */}
         <div 
           className="absolute top-0 left-0 right-0 h-px"
@@ -91,10 +91,10 @@ export function CtaFooterWrapper() {
             background: 'linear-gradient(to right, transparent 0%, rgba(229, 231, 235, 1) 20%, rgba(229, 231, 235, 1) 80%, transparent 100%)',
           }}
         />
-        <div className="container mx-auto px-6 py-12 relative z-10">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:gap-12">
-            {/* Brand Column */}
-            <div className="col-span-2 md:col-span-1">
+        <div className="container mx-auto px-6 pt-8 pb-12 relative z-10">
+          <div className="flex flex-col md:flex-row md:justify-between gap-10">
+            {/* Brand Column - Left */}
+            <div className="shrink-0 max-w-[280px]">
               <Link href="/" className="inline-block">
                 <span 
                   className="text-xl font-semibold tracking-tight text-gray-900"
@@ -103,64 +103,80 @@ export function CtaFooterWrapper() {
                   {brand.name}<span className="text-amber-500">.</span>
                 </span>
               </Link>
-              <p className="mt-4 text-sm text-gray-600 max-w-xs">
+              <p className="mt-4 text-sm text-gray-600">
                 {brand.description}
               </p>
+              
+              {/* SOC 2 Trust Badge */}
+              <div className="mt-6 flex items-center gap-2">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 bg-gray-50">
+                  <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-900">SOC 2 Type II</p>
+                  <p className="text-xs text-gray-500">Certified</p>
+                </div>
+              </div>
             </div>
 
-            {/* Product Links */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900">Product</h3>
-              <ul className="mt-4 space-y-3">
-                {navigation.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {/* Navigation Links - Right, grouped tightly */}
+            <div className="flex gap-16 shrink-0 pr-24">
+              {/* Product Links */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">Product</h3>
+                <ul className="mt-4 space-y-3">
+                  {navigation.links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-            {/* Company Links */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900">
-                {footer.company.title}
-              </h3>
-              <ul className="mt-4 space-y-3">
-                {footer.company.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              {/* Company Links */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">
+                  {footer.company.title}
+                </h3>
+                <ul className="mt-4 space-y-3">
+                  {footer.company.links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-            {/* Legal Links */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900">
-                {footer.legal.title}
-              </h3>
-              <ul className="mt-4 space-y-3">
-                {footer.legal.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              {/* Legal Links */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">
+                  {footer.legal.title}
+                </h3>
+                <ul className="mt-4 space-y-3">
+                  {footer.legal.links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
 

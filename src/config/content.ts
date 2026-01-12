@@ -75,7 +75,8 @@ export const content = {
   // The 5-step flow
   // ============================================
   howItWorks: {
-    title: "How Duckie resolves tickets",
+    title: "How tickets close themselves",
+    subtitle: "Watch Duckie understand, verify, and resolve a real request.",
     steps: [
       {
         number: 1,
@@ -252,6 +253,7 @@ export const content = {
   // SOCIAL PROOF
   // ============================================
   socialProof: {
+    title: "Results that speak for themselves",
     stats: [
       { value: "82", suffix: "%", label: "Resolution rate" },
       { value: "76", suffix: "%", label: "Faster handle time" },
@@ -259,11 +261,12 @@ export const content = {
       { value: "4.8", suffix: "/5", label: "CSAT maintained" },
     ],
     featuredTestimonial: {
-      quote: "We went from 40% automation to 82% in weeks—not months.",
+      title: "From 40% to 82% automation in weeks",
+      description: "TechScale's support team was drowning in repetitive tickets. With Duckie handling refunds, account updates, and common questions, their agents now focus on complex issues that actually need human attention.",
       author: "Sarah Chen",
       role: "VP of Customer Experience",
       company: "TechScale",
-      logo: "", // Company logo URL
+      logo: "/images/grid-logo.png",
       avatar: "", // Author photo URL
       stat: { value: "82%", label: "Resolution rate" }, // Optional highlight stat
     },
@@ -325,31 +328,31 @@ export const content = {
   // Getting Duckie up and running
   // ============================================
   implementation: {
-    title: "From setup to resolution in under 2 hours",
+    title: "Enterprise-ready in under 2 weeks",
     subtitle: "Get your AI support agent live and handling real tickets faster than you'd onboard a human.",
     steps: [
       {
         number: 1,
         title: "Connect",
         subtitle: "Link your tools",
-        description: "Connect your support channels (Zendesk, Intercom, Slack) and knowledge sources (Notion, Confluence, Drive) in minutes.",
-        duration: "5 minutes",
+        description: "Connect your support channels (Zendesk, Intercom, Slack) and knowledge sources (Notion, Confluence, Drive). SSO and security review included.",
+        duration: "1-2 days",
         icon: "🔗",
       },
       {
         number: 2,
         title: "Configure",
-        subtitle: "Set the rules",
-        description: "Define your guidelines, guardrails, and escalation rules. Control what the AI can and can't do.",
-        duration: "15 minutes",
-        icon: "⚙️",
+        subtitle: "Build your runbooks",
+        description: "Define step-by-step procedures for how Duckie handles scenarios—from simple Q&A to complex multi-step workflows with your team.",
+        duration: "3-5 days",
+        icon: "📋",
       },
       {
         number: 3,
         title: "Test",
         subtitle: "Validate everything",
         description: "Use the playground to test conversations. Run batch tests. Refine until you're confident.",
-        duration: "1 hour",
+        duration: "1 week",
         icon: "🧪",
       },
       {
@@ -357,7 +360,7 @@ export const content = {
         title: "Deploy",
         subtitle: "Go live or shadow",
         description: "Choose Live mode for full automation, or Shadow mode to review responses before they're sent.",
-        duration: "1 click",
+        duration: "1-2 days",
         icon: "🚀",
       },
     ],
@@ -429,7 +432,7 @@ export const content = {
   productImages: {
     hero: {
       id: "hero",
-      description: "The main Duckie interface showing a conversation being handled. Should show: customer message, AI response, and the action being taken (e.g., 'Processing refund...'). Clean, modern UI. Light theme.",
+      description: "The main Duckie interface showing a conversation being handled. Should show: customer message, AI response, and the action being taken (e.g., 'Processing refund...'). Clean, modern UI. Dark theme.",
     },
     conversationWithAction: {
       id: "conversation-action",
