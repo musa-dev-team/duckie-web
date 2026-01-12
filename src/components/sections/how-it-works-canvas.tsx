@@ -1,6 +1,7 @@
 "use client"
 
 import { InteractiveShowcase } from "@/components/ui/interactive-showcase"
+import { InteractiveShowcaseMobile } from "@/components/ui/interactive-showcase-mobile"
 import { content } from "@/config/content"
 import { motion } from "framer-motion"
 import { Check, Search, Database, BarChart3 } from "lucide-react"
@@ -389,28 +390,47 @@ export function HowItWorksCanvas() {
     )
   }
 
+  const panelIcon = (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+    </svg>
+  )
+
   return (
-    <InteractiveShowcase
-      sectionTitle={content.howItWorks.title}
-      sectionSubtitle={content.howItWorks.subtitle}
-      eyebrowLabel="How It Works"
-      panelIcon={
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-        </svg>
-      }
-      panelTitle="Resolution Process"
-      panelDescription="The fastest way to resolve customer issues with AI-powered understanding and action."
-      ctaText="Learn more"
-      ctaHref="/how-it-works"
-      items={items}
-      backgroundImages={backgrounds}
-      renderContent={renderContent}
-      imagePosition="left"
-      autoRotate={true}
-      rotationDuration={undefined}
-      accentGradient="linear-gradient(135deg, #d8b4fe 0%, #ffffff 40%)"
-    />
+    <>
+      {/* Desktop */}
+      <InteractiveShowcase
+        sectionTitle={content.howItWorks.title}
+        sectionSubtitle={content.howItWorks.subtitle}
+        eyebrowLabel="How It Works"
+        panelIcon={panelIcon}
+        panelTitle="Resolution Process"
+        panelDescription="The fastest way to resolve customer issues with AI-powered understanding and action."
+        ctaText="Learn more"
+        ctaHref="/how-it-works"
+        items={items}
+        backgroundImages={backgrounds}
+        renderContent={renderContent}
+        imagePosition="left"
+        autoRotate={true}
+        rotationDuration={undefined}
+        accentGradient="linear-gradient(135deg, #d8b4fe 0%, #ffffff 40%)"
+      />
+      {/* Mobile */}
+      <InteractiveShowcaseMobile
+        sectionTitle={content.howItWorks.title}
+        sectionSubtitle={content.howItWorks.subtitle}
+        eyebrowLabel="How It Works"
+        panelIcon={panelIcon}
+        panelTitle="Resolution Process"
+        panelDescription="The fastest way to resolve customer issues with AI-powered understanding and action."
+        ctaText="Learn more"
+        ctaHref="/how-it-works"
+        items={items}
+        renderContent={renderContent}
+        accentGradient="linear-gradient(135deg, #d8b4fe 0%, #ffffff 40%)"
+      />
+    </>
   )
 }
 
