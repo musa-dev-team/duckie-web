@@ -4,36 +4,26 @@ import { content } from "@/config/content"
 import { motion, useInView, useSpring, useTransform } from "framer-motion"
 import { useEffect, useRef } from "react"
 
-type MotionStyle = "overshoot" | "smooth" | "snappy" | "bounce"
+const ease = [0.22, 1, 0.36, 1] as const
 
 function AnimatedNumber({ 
   value, 
   suffix = "",
-  motionStyle = "smooth"
 }: { 
   value: string
   suffix?: string
-  motionStyle?: MotionStyle
 }) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-50px" })
   
-  // Parse the numeric value
   const isLessThan = value.startsWith("<")
   const numericValue = isLessThan 
     ? parseFloat(value.slice(1)) 
     : parseFloat(value)
   const hasDecimal = value.includes(".")
   
-  // Different spring configs for different motion styles
-  const springConfigs: Record<MotionStyle, { stiffness: number; damping: number; mass: number }> = {
-    overshoot: { stiffness: 150, damping: 12, mass: 1 },    // Overshoots then settles
-    smooth: { stiffness: 50, damping: 20, mass: 1 },        // Smooth ease
-    snappy: { stiffness: 300, damping: 30, mass: 0.8 },     // Quick and precise
-    bounce: { stiffness: 200, damping: 10, mass: 1 },       // Bouncy settle
-  }
-  
-  const spring = useSpring(0, springConfigs[motionStyle])
+  // Critically damped spring - no overshoot or bounce
+  const spring = useSpring(0, { stiffness: 80, damping: 25, mass: 1 })
   
   useEffect(() => {
     if (isInView) {
@@ -47,58 +37,125 @@ function AnimatedNumber({
   })
   
   return (
-    <span ref={ref} className="inline-flex items-baseline">
-      {isLessThan && <span className="mr-0.5">&lt;</span>}
-      <motion.span className="tabular-nums">{display}</motion.span>
-      <span className="ml-1 text-2xl font-medium text-zinc-500 md:text-3xl">
+    <span ref={ref} className="inline-flex items-baseline tabular-nums">
+      {isLessThan && <span className="mr-1">&lt;</span>}
+      <motion.span>{display}</motion.span>
+      <span className="text-[0.35em] font-medium text-zinc-500 ml-1">
         {suffix}
       </span>
     </span>
   )
 }
 
-export function Stats() {
+export function StatsContent() {
   const stats = content.socialProof.stats
   
-  // Different motion style for each stat to create variety
-  const motionStyles: MotionStyle[] = ["overshoot", "smooth", "snappy", "bounce"]
-  
   return (
-    <section className="relative pt-12 pb-24 bg-[var(--bg-deep-blue)]">
-      {/* Gradient fade to site background at bottom */}
-      <div 
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-32"
-        style={{ background: 'linear-gradient(to bottom, transparent, var(--bg-deep-blue))' }}
-      />
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="flex flex-wrap items-baseline justify-center gap-x-16 gap-y-10 md:gap-x-20">
-          {stats.map((stat, index) => (
+    <div className="relative py-16 lg:py-24">
+      {/* Decorative vertical lines */}
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div 
+          initial={{ scaleY: 0 }}
+          whileInView={{ scaleY: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2, ease }}
+          className="absolute left-[15%] top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/5 to-transparent origin-top"
+        />
+        <motion.div 
+          initial={{ scaleY: 0 }}
+          whileInView={{ scaleY: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2, delay: 0.2, ease }}
+          className="absolute right-[20%] top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/5 to-transparent origin-top"
+        />
+      </div>
+
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          {/* Main stats grid - horizontal layout */}
+          <div className="grid grid-cols-12 gap-6 lg:gap-8 items-end">
+            {/* Featured stat - hero */}
             <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ 
-                duration: 0.4, 
-                delay: index * 0.08,
-                ease: [0.22, 1, 0.36, 1] 
-              }}
-              className="text-center"
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, ease }}
+              className="col-span-12 sm:col-span-6 lg:col-span-4 relative"
             >
-              <div className="font-mono text-5xl font-light tracking-tighter text-zinc-50 md:text-6xl">
-                <AnimatedNumber 
-                  value={stat.value} 
-                  suffix={stat.suffix}
-                  motionStyle={motionStyles[index]}
-                />
+              {/* Large number with gradient treatment */}
+              <div className="relative">
+                <div 
+                  className="text-[5rem] sm:text-[6rem] lg:text-[7rem] font-bold leading-[0.85] tracking-[-0.04em]"
+                  style={{
+                    background: 'linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,0.7) 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  <AnimatedNumber 
+                    value={stats[0].value} 
+                    suffix={stats[0].suffix}
+                  />
+                </div>
+                {/* Accent underline */}
+                <motion.div 
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.5, ease }}
+                  className="absolute -bottom-1 left-0 h-0.5 w-16 bg-[#FF6B35] origin-left overflow-hidden"
+                >
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+                    animate={{ x: ['-100%', '200%', '200%', '-100%'] }}
+                    transition={{ 
+                      duration: 3,
+                      repeat: Infinity,
+                      repeatDelay: 2,
+                      times: [0, 0.45, 0.55, 1],
+                      ease: "easeInOut"
+                    }}
+                  />
+                </motion.div>
               </div>
-              <div className="mt-3 text-xs font-medium uppercase tracking-widest text-zinc-400">
-                {stat.label}
-              </div>
+              <p className="mt-4 text-sm text-zinc-400 max-w-[200px] leading-relaxed">
+                {stats[0].label}
+              </p>
             </motion.div>
-          ))}
+
+            {/* Secondary stats - horizontal row */}
+            {stats.slice(1).map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ 
+                  duration: 0.6, 
+                  delay: i * 0.1,
+                  ease,
+                }}
+                className="col-span-6 sm:col-span-3 lg:col-span-2 relative group origin-left border-l border-white/10 pl-4"
+              >
+                {/* Number */}
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[-0.03em] text-white">
+                  <AnimatedNumber 
+                    value={stat.value} 
+                    suffix={stat.suffix}
+                  />
+                </div>
+                {/* Label */}
+                <p className="mt-2 text-xs text-zinc-500 uppercase tracking-[0.08em] leading-tight">
+                  {stat.label}
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   )
 }
+
+// Keep backward compatibility alias
+export const Stats = StatsContent

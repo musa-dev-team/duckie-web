@@ -48,6 +48,9 @@ export interface InteractiveShowcaseProps {
   
   // Accent gradient for icon and title styling
   accentGradient?: string
+  
+  // Content-only mode (no section wrapper)
+  contentOnly?: boolean
 }
 
 const ease = [0.22, 1, 0.36, 1] as const
@@ -72,6 +75,7 @@ export function InteractiveShowcase({
   autoRotate = true,
   rotationDuration = 10000,
   accentGradient = "linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%)",
+  contentOnly = false,
 }: InteractiveShowcaseProps) {
   const [activeStep, setActiveStep] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
@@ -282,68 +286,80 @@ export function InteractiveShowcase({
     </div>
   )
 
+  const content = (
+    <div className="container mx-auto px-6">
+      {/* Section Header */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.5, ease }}
+        className="mb-12"
+      >
+        {eyebrowLabel && (
+          <div 
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase mb-4"
+            style={{
+              background: `linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)`,
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.06)',
+              color: accentGradient.match(/#[a-fA-F0-9]{6}/g)?.[0] || '#a1a1aa',
+            }}
+          >
+            <span 
+              className="w-1.5 h-1.5 rounded-full"
+              style={{ background: accentGradient.match(/#[a-fA-F0-9]{6}/g)?.[0] || '#a1a1aa' }}
+            />
+            {eyebrowLabel}
+          </div>
+        )}
+        <h2 className="text-5xl lg:text-5xl font-normal text-zinc-50 leading-[1.1] tracking-tight max-w-3xl">
+          {sectionTitle}
+        </h2>
+        {sectionSubtitle && (
+          <p className="mt-4 text-lg text-zinc-400 max-w-2xl">
+            {sectionSubtitle}
+          </p>
+        )}
+      </motion.div>
+
+      {/* Contained Canvas Component */}
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6, delay: 0.1, ease }}
+        className="rounded-2xl overflow-hidden grid lg:grid-cols-3 min-h-[650px]"
+        style={{ 
+          background: 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 50%), #18181b',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.04)',
+        }}
+      >
+        {imagePosition === 'left' ? (
+          <>
+            {ImagePanel}
+            {AccordionPanel}
+          </>
+        ) : (
+          <>
+            {AccordionPanel}
+            {ImagePanel}
+          </>
+        )}
+      </motion.div>
+    </div>
+  )
+
+  if (contentOnly) {
+    return (
+      <div className="relative py-20 hidden lg:block">
+        {content}
+      </div>
+    )
+  }
+
   return (
     <section className="relative py-20 hidden lg:block">
-      <div className="container mx-auto px-6">
-        {/* Section Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.5, ease }}
-          className="mb-12"
-        >
-          {eyebrowLabel && (
-            <div 
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase mb-4"
-              style={{
-                background: `linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)`,
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.06)',
-                color: accentGradient.match(/#[a-fA-F0-9]{6}/g)?.[0] || '#a1a1aa',
-              }}
-            >
-              <span 
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ background: accentGradient.match(/#[a-fA-F0-9]{6}/g)?.[0] || '#a1a1aa' }}
-              />
-              {eyebrowLabel}
-            </div>
-          )}
-          <h2 className="font-serif text-5xl lg:text-5xl font-normal text-zinc-50 leading-[1.1] tracking-tight max-w-3xl">
-            {sectionTitle}
-          </h2>
-          {sectionSubtitle && (
-            <p className="mt-4 text-lg text-zinc-400 max-w-2xl">
-              {sectionSubtitle}
-            </p>
-          )}
-        </motion.div>
-
-        {/* Contained Canvas Component */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6, delay: 0.1, ease }}
-          className="rounded-2xl overflow-hidden grid lg:grid-cols-3 min-h-[650px]"
-          style={{ 
-            background: 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 50%), #18181b',
-            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.04)',
-          }}
-        >
-          {imagePosition === 'left' ? (
-            <>
-              {ImagePanel}
-              {AccordionPanel}
-            </>
-          ) : (
-            <>
-              {AccordionPanel}
-              {ImagePanel}
-            </>
-          )}
-        </motion.div>
-      </div>
+      {content}
     </section>
   )
 }

@@ -1,489 +1,2265 @@
 "use client"
 
-import { InteractiveShowcase } from "@/components/ui/interactive-showcase"
-import { InteractiveShowcaseMobile } from "@/components/ui/interactive-showcase-mobile"
+import {
+  JiraIcon,
+  NotionIcon,
+  SlackIcon
+} from "@/components/icons"
 import { content } from "@/config/content"
-import { motion } from "framer-motion"
-import { Check } from "lucide-react"
-import { SlackIcon, NotionIcon, ConfluenceIcon, GoogleDriveIcon } from "@/components/icons"
+import { AnimatePresence, motion } from "framer-motion"
+import { Check, ChevronRight, Clock, FileText, FlaskConical, GitBranch, Link2, MessageSquare, Pause, Play, Plus, Rocket, Search, Workflow } from "lucide-react"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { SiHubspot, SiIntercom, SiZendesk } from "react-icons/si"
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-// Shared card style
-const cardStyle = {
-  background: 'rgba(255,255,255,0.03)',
-  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02), 0 0 0 1px rgba(255,255,255,0.03)',
+// Custom scrollbar styles
+const scrollbarStyles = {
+  scrollbarWidth: 'thin' as const,
+  scrollbarColor: 'rgba(255,255,255,0.1) transparent',
 }
 
-export function ImplementationCanvas() {
-  const steps = content.implementation.steps
+const scrollbarCSS = `
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.2);
+  }
+`
 
-  // Background images - one per step
-  const backgrounds = [
-    "/images/ocean-bg-5.jpg",
-    "/images/ocean-bg-6.jpg",
-    "/images/ocean-bg-1.jpg",
-    "/images/ocean-bg-2.jpg",
+const steps = [
+  { id: 0, label: "Connect", icon: Link2, duration: "1 day", color: "emerald" },
+  { id: 1, label: "Build", icon: Workflow, duration: "3-5 days", color: "rose" },
+  { id: 2, label: "Train", icon: FileText, duration: "3-4 days", color: "purple" },
+  { id: 3, label: "Test", icon: FlaskConical, duration: "4-6 days", color: "sky" },
+  { id: 4, label: "Deploy", icon: Rocket, duration: "1 day", color: "amber" },
+]
+
+const colorMap = {
+  emerald: { bg: 'rgba(16, 185, 129, 0.1)', border: 'rgba(16, 185, 129, 0.3)', text: 'rgb(110, 231, 183)', glow: 'rgba(16, 185, 129, 0.15)' },
+  purple: { bg: 'rgba(168, 85, 247, 0.1)', border: 'rgba(168, 85, 247, 0.3)', text: 'rgb(216, 180, 254)', glow: 'rgba(168, 85, 247, 0.15)' },
+  rose: { bg: 'rgba(244, 63, 94, 0.1)', border: 'rgba(244, 63, 94, 0.3)', text: 'rgb(251, 113, 133)', glow: 'rgba(244, 63, 94, 0.15)' },
+  sky: { bg: 'rgba(56, 189, 248, 0.1)', border: 'rgba(56, 189, 248, 0.3)', text: 'rgb(125, 211, 252)', glow: 'rgba(56, 189, 248, 0.15)' },
+  amber: { bg: 'rgba(251, 191, 36, 0.1)', border: 'rgba(251, 191, 36, 0.3)', text: 'rgb(252, 211, 77)', glow: 'rgba(251, 191, 36, 0.15)' },
+}
+
+// Animated cursor component for ConnectionsUI
+function ConnectionCursor({ x, y, clicking }: { x: number; y: number; clicking: boolean }) {
+  return (
+    <motion.div
+      className="absolute z-50 pointer-events-none"
+      animate={{ x, y }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <motion.svg 
+        width="20" 
+        height="20" 
+        viewBox="0 0 24 24" 
+        fill="none"
+        animate={{ scale: clicking ? 0.85 : 1 }}
+        transition={{ duration: 0.1 }}
+      >
+        <path 
+          d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.48 0 .72-.58.38-.92L6.35 2.85a.5.5 0 0 0-.85.36Z" 
+          fill="#fff"
+          stroke="#000"
+          strokeWidth="1.5"
+        />
+      </motion.svg>
+    </motion.div>
+  )
+}
+
+// Animation timeline for ConnectionsUI (in ms, cumulative)
+const CONNECTION_TIMELINE = {
+  idle: 0,
+  moveToCard: 2500,      // 0-2500: idle (viewing dashboard - 2.5s)
+  hover: 3200,           // 2500-3200: cursor moves to card (0.7s)
+  click: 3600,           // 3200-3600: hover state (0.4s)
+  oauthOpen: 3800,       // 3600-3800: click animation (0.2s)
+  moveToAuth: 5200,      // 3800-5200: viewing oauth modal (1.4s)
+  clickAuth: 5900,       // 5200-5900: cursor moves to auth button (0.7s)
+  connecting: 6100,      // 5900-6100: click animation (0.2s)
+  connected: 6800,       // 6100-6800: connecting spinner (0.7s)
+  end: 9000,             // 6800-9000: connected success (2.2s pause)
+}
+
+// Product mockup components
+function ConnectionsUI({ progress }: { progress: number }) {
+  const [phase, setPhase] = useState<'idle' | 'hovering' | 'clicked' | 'oauth' | 'connecting' | 'connected'>('idle')
+  const [cursorPos, setCursorPos] = useState({ x: 300, y: 280 })
+  const [clicking, setClicking] = useState(false)
+  const [hubspotConnected, setHubspotConnected] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const hubspotCardRef = useRef<HTMLDivElement>(null)
+  const authorizeButtonRef = useRef<HTMLButtonElement>(null)
+  const lastProgressRef = useRef(0)
+
+  const getElementCenter = useCallback((ref: React.RefObject<HTMLElement | null>) => {
+    if (!ref.current || !containerRef.current) return null
+    const containerRect = containerRef.current.getBoundingClientRect()
+    const elementRect = ref.current.getBoundingClientRect()
+    return {
+      x: elementRect.left - containerRect.left + elementRect.width / 2,
+      y: elementRect.top - containerRect.top + elementRect.height / 2,
+    }
+  }, [])
+
+  // Update animation state based on progress (0-100)
+  useEffect(() => {
+    const elapsed = (progress / 100) * CONNECTION_TIMELINE.end
+    const prevElapsed = (lastProgressRef.current / 100) * CONNECTION_TIMELINE.end
+    lastProgressRef.current = progress
+
+    // Determine current phase based on elapsed time
+    if (elapsed < CONNECTION_TIMELINE.moveToCard) {
+      // Idle - viewing dashboard
+      setPhase('idle')
+      setHubspotConnected(false)
+      setCursorPos({ x: 300, y: 280 })
+      setClicking(false)
+    } else if (elapsed < CONNECTION_TIMELINE.hover) {
+      // Moving to card - trigger cursor move once
+      if (prevElapsed < CONNECTION_TIMELINE.moveToCard) {
+        const hubspotPos = getElementCenter(hubspotCardRef)
+        if (hubspotPos) setCursorPos(hubspotPos)
+      }
+      setPhase('idle')
+    } else if (elapsed < CONNECTION_TIMELINE.click) {
+      // Hover state
+      setPhase('hovering')
+      setClicking(false)
+    } else if (elapsed < CONNECTION_TIMELINE.oauthOpen) {
+      // Click animation - trigger once
+      if (prevElapsed < CONNECTION_TIMELINE.click) {
+        setClicking(true)
+        setTimeout(() => setClicking(false), 100)
+      }
+      setPhase('clicked')
+    } else if (elapsed < CONNECTION_TIMELINE.clickAuth) {
+      // OAuth modal open - move cursor to auth button midway
+      if (prevElapsed < CONNECTION_TIMELINE.moveToAuth) {
+        const authPos = getElementCenter(authorizeButtonRef)
+        if (authPos) setCursorPos(authPos)
+      }
+      setPhase('oauth')
+    } else if (elapsed < CONNECTION_TIMELINE.connecting) {
+      // Click authorize - trigger once
+      if (prevElapsed < CONNECTION_TIMELINE.clickAuth) {
+        setClicking(true)
+        setTimeout(() => setClicking(false), 100)
+      }
+      setPhase('connecting')
+    } else if (elapsed < CONNECTION_TIMELINE.connected) {
+      // Connecting spinner
+      setPhase('connecting')
+    } else {
+      // Connected! (holds for 1.2s before loop)
+      setHubspotConnected(true)
+      setPhase('connected')
+    }
+  }, [progress, getElementCenter])
+
+  const integrations = [
+    { name: "Zendesk", Icon: SiZendesk, connected: true, color: "#03363D", synced: "2m ago" },
+    { name: "Intercom", Icon: SiIntercom, connected: true, color: "#016FFF", synced: "5m ago" },
+    { name: "Slack", Icon: SlackIcon, connected: true, color: undefined, synced: "1m ago" },
+    { name: "Notion", Icon: NotionIcon, connected: true, color: "#ffffff", synced: "3m ago" },
+    { name: "HubSpot", Icon: SiHubspot, connected: hubspotConnected, color: "#FF7A59", synced: "just now", isTarget: true },
+    { name: "Jira", Icon: JiraIcon, connected: true, color: undefined, synced: "4m ago" },
   ]
 
-  // Map steps to accordion items with duration metadata
-  const items = steps.map((step) => ({
-    id: step.number,
-    title: step.title,
-    description: step.description,
-    duration: step.duration,
-  }))
+  const connectedCount = integrations.filter(i => i.connected).length
 
-  // Step labels (matches content.ts step titles)
-  const stepLabels = ["Connect", "Configure", "Test", "Deploy"]
+  return (
+    <div ref={containerRef} className="h-full flex flex-col relative">
+      {/* Cursor */}
+      <ConnectionCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
 
-  // Render content function - returns setup UI for each step
-  const renderContent = (activeIndex: number, activeItem: { duration?: string }) => {
-    return (
-      <div 
-        className="rounded-xl overflow-hidden"
-        style={{
-          background: '#111113',
-          boxShadow: `
-            inset 0 1px 0 rgba(255,255,255,0.1),
-            0 0 0 1px rgba(255,255,255,0.1),
-            0 4px 8px rgba(0,0,0,0.4),
-            0 12px 24px rgba(0,0,0,0.4),
-            0 32px 64px rgba(0,0,0,0.5)
-          `.trim().replace(/\s+/g, ' '),
-        }}
+      {/* App header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center">
+            <Link2 className="w-3.5 h-3.5 text-emerald-400" />
+          </div>
+          <span className="text-sm font-medium text-white">Connections</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-[10px] text-zinc-500">{connectedCount} connected</span>
+        </div>
+      </div>
+
+      {/* Stats row */}
+      <div className="px-4 py-3 border-b border-white/5">
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { label: "Connected", value: connectedCount.toString(), color: "emerald" },
+            { label: "Syncing", value: connectedCount.toString(), color: "sky" },
+            { label: "Data Sources", value: "12", color: "white" },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center">
+              <div className={`text-lg font-bold ${
+                stat.color === 'emerald' ? 'text-emerald-400' : 
+                stat.color === 'sky' ? 'text-sky-400' : 'text-white'
+              }`}>{stat.value}</div>
+              <div className="text-[9px] text-zinc-500">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 p-3 overflow-auto custom-scrollbar" style={scrollbarStyles}>
+        <div className="grid grid-cols-2 gap-2">
+          {integrations.map((int, idx) => (
+            <motion.div
+              key={int.name}
+              ref={int.isTarget ? hubspotCardRef : null}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 + idx * 0.05 }}
+              className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+                int.isTarget && phase === 'hovering' ? 'ring-1 ring-[#FF7A59]/40' : ''
+              } ${
+                int.connected 
+                  ? 'border-white/5 bg-white/[0.02]' 
+                  : 'border-dashed border-white/10 bg-transparent'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <div 
+                  className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{ 
+                    background: int.connected ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.03)',
+                  }}
+                >
+                  <int.Icon className="w-4 h-4" style={int.color ? { color: int.color } : undefined} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-medium text-white truncate">{int.name}</div>
+                  <div className="text-[9px] text-zinc-500">
+                    {int.connected ? `Synced ${int.synced}` : "Not connected"}
+                  </div>
+                </div>
+                {int.connected ? (
+                  <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                ) : (
+                  <Plus className="w-3.5 h-3.5 text-zinc-600 flex-shrink-0" />
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom status */}
+      <div className="px-4 py-2.5 border-t border-white/5 bg-emerald-500/5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Check className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-[10px] text-emerald-400">All systems syncing</span>
+          </div>
+          <span className="text-[9px] text-zinc-500">Last sync: 1m ago</span>
+        </div>
+      </div>
+
+      {/* OAuth Modal */}
+      <AnimatePresence>
+        {(phase === 'oauth' || phase === 'connecting' || phase === 'connected') && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-40"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="w-full max-w-[280px] rounded-xl overflow-hidden"
+              style={{
+                background: 'linear-gradient(180deg, #1a1a1f 0%, #0f0f12 100%)',
+                boxShadow: '0 0 0 1px rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.5)',
+              }}
+            >
+              {/* Modal header */}
+              <div className="px-4 py-3 border-b border-white/5 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-[#FF7A59]/20 flex items-center justify-center">
+                  <SiHubspot className="w-4 h-4 text-[#FF7A59]" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-white">Connect HubSpot</div>
+                  <div className="text-[10px] text-zinc-500">OAuth 2.0</div>
+                </div>
+              </div>
+
+              {/* Modal content */}
+              <div className="p-4">
+                {phase === 'connected' ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center py-4"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-3">
+                      <Check className="w-6 h-6 text-emerald-400" />
+                    </div>
+                    <div className="text-sm font-medium text-white mb-1">Connected!</div>
+                    <div className="text-[10px] text-zinc-500">Syncing your data...</div>
+                  </motion.div>
+                ) : phase === 'connecting' ? (
+                  <div className="text-center py-4">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="w-10 h-10 rounded-full border-2 border-[#FF7A59]/20 border-t-[#FF7A59] mx-auto mb-3"
+                    />
+                    <div className="text-[11px] text-zinc-400">Connecting...</div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="text-[11px] text-zinc-400 mb-3">
+                      Duckie will access:
+                    </div>
+                    <div className="space-y-2 mb-4">
+                      {["Contact records", "Ticket data", "Company info"].map((perm, i) => (
+                        <div key={i} className="flex items-center gap-2 text-[10px]">
+                          <Check className="w-3 h-3 text-emerald-400" />
+                          <span className="text-zinc-300">{perm}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      ref={authorizeButtonRef}
+                      className="w-full py-2.5 rounded-lg bg-[#FF7A59] text-white text-xs font-medium hover:bg-[#ff6a45] transition-colors"
+                    >
+                      Authorize Connection
+                    </button>
+                    <div className="text-[9px] text-zinc-600 text-center mt-2">
+                      You can revoke access anytime
+                    </div>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+// Animation timeline for TrainUI (in ms, cumulative)
+const TRAIN_TIMELINE = {
+  idle: 0,
+  moveToNotion: 2000,     // 0-2000: idle (viewing dashboard - 2s)
+  hoverNotion: 2500,      // 2000-2500: cursor moves to Notion
+  clickNotion: 2800,      // 2500-2800: hover state
+  syncing: 3000,          // 2800-3000: click animation
+  syncComplete: 4500,     // 3000-4500: syncing animation
+  moveToGuideline: 5200,  // 4500-5200: sync complete, pause
+  hoverGuideline: 5700,   // 5200-5700: cursor moves to guideline
+  clickGuideline: 6000,   // 5700-6000: hover state
+  editingGuideline: 6200, // 6000-6200: click animation
+  typingGuideline: 7500,  // 6200-7500: editing/typing
+  saveGuideline: 7800,    // 7500-7800: save animation
+  end: 9000,              // 7800-9000: success state (1.2s pause)
+}
+
+// Cursor component for TrainUI
+function TrainCursor({ x, y, clicking }: { x: number; y: number; clicking: boolean }) {
+  return (
+    <motion.div
+      className="absolute z-50 pointer-events-none"
+      animate={{ x, y }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <motion.svg 
+        width="20" 
+        height="20" 
+        viewBox="0 0 24 24" 
+        fill="none"
+        animate={{ scale: clicking ? 0.85 : 1 }}
+        transition={{ duration: 0.1 }}
       >
-        {/* Header */}
+        <path 
+          d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.48 0 .72-.58.38-.92L6.35 2.85a.5.5 0 0 0-.85.36Z" 
+          fill="#fff"
+          stroke="#000"
+          strokeWidth="1.5"
+        />
+      </motion.svg>
+    </motion.div>
+  )
+}
+
+function TrainUI({ progress }: { progress: number }) {
+  const [phase, setPhase] = useState<'idle' | 'hoverNotion' | 'syncing' | 'syncComplete' | 'hoverGuideline' | 'editingGuideline' | 'saved'>('idle')
+  const [cursorPos, setCursorPos] = useState({ x: 350, y: 300 })
+  const [clicking, setClicking] = useState(false)
+  const [notionSynced, setNotionSynced] = useState(false)
+  const [syncProgress, setSyncProgress] = useState(0)
+  const [guidelineText, setGuidelineText] = useState("Be friendly and helpful")
+  const [articleCount, setArticleCount] = useState(142)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const notionCardRef = useRef<HTMLDivElement>(null)
+  const guidelineCardRef = useRef<HTMLDivElement>(null)
+  const lastProgressRef = useRef(0)
+
+  const getElementCenter = useCallback((ref: React.RefObject<HTMLElement | null>) => {
+    if (!ref.current || !containerRef.current) return null
+    const containerRect = containerRef.current.getBoundingClientRect()
+    const elementRect = ref.current.getBoundingClientRect()
+    return {
+      x: elementRect.left - containerRect.left + elementRect.width / 2,
+      y: elementRect.top - containerRect.top + elementRect.height / 2,
+    }
+  }, [])
+
+  // Update animation state based on progress (0-100)
+  useEffect(() => {
+    const elapsed = (progress / 100) * TRAIN_TIMELINE.end
+    const prevElapsed = (lastProgressRef.current / 100) * TRAIN_TIMELINE.end
+    lastProgressRef.current = progress
+
+    if (elapsed < TRAIN_TIMELINE.moveToNotion) {
+      setPhase('idle')
+      setNotionSynced(false)
+      setSyncProgress(0)
+      setGuidelineText("Be friendly and helpful")
+      setArticleCount(142)
+      setCursorPos({ x: 350, y: 300 })
+      setClicking(false)
+    } else if (elapsed < TRAIN_TIMELINE.hoverNotion) {
+      if (prevElapsed < TRAIN_TIMELINE.moveToNotion) {
+        const notionPos = getElementCenter(notionCardRef)
+        if (notionPos) setCursorPos(notionPos)
+      }
+      setPhase('idle')
+    } else if (elapsed < TRAIN_TIMELINE.clickNotion) {
+      setPhase('hoverNotion')
+      setClicking(false)
+    } else if (elapsed < TRAIN_TIMELINE.syncing) {
+      if (prevElapsed < TRAIN_TIMELINE.clickNotion) {
+        setClicking(true)
+        setTimeout(() => setClicking(false), 100)
+      }
+      setPhase('syncing')
+    } else if (elapsed < TRAIN_TIMELINE.syncComplete) {
+      setPhase('syncing')
+      // Animate sync progress
+      const syncElapsed = elapsed - TRAIN_TIMELINE.syncing
+      const syncDuration = TRAIN_TIMELINE.syncComplete - TRAIN_TIMELINE.syncing
+      setSyncProgress(Math.min(100, (syncElapsed / syncDuration) * 100))
+    } else if (elapsed < TRAIN_TIMELINE.moveToGuideline) {
+      setPhase('syncComplete')
+      setNotionSynced(true)
+      setSyncProgress(100)
+      setArticleCount(156)
+    } else if (elapsed < TRAIN_TIMELINE.hoverGuideline) {
+      if (prevElapsed < TRAIN_TIMELINE.moveToGuideline) {
+        const guidelinePos = getElementCenter(guidelineCardRef)
+        if (guidelinePos) setCursorPos(guidelinePos)
+      }
+      setPhase('syncComplete')
+    } else if (elapsed < TRAIN_TIMELINE.clickGuideline) {
+      setPhase('hoverGuideline')
+      setClicking(false)
+    } else if (elapsed < TRAIN_TIMELINE.editingGuideline) {
+      if (prevElapsed < TRAIN_TIMELINE.clickGuideline) {
+        setClicking(true)
+        setTimeout(() => setClicking(false), 100)
+      }
+      setPhase('editingGuideline')
+    } else if (elapsed < TRAIN_TIMELINE.typingGuideline) {
+      setPhase('editingGuideline')
+      // Animate typing
+      const fullText = "Be friendly, helpful, and always offer next steps"
+      const typeElapsed = elapsed - TRAIN_TIMELINE.editingGuideline
+      const typeDuration = TRAIN_TIMELINE.typingGuideline - TRAIN_TIMELINE.editingGuideline
+      const charCount = Math.floor((typeElapsed / typeDuration) * fullText.length)
+      setGuidelineText(fullText.substring(0, charCount))
+    } else if (elapsed < TRAIN_TIMELINE.saveGuideline) {
+      setGuidelineText("Be friendly, helpful, and always offer next steps")
+      if (prevElapsed < TRAIN_TIMELINE.typingGuideline) {
+        setClicking(true)
+        setTimeout(() => setClicking(false), 100)
+      }
+      setPhase('saved')
+    } else {
+      setPhase('saved')
+    }
+  }, [progress, getElementCenter])
+
+  const knowledgeSources = [
+    { name: "Help Center", icon: "🌐", articles: 89, synced: true },
+    { name: "Notion", icon: NotionIcon, articles: notionSynced ? 14 : 0, synced: notionSynced, isTarget: true },
+    { name: "Confluence", icon: "📚", articles: 53, synced: true },
+  ]
+
+  const guidelines = [
+    { id: 1, title: "Tone & Voice", description: guidelineText, isTarget: true },
+    { id: 2, title: "Escalation Rules", description: "Escalate billing issues over $500" },
+    { id: 3, title: "Response Format", description: "Keep responses under 3 paragraphs" },
+  ]
+
+  return (
+    <div ref={containerRef} className="h-full flex flex-col relative">
+      <TrainCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+
+      {/* App header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded bg-purple-500/20 flex items-center justify-center">
+            <FileText className="w-3.5 h-3.5 text-purple-400" />
+          </div>
+          <span className="text-sm font-medium text-white">Training</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-zinc-500">{articleCount} articles indexed</span>
+          <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+        </div>
+      </div>
+
+      {/* Stats row */}
+      <div className="px-4 py-3 border-b border-white/5">
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { label: "Knowledge Articles", value: articleCount.toString(), color: "purple" },
+            { label: "Guidelines", value: "12", color: "emerald" },
+            { label: "Runbooks", value: "8", color: "white" },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center">
+              <div className={`text-lg font-bold ${
+                stat.color === 'purple' ? 'text-purple-400' : 
+                stat.color === 'emerald' ? 'text-emerald-400' : 'text-white'
+              }`}>{stat.value}</div>
+              <div className="text-[9px] text-zinc-500">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Content - Two columns */}
+      <div className="flex-1 p-3 overflow-auto custom-scrollbar grid grid-cols-2 gap-3" style={scrollbarStyles}>
+        {/* Left: Knowledge Sources */}
+        <div>
+          <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Knowledge Sources</div>
+          <div className="space-y-2">
+            {knowledgeSources.map((source, idx) => {
+              const isNotion = source.isTarget
+              const isStringIcon = typeof source.icon === 'string'
+              
+              return (
+                <motion.div
+                  key={source.name}
+                  ref={isNotion ? notionCardRef : null}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 + idx * 0.05 }}
+                  className={`p-2.5 rounded-xl border transition-all ${
+                    isNotion && phase === 'hoverNotion' ? 'ring-1 ring-purple-500/40' : ''
+                  } ${
+                    isNotion && (phase === 'syncing') ? 'border-purple-500/30 bg-purple-500/5' : 
+                    'border-white/5 bg-white/[0.02]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
+                      {isStringIcon ? (
+                        <span className="text-sm">{source.icon as string}</span>
+                      ) : (
+                        <source.icon className="w-4 h-4 text-white" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-medium text-white">{source.name}</div>
+                      <div className="text-[9px] text-zinc-500">
+                        {isNotion && phase === 'syncing' ? (
+                          <span className="text-purple-400">Syncing... {Math.round(syncProgress)}%</span>
+                        ) : (
+                          `${source.articles} articles`
+                        )}
+                      </div>
+                    </div>
+                    {source.synced ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    ) : isNotion && phase === 'syncing' ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="w-3.5 h-3.5 border border-purple-400/30 border-t-purple-400 rounded-full"
+                      />
+                    ) : (
+                      <Plus className="w-3.5 h-3.5 text-zinc-600 flex-shrink-0" />
+                    )}
+                  </div>
+                  {/* Sync progress bar */}
+                  {isNotion && phase === 'syncing' && (
+                    <div className="mt-2 h-1 rounded-full bg-white/5 overflow-hidden">
+                      <motion.div 
+                        className="h-full bg-purple-500 rounded-full"
+                        style={{ width: `${syncProgress}%` }}
+                      />
+                    </div>
+                  )}
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Right: Guidelines */}
+        <div>
+          <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Guidelines</div>
+          <div className="space-y-2">
+            {guidelines.map((guideline, idx) => (
+              <motion.div
+                key={guideline.id}
+                ref={guideline.isTarget ? guidelineCardRef : null}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + idx * 0.05 }}
+                className={`p-2.5 rounded-xl border transition-all ${
+                  guideline.isTarget && phase === 'hoverGuideline' ? 'ring-1 ring-purple-500/40' : ''
+                } ${
+                  guideline.isTarget && (phase === 'editingGuideline' || phase === 'saved') 
+                    ? 'border-purple-500/30 bg-purple-500/5' 
+                    : 'border-white/5 bg-white/[0.02]'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <div className="text-xs font-medium text-white">{guideline.title}</div>
+                  {guideline.isTarget && phase === 'saved' && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="flex items-center gap-1"
+                    >
+                      <Check className="w-3 h-3 text-emerald-400" />
+                      <span className="text-[9px] text-emerald-400">Saved</span>
+                    </motion.div>
+                  )}
+                </div>
+                <div className={`text-[10px] ${
+                  guideline.isTarget && phase === 'editingGuideline' ? 'text-white' : 'text-zinc-500'
+                }`}>
+                  {guideline.description}
+                  {guideline.isTarget && phase === 'editingGuideline' && (
+                    <motion.span
+                      animate={{ opacity: [1, 0] }}
+                      transition={{ duration: 0.5, repeat: Infinity }}
+                      className="text-purple-400"
+                    >|</motion.span>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom status */}
+      <div className="px-4 py-2.5 border-t border-white/5 bg-purple-500/5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {phase === 'saved' ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-[10px] text-emerald-400">All changes saved</span>
+              </>
+            ) : phase === 'syncing' ? (
+              <>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="w-3.5 h-3.5 border border-purple-400/30 border-t-purple-400 rounded-full"
+                />
+                <span className="text-[10px] text-purple-400">Syncing knowledge...</span>
+              </>
+            ) : (
+              <>
+                <Check className="w-3.5 h-3.5 text-purple-400" />
+                <span className="text-[10px] text-purple-400">Training data ready</span>
+              </>
+            )}
+          </div>
+          <span className="text-[9px] text-zinc-500">Last updated: 2m ago</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Animation timeline for BuildUI (in ms, cumulative)
+const BUILD_TIMELINE = {
+  idle: 0,
+  scrolling: 1800,        // 0-1800: viewing runbook
+  scrollDone: 3000,       // 1800-3000: scrolling through runbook
+  moveToWorkflow: 3500,   // 3000-3500: pause at workflow ref
+  hoverWorkflow: 4000,    // 3500-4000: cursor moves to workflow
+  clickWorkflow: 4300,    // 4000-4300: hover
+  transitionToWf: 4500,   // 4300-4500: click
+  viewingWorkflow: 6500,  // 4500-6500: viewing workflow (2s)
+  moveToRunbook: 7000,    // 6500-7000: pause
+  hoverRunbook: 7500,     // 7000-7500: cursor moves to runbook node
+  clickRunbook: 7800,     // 7500-7800: hover
+  transitionToRb: 8000,   // 7800-8000: click
+  viewingRunbook2: 9000,  // 8000-9000: viewing second runbook
+  end: 9000,
+}
+
+// Cursor component for BuildUI
+function BuildCursor({ x, y, clicking }: { x: number; y: number; clicking: boolean }) {
+  return (
+    <motion.div
+      className="absolute z-50 pointer-events-none"
+      animate={{ x, y }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <motion.svg 
+        width="20" 
+        height="20" 
+        viewBox="0 0 24 24" 
+        fill="none"
+        animate={{ scale: clicking ? 0.85 : 1 }}
+        transition={{ duration: 0.1 }}
+      >
+        <path 
+          d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.48 0 .72-.58.38-.92L6.35 2.85a.5.5 0 0 0-.85.36Z" 
+          fill="#fff"
+          stroke="#000"
+          strokeWidth="1.5"
+        />
+      </motion.svg>
+    </motion.div>
+  )
+}
+
+// Tool badge component
+function ToolBadge({ children, color = "zinc" }: { children: React.ReactNode; color?: string }) {
+  const colors: Record<string, string> = {
+    zinc: "bg-zinc-800 text-zinc-300 border-zinc-700",
+    amber: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+    emerald: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+    sky: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+  }
+  return (
+    <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium border ${colors[color]}`}>
+      <MessageSquare className="w-2.5 h-2.5" />
+      {children}
+    </span>
+  )
+}
+
+function BuildUI({ progress }: { progress: number }) {
+  const [view, setView] = useState<'runbook' | 'workflow' | 'runbook2'>('runbook')
+  const [cursorPos, setCursorPos] = useState({ x: 350, y: 280 })
+  const [clicking, setClicking] = useState(false)
+  const [scrollY, setScrollY] = useState(0)
+  const [hoveredElement, setHoveredElement] = useState<string | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const workflowRefRef = useRef<HTMLDivElement>(null)
+  const runbookNodeRef = useRef<HTMLDivElement>(null)
+  const lastProgressRef = useRef(0)
+
+  const getElementCenter = useCallback((ref: React.RefObject<HTMLElement | null>) => {
+    if (!ref.current || !containerRef.current) return null
+    const containerRect = containerRef.current.getBoundingClientRect()
+    const elementRect = ref.current.getBoundingClientRect()
+    return {
+      x: elementRect.left - containerRect.left + elementRect.width / 2,
+      y: elementRect.top - containerRect.top + elementRect.height / 2,
+    }
+  }, [])
+
+  useEffect(() => {
+    const elapsed = (progress / 100) * BUILD_TIMELINE.end
+    const prevElapsed = (lastProgressRef.current / 100) * BUILD_TIMELINE.end
+    
+    lastProgressRef.current = progress
+
+    if (elapsed < BUILD_TIMELINE.scrolling) {
+      setView('runbook')
+      setScrollY(0)
+      setCursorPos({ x: 350, y: 280 })
+    } else if (elapsed < BUILD_TIMELINE.scrollDone) {
+      // Scroll animation
+      const scrollProgress = (elapsed - BUILD_TIMELINE.scrolling) / (BUILD_TIMELINE.scrollDone - BUILD_TIMELINE.scrolling)
+      setScrollY(scrollProgress * 120)
+    } else if (elapsed < BUILD_TIMELINE.moveToWorkflow) {
+      setScrollY(120)
+    } else if (elapsed < BUILD_TIMELINE.hoverWorkflow) {
+      if (prevElapsed < BUILD_TIMELINE.moveToWorkflow) {
+        const pos = getElementCenter(workflowRefRef)
+        if (pos) setCursorPos(pos)
+      }
+    } else if (elapsed < BUILD_TIMELINE.clickWorkflow) {
+      setHoveredElement('workflow')
+    } else if (elapsed < BUILD_TIMELINE.transitionToWf) {
+      if (prevElapsed < BUILD_TIMELINE.clickWorkflow) {
+        setClicking(true)
+        setTimeout(() => setClicking(false), 100)
+      }
+    } else if (elapsed < BUILD_TIMELINE.viewingWorkflow) {
+      setView('workflow')
+      setHoveredElement(null)
+      setCursorPos({ x: 350, y: 200 })
+    } else if (elapsed < BUILD_TIMELINE.moveToRunbook) {
+      // Pause viewing workflow
+    } else if (elapsed < BUILD_TIMELINE.hoverRunbook) {
+      if (prevElapsed < BUILD_TIMELINE.moveToRunbook) {
+        const pos = getElementCenter(runbookNodeRef)
+        if (pos) setCursorPos(pos)
+      }
+    } else if (elapsed < BUILD_TIMELINE.clickRunbook) {
+      setHoveredElement('runbookNode')
+    } else if (elapsed < BUILD_TIMELINE.transitionToRb) {
+      if (prevElapsed < BUILD_TIMELINE.clickRunbook) {
+        setClicking(true)
+        setTimeout(() => setClicking(false), 100)
+      }
+    } else {
+      setView('runbook2')
+      setHoveredElement(null)
+      setScrollY(0)
+      setCursorPos({ x: 350, y: 200 })
+    }
+  }, [progress, getElementCenter])
+
+  // Runbook content renderer
+  const renderRunbookContent = (title: string, isSecond: boolean, currentScrollY: number) => (
+    <div className="h-full flex flex-col">
+      {/* Header with back button and tools */}
+      <div className="px-4 py-3 border-b border-white/5">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-6 h-6 rounded bg-amber-500/20 flex items-center justify-center">
+            <FileText className="w-3.5 h-3.5 text-amber-400" />
+          </div>
+          <span className="text-sm font-medium text-white">{title}</span>
+        </div>
+        {/* Tools row */}
+        <div className="flex flex-wrap gap-1.5">
+          <ToolBadge>Responder</ToolBadge>
+          <ToolBadge color="sky">Verify account</ToolBadge>
+          <ToolBadge color="emerald">Check status</ToolBadge>
+          <ToolBadge color="amber">Escalator</ToolBadge>
+        </div>
+      </div>
+
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-hidden relative">
         <div 
-          className="px-5 py-3"
-          style={{
-            background: 'rgba(17,17,19,0.95)',
-            borderBottom: '1px solid rgba(255,255,255,0.04)',
+          className="p-4 space-y-4 absolute inset-x-0"
+          style={{ 
+            transform: `translateY(${-currentScrollY}px)`,
+            transition: 'transform 0.3s ease-out'
           }}
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-zinc-700" />
-                <div className="w-3 h-3 rounded-full bg-zinc-700" />
-                <div className="w-3 h-3 rounded-full bg-zinc-700" />
-              </div>
-              <span className="text-sm font-medium text-zinc-400">Setup Wizard</span>
+          {/* Use when */}
+          <div>
+            <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-1">Use when</div>
+            <div className="text-xs text-zinc-300">
+              {isSecond 
+                ? "A user needs help understanding their billing or charges."
+                : "A user cannot log in or requests help resetting their password."
+              }
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-zinc-500">{activeItem.duration}</span>
-              <div 
-                className="flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium"
-                style={{
-                  background: 'rgba(192, 132, 252, 0.1)',
-                  color: 'rgb(216, 180, 254)',
-                }}
+          </div>
+
+          {/* Goal */}
+          <div>
+            <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-1">Goal</div>
+            <div className="text-xs text-zinc-300">
+              {isSecond
+                ? "Help the user understand their charges and resolve billing concerns."
+                : "Help the user securely reset their password with minimal friction."
+              }
+            </div>
+          </div>
+
+          {/* Section 1 */}
+          <div className="pt-2 border-t border-white/5">
+            <div className="text-sm font-medium text-white mb-2">1. Collect required info</div>
+            <div className="text-xs text-zinc-400 mb-2">
+              Use <ToolBadge>Responder</ToolBadge> to gather the following:
+            </div>
+            <ul className="text-xs text-zinc-400 space-y-1 ml-4">
+              <li className="flex items-start gap-2">
+                <span className="text-zinc-600">•</span>
+                <span>Account email</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-zinc-600">•</span>
+                <span>Product or app name</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-zinc-600">•</span>
+                <span>Error message shown (if any)</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Section 2 with workflow reference */}
+          <div className="pt-2 border-t border-white/5">
+            <div className="text-sm font-medium text-white mb-2">2. Verify and process</div>
+            <div className="text-xs text-zinc-400 mb-3">
+              Follow the verification flow to confirm identity:
+            </div>
+            
+            {/* Workflow reference */}
+            {!isSecond && (
+              <div
+                ref={workflowRefRef}
+                className={`p-2.5 rounded-lg border transition-all cursor-pointer ${
+                  hoveredElement === 'workflow' 
+                    ? 'border-rose-500/40 bg-rose-500/10 ring-1 ring-rose-500/30' 
+                    : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+                }`}
               >
-                Step {activeIndex + 1}: {stepLabels[activeIndex]}
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded bg-rose-500/20 flex items-center justify-center">
+                    <GitBranch className="w-3 h-3 text-rose-400" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-[11px] font-medium text-white">Identity Verification</div>
+                    <div className="text-[9px] text-zinc-500">Workflow • 4 nodes</div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-zinc-600" />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Section 3 */}
+          <div className="pt-2 border-t border-white/5">
+            <div className="text-sm font-medium text-white mb-2">3. Complete or escalate</div>
+            <div className="text-xs text-zinc-400">
+              If verified, use <ToolBadge color="emerald">Check status</ToolBadge> then proceed. 
+              Otherwise, use <ToolBadge color="amber">Escalator</ToolBadge> to hand off.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
+  // Workflow view with visual graph
+  const renderWorkflowContent = () => (
+    <div className="h-full flex flex-col">
+      {/* Header */}
+      <div className="px-4 py-3 border-b border-white/5 flex items-center gap-3">
+        <div className="w-6 h-6 rounded bg-rose-500/20 flex items-center justify-center">
+          <GitBranch className="w-3.5 h-3.5 text-rose-400" />
+        </div>
+        <span className="text-sm font-medium text-white">Identity Verification</span>
+        <span className="text-[10px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300">Workflow</span>
+      </div>
+
+      {/* Canvas with dot grid */}
+      <div 
+        className="flex-1 relative overflow-hidden flex items-center justify-center"
+        style={{
+          backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px)`,
+          backgroundSize: '24px 24px',
+        }}
+      >
+        {/* Centered workflow container */}
+        <div className="relative" style={{ width: 520, height: 200 }}>
+          {/* SVG layer for edges */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: 'visible' }}>
+            {/* Draw lines first */}
+            {/* Start to Verify Email - horizontal line */}
+            <line x1="72" y1="100" x2="150" y2="100" stroke="#f59e0b" strokeWidth="2" />
+            
+            {/* Verify Email to Responder (top branch) - curved path */}
+            <path 
+              d="M 265 100 C 305 100, 325 40, 380 40" 
+              stroke="rgba(255,255,255,0.3)" 
+              strokeWidth="2" 
+              fill="none"
+            />
+            
+            {/* Verify Email to Billing Help (bottom branch) - curved path */}
+            <path 
+              d="M 265 100 C 305 100, 325 160, 380 160" 
+              stroke="#10b981" 
+              strokeWidth="2" 
+              fill="none"
+            />
+            
+            {/* Draw circles on top of lines */}
+            <circle cx="72" cy="100" r="4" fill="#f59e0b" />
+            <circle cx="150" cy="100" r="4" fill="#f59e0b" />
+            <circle cx="265" cy="100" r="5" fill="#f59e0b" />
+            <circle cx="380" cy="40" r="4" fill="rgba(255,255,255,0.5)" />
+            <circle cx="380" cy="160" r="4" fill="#10b981" />
+          </svg>
+
+          {/* Nodes layer */}
+          {/* Start node */}
+          <div 
+            className="absolute flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1a1a1f] border border-white/10"
+            style={{ left: 0, top: 85 }}
+          >
+            <Play className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs text-white">Start</span>
+          </div>
+
+          {/* Verify Email node */}
+          <div 
+            className="absolute flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1a1a1f] border border-amber-500/30"
+            style={{ left: 150, top: 85 }}
+          >
+            <div className="w-4 h-4 rounded bg-amber-500/20 flex items-center justify-center">
+              <span className="text-[10px]">⚙️</span>
+            </div>
+            <span className="text-xs text-white">Verify Email</span>
+          </div>
+
+          {/* Responder node (top) */}
+          <div 
+            className="absolute flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1a1a1f] border border-white/10"
+            style={{ left: 380, top: 25 }}
+          >
+            <MessageSquare className="w-4 h-4 text-zinc-400" />
+            <span className="text-xs text-white">Responder</span>
+          </div>
+
+          {/* Billing Help node (bottom, clickable) */}
+          <div
+            ref={runbookNodeRef}
+            className={`absolute flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1a1a1f] border transition-all cursor-pointer ${
+              hoveredElement === 'runbookNode'
+                ? 'border-emerald-500/40 ring-1 ring-emerald-500/30'
+                : 'border-emerald-500/30'
+            }`}
+            style={{ left: 380, top: 145 }}
+          >
+            <FileText className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs text-white">Billing Help</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
+  return (
+    <div ref={containerRef} className="h-full flex flex-col relative">
+      <BuildCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      
+      <AnimatePresence mode="wait">
+        {view === 'runbook' && (
+          <motion.div
+            key="runbook"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="h-full"
+          >
+            {renderRunbookContent("Password Reset", false, scrollY)}
+          </motion.div>
+        )}
+        {view === 'workflow' && (
+          <motion.div
+            key="workflow"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="h-full"
+          >
+            {renderWorkflowContent()}
+          </motion.div>
+        )}
+        {view === 'runbook2' && (
+          <motion.div
+            key="runbook2"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+            className="h-full"
+          >
+            {renderRunbookContent("Billing Help", true, 0)}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+// Animation timeline for TestUI (in ms, cumulative)
+const TEST_TIMELINE = {
+  idle: 0,
+  moveToRunButton: 800,
+  clickRunButton: 1000,
+  testsRunning: 1200,
+  testsComplete: 4500,
+  moveToResult: 5000,
+  clickResult: 5200,
+  viewResult: 5500,
+  moveToScore: 7000,
+  clickScore: 7200,
+  scoreSubmitted: 7500,
+  end: 9000,
+}
+
+// Cursor component for TestUI
+function TestCursor({ x, y, clicking }: { x: number; y: number; clicking: boolean }) {
+  return (
+    <motion.div
+      className="absolute z-50 pointer-events-none"
+      animate={{ x, y }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <motion.svg 
+        width="20" 
+        height="20" 
+        viewBox="0 0 24 24" 
+        fill="none"
+        animate={{ scale: clicking ? 0.85 : 1 }}
+        transition={{ duration: 0.1 }}
+      >
+        <path 
+          d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.48 0 .72-.58.38-.92L6.35 2.85a.5.5 0 0 0-.85.36Z" 
+          fill="#fff"
+          stroke="#000"
+          strokeWidth="1.5"
+        />
+      </motion.svg>
+    </motion.div>
+  )
+}
+
+function TestUI({ progress }: { progress: number }) {
+  const [testsRunning, setTestsRunning] = useState(false)
+  const [testsComplete, setTestsComplete] = useState(false)
+  const [completedTests, setCompletedTests] = useState(0)
+  const [selectedResult, setSelectedResult] = useState<number | null>(null)
+  const [scoreSubmitted, setScoreSubmitted] = useState(false)
+  const [cursorPos, setCursorPos] = useState({ x: 400, y: 200 })
+  const [clicking, setClicking] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const runButtonRef = useRef<HTMLButtonElement>(null)
+  const resultRowRef = useRef<HTMLDivElement>(null)
+  const scoreButtonRef = useRef<HTMLButtonElement>(null)
+  const lastProgressRef = useRef(0)
+  const totalTests = 127
+
+  const testResults = [
+    { id: 'TKT-8921', query: 'Password reset not working', expected: 'Reset link sent', actual: 'Reset link sent', score: 98, status: 'pass' },
+    { id: 'TKT-8922', query: 'Billing inquiry - wrong charge', expected: 'Refund processed', actual: 'Refund processed', score: 95, status: 'pass' },
+    { id: 'TKT-8923', query: 'Cancel subscription request', expected: 'Cancellation confirmed', actual: 'Retention offer made', score: 72, status: 'review' },
+    { id: 'TKT-8924', query: 'Product not delivered', expected: 'Tracking provided', actual: 'Tracking provided', score: 96, status: 'pass' },
+    { id: 'TKT-8925', query: 'Feature request - dark mode', expected: 'Logged for product', actual: 'Logged for product', score: 94, status: 'pass' },
+  ]
+
+  const getElementCenter = useCallback((ref: React.RefObject<HTMLElement | null>) => {
+    if (!ref.current || !containerRef.current) return null
+    const containerRect = containerRef.current.getBoundingClientRect()
+    const elementRect = ref.current.getBoundingClientRect()
+    return {
+      x: elementRect.left - containerRect.left + elementRect.width / 2 - 10,
+      y: elementRect.top - containerRect.top + elementRect.height / 2 - 10,
+    }
+  }, [])
+
+  // Animate tests completing
+  useEffect(() => {
+    if (!testsRunning || testsComplete) return
+    
+    const interval = setInterval(() => {
+      setCompletedTests(prev => {
+        if (prev >= totalTests) {
+          clearInterval(interval)
+          return totalTests
+        }
+        return prev + Math.floor(Math.random() * 8) + 3
+      })
+    }, 80)
+
+    return () => clearInterval(interval)
+  }, [testsRunning, testsComplete])
+
+  // Main animation timeline
+  useEffect(() => {
+    const elapsed = (progress / 100) * TEST_TIMELINE.end
+    const prevElapsed = (lastProgressRef.current / 100) * TEST_TIMELINE.end
+    lastProgressRef.current = progress
+
+    // Move to run button
+    if (elapsed >= TEST_TIMELINE.moveToRunButton && prevElapsed < TEST_TIMELINE.moveToRunButton) {
+      const pos = getElementCenter(runButtonRef)
+      if (pos) setCursorPos(pos)
+    }
+
+    // Click run button
+    if (elapsed >= TEST_TIMELINE.clickRunButton && prevElapsed < TEST_TIMELINE.clickRunButton) {
+      setClicking(true)
+      setTimeout(() => setClicking(false), 100)
+    }
+
+    // Start tests
+    if (elapsed >= TEST_TIMELINE.testsRunning && prevElapsed < TEST_TIMELINE.testsRunning) {
+      setTestsRunning(true)
+    }
+
+    // Tests complete
+    if (elapsed >= TEST_TIMELINE.testsComplete && prevElapsed < TEST_TIMELINE.testsComplete) {
+      setTestsComplete(true)
+      setCompletedTests(totalTests)
+    }
+
+    // Move to result row
+    if (elapsed >= TEST_TIMELINE.moveToResult && prevElapsed < TEST_TIMELINE.moveToResult) {
+      const pos = getElementCenter(resultRowRef)
+      if (pos) setCursorPos(pos)
+    }
+
+    // Click result
+    if (elapsed >= TEST_TIMELINE.clickResult && prevElapsed < TEST_TIMELINE.clickResult) {
+      setClicking(true)
+      setTimeout(() => setClicking(false), 100)
+    }
+
+    // View result detail
+    if (elapsed >= TEST_TIMELINE.viewResult && prevElapsed < TEST_TIMELINE.viewResult) {
+      setSelectedResult(2) // The "review" item
+    }
+
+    // Move to score button
+    if (elapsed >= TEST_TIMELINE.moveToScore && prevElapsed < TEST_TIMELINE.moveToScore) {
+      const pos = getElementCenter(scoreButtonRef)
+      if (pos) setCursorPos(pos)
+    }
+
+    // Click score
+    if (elapsed >= TEST_TIMELINE.clickScore && prevElapsed < TEST_TIMELINE.clickScore) {
+      setClicking(true)
+      setTimeout(() => setClicking(false), 100)
+    }
+
+    // Score submitted
+    if (elapsed >= TEST_TIMELINE.scoreSubmitted && prevElapsed < TEST_TIMELINE.scoreSubmitted) {
+      setScoreSubmitted(true)
+    }
+  }, [progress, getElementCenter])
+
+  return (
+    <div ref={containerRef} className="h-full flex relative">
+      <TestCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+
+      {/* Left sidebar - Test config */}
+      <div className="w-48 border-r border-white/5 p-3 flex flex-col">
+        <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Test Suite</div>
+        <div className="space-y-1.5 mb-4">
+          {[
+            { name: 'Historic Tickets', count: 127, selected: true },
+            { name: 'Edge Cases', count: 34 },
+            { name: 'Regression', count: 56 },
+          ].map((suite, idx) => (
+            <div 
+              key={idx}
+              className={`px-2.5 py-2 rounded-lg text-xs cursor-pointer transition-colors ${
+                suite.selected 
+                  ? 'bg-sky-500/10 text-sky-300 border border-sky-500/20' 
+                  : 'text-zinc-400 hover:bg-white/5'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span>{suite.name}</span>
+                <span className={suite.selected ? 'text-sky-400' : 'text-zinc-600'}>{suite.count}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Agent</div>
+        <div className="px-2.5 py-2 rounded-lg bg-white/5 text-xs text-zinc-300 mb-4">
+          Support Agent v2.1
+        </div>
+
+        <div className="mt-auto">
+          <button 
+            ref={runButtonRef}
+            className={`w-full py-2.5 rounded-lg text-xs font-medium flex items-center justify-center gap-2 transition-all ${
+              testsRunning && !testsComplete
+                ? 'bg-sky-500/20 text-sky-300'
+                : 'bg-sky-500 text-white hover:bg-sky-600'
+            }`}
+          >
+            {testsRunning && !testsComplete ? (
+              <>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                  className="w-3 h-3 border-2 border-sky-300 border-t-transparent rounded-full"
+                />
+                Running...
+              </>
+            ) : (
+              <>
+                <Play className="w-3.5 h-3.5" />
+                Run Batch Test
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1 flex flex-col">
+        {/* Header with stats */}
+        <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 rounded bg-sky-500/20 flex items-center justify-center">
+              <FlaskConical className="w-3.5 h-3.5 text-sky-400" />
+            </div>
+            <span className="text-sm font-medium text-white">Batch Testing</span>
+          </div>
+          
+          {testsRunning && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-center gap-4"
+            >
+              <div className="text-xs text-zinc-400">
+                <span className="text-white font-medium">{Math.min(completedTests, totalTests)}</span> / {totalTests} tests
+              </div>
+              <div className="w-32 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <motion.div 
+                  className="h-full bg-sky-500 rounded-full"
+                  style={{ width: `${(Math.min(completedTests, totalTests) / totalTests) * 100}%` }}
+                />
+              </div>
+            </motion.div>
+          )}
+        </div>
+
+        {/* Content area with optional right panel */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* Results area */}
+          <div className="flex-1 overflow-auto custom-scrollbar" style={scrollbarStyles}>
+            {!testsComplete ? (
+              <div className="h-full flex items-center justify-center">
+                {testsRunning ? (
+                  <div className="text-center">
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="w-16 h-16 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center mx-auto mb-4"
+                    >
+                      <FlaskConical className="w-8 h-8 text-sky-400" />
+                    </motion.div>
+                    <div className="text-sm text-white mb-2">Running tests on historic tickets...</div>
+                    <div className="text-xs text-zinc-500">Evaluating agent responses against expected outcomes</div>
+                  </div>
+                ) : (
+                  <div className="text-center text-zinc-500">
+                    <FlaskConical className="w-10 h-10 mx-auto mb-3 opacity-30" />
+                    <div className="text-sm">Select a test suite and click Run</div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="p-3">
+                {/* Summary cards */}
+                <div className="grid grid-cols-4 gap-2 mb-3">
+                  {[
+                    { label: 'Total', value: '127', color: 'zinc' },
+                    { label: 'Passed', value: '119', color: 'emerald' },
+                    { label: 'Failed', value: '3', color: 'red' },
+                    { label: 'Review', value: '5', color: 'amber' },
+                  ].map((stat, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="p-2 rounded-lg bg-white/[0.02] border border-white/5"
+                    >
+                      <div className="text-[9px] text-zinc-500 uppercase tracking-wider">{stat.label}</div>
+                      <div className={`text-base font-semibold ${
+                        stat.color === 'emerald' ? 'text-emerald-400' :
+                        stat.color === 'red' ? 'text-red-400' :
+                        stat.color === 'amber' ? 'text-amber-400' :
+                        'text-white'
+                      }`}>{stat.value}</div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Results table */}
+                <div className="rounded-lg border border-white/5 overflow-hidden">
+                  <div className="grid grid-cols-12 gap-2 px-3 py-1.5 bg-white/[0.02] text-[9px] text-zinc-500 uppercase tracking-wider">
+                    <div className="col-span-2">Ticket</div>
+                    <div className="col-span-5">Query</div>
+                    <div className="col-span-3">Score</div>
+                    <div className="col-span-2">Status</div>
+                  </div>
+                  {testResults.map((result, idx) => (
+                    <motion.div
+                      key={idx}
+                      ref={idx === 2 ? resultRowRef : null}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2 + idx * 0.05 }}
+                      className={`grid grid-cols-12 gap-2 px-3 py-2 border-t border-white/5 text-xs cursor-pointer transition-colors ${
+                        selectedResult === idx 
+                          ? 'bg-sky-500/10 border-l-2 border-l-sky-500' 
+                          : 'hover:bg-white/[0.02]'
+                      }`}
+                    >
+                      <div className="col-span-2 text-zinc-400 font-mono text-[10px]">{result.id}</div>
+                      <div className="col-span-5 text-zinc-300 truncate text-[11px]">{result.query}</div>
+                      <div className="col-span-3">
+                        <span className={`font-medium ${
+                          result.score >= 90 ? 'text-emerald-400' :
+                          result.score >= 70 ? 'text-amber-400' :
+                          'text-red-400'
+                        }`}>{result.score}%</span>
+                      </div>
+                      <div className="col-span-2">
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+                          result.status === 'pass' ? 'bg-emerald-500/20 text-emerald-400' :
+                          result.status === 'review' ? 'bg-amber-500/20 text-amber-400' :
+                          'bg-red-500/20 text-red-400'
+                        }`}>
+                          {result.status === 'pass' ? '✓ Pass' : result.status === 'review' ? '? Review' : '✗ Fail'}
+                        </span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right detail panel - slides in when result selected */}
+          <AnimatePresence>
+            {selectedResult !== null && (
+              <motion.div
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: 220, opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="border-l border-white/5 overflow-hidden flex-shrink-0"
+              >
+                <div className="w-[220px] h-full flex flex-col p-3">
+                  {/* Header */}
+                  <div className="mb-3">
+                    <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-1">Review Result</div>
+                    <div className="text-sm font-medium text-white leading-tight">
+                      {testResults[selectedResult].query}
+                    </div>
+                    <div className="text-[10px] text-zinc-500 mt-1">{testResults[selectedResult].id}</div>
+                  </div>
+
+                  {/* Score */}
+                  <div className="mb-3 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] text-amber-400 uppercase tracking-wider">Confidence</span>
+                      <span className="text-lg font-bold text-amber-400">{testResults[selectedResult].score}%</span>
+                    </div>
+                    <div className="h-1.5 bg-amber-500/20 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-amber-400 rounded-full"
+                        style={{ width: `${testResults[selectedResult].score}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Expected vs Actual */}
+                  <div className="space-y-2 mb-4 flex-1">
+                    <div className="p-2 rounded-lg bg-white/[0.02]">
+                      <div className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1">Expected</div>
+                      <div className="text-[11px] text-zinc-300">{testResults[selectedResult].expected}</div>
+                    </div>
+                    <div className="p-2 rounded-lg bg-sky-500/5 border border-sky-500/20">
+                      <div className="text-[9px] text-sky-400 uppercase tracking-wider mb-1">Agent Response</div>
+                      <div className="text-[11px] text-zinc-300">{testResults[selectedResult].actual}</div>
+                    </div>
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="space-y-2 mt-auto">
+                    {!scoreSubmitted ? (
+                      <>
+                        <button 
+                          ref={scoreButtonRef}
+                          className="w-full py-2 rounded-lg text-xs font-medium bg-emerald-500 text-white hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                          Approve Response
+                        </button>
+                        <button className="w-full py-2 rounded-lg text-xs bg-white/5 text-zinc-400 hover:bg-white/10 transition-colors">
+                          Mark as Fail
+                        </button>
+                      </>
+                    ) : (
+                      <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="w-full py-2.5 rounded-lg text-xs font-medium bg-emerald-500/20 text-emerald-400 flex items-center justify-center gap-2"
+                      >
+                        <Check className="w-4 h-4" />
+                        Response Approved
+                      </motion.div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Animation timeline for DeployUI (in ms, cumulative)
+const DEPLOY_TIMELINE = {
+  idle: 0,
+  moveToDeployButton: 2000,
+  clickDeployButton: 2300,
+  deploying: 2500,
+  deployed: 3500,
+  showLiveFeed: 3800,
+  ticket1: 4200,
+  ticket1Resolved: 4900,
+  ticket2: 5400,
+  ticket2Resolved: 6100,
+  ticket3: 6600,
+  ticket3Resolved: 7300,
+  ticket4: 7800,
+  ticket4Resolved: 8500,
+  end: 9000,
+}
+
+// Cursor component for DeployUI
+function DeployCursor({ x, y, clicking }: { x: number; y: number; clicking: boolean }) {
+  return (
+    <motion.div
+      className="absolute z-50 pointer-events-none"
+      animate={{ x, y }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <motion.svg 
+        width="20" 
+        height="20" 
+        viewBox="0 0 24 24" 
+        fill="none"
+        animate={{ scale: clicking ? 0.85 : 1 }}
+        transition={{ duration: 0.1 }}
+      >
+        <path 
+          d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.48 0 .72-.58.38-.92L6.35 2.85a.5.5 0 0 0-.85.36Z" 
+          fill="#fff"
+          stroke="#000"
+          strokeWidth="1.5"
+        />
+      </motion.svg>
+    </motion.div>
+  )
+}
+
+function DeployUI({ progress }: { progress: number }) {
+  const [isDeploying, setIsDeploying] = useState(false)
+  const [isDeployed, setIsDeployed] = useState(false)
+  const [cursorPos, setCursorPos] = useState({ x: 300, y: 200 })
+  const [clicking, setClicking] = useState(false)
+  const [resolvedTickets, setResolvedTickets] = useState<number[]>([])
+  const [activeTicket, setActiveTicket] = useState<number | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const deployButtonRef = useRef<HTMLButtonElement>(null)
+  const ticketFeedRef = useRef<HTMLDivElement>(null)
+  const lastProgressRef = useRef(0)
+
+  const liveTickets = [
+    { id: 'TKT-9012', customer: 'Alex M.', query: 'How do I reset my password?', response: 'Reset link sent to email', time: '2s' },
+    { id: 'TKT-9013', customer: 'Sarah K.', query: 'Refund for order #45231', response: 'Refund of $34.99 processed', time: '3s' },
+    { id: 'TKT-9014', customer: 'Mike R.', query: 'Shipping status question', response: 'Tracking info provided', time: '2s' },
+    { id: 'TKT-9015', customer: 'Emma L.', query: 'Cancel subscription', response: 'Subscription cancelled', time: '4s' },
+  ]
+
+  const getElementCenter = useCallback((ref: React.RefObject<HTMLElement | null>) => {
+    if (!ref.current || !containerRef.current) return null
+    const containerRect = containerRef.current.getBoundingClientRect()
+    const elementRect = ref.current.getBoundingClientRect()
+    return {
+      x: elementRect.left - containerRect.left + elementRect.width / 2 - 10,
+      y: elementRect.top - containerRect.top + elementRect.height / 2 - 10,
+    }
+  }, [])
+
+  // Main animation timeline
+  useEffect(() => {
+    const elapsed = (progress / 100) * DEPLOY_TIMELINE.end
+    const prevElapsed = (lastProgressRef.current / 100) * DEPLOY_TIMELINE.end
+    lastProgressRef.current = progress
+
+    // Move to deploy button
+    if (elapsed >= DEPLOY_TIMELINE.moveToDeployButton && prevElapsed < DEPLOY_TIMELINE.moveToDeployButton) {
+      const pos = getElementCenter(deployButtonRef)
+      if (pos) setCursorPos(pos)
+    }
+
+    // Click deploy button
+    if (elapsed >= DEPLOY_TIMELINE.clickDeployButton && prevElapsed < DEPLOY_TIMELINE.clickDeployButton) {
+      setClicking(true)
+      setTimeout(() => setClicking(false), 100)
+    }
+
+    // Start deploying
+    if (elapsed >= DEPLOY_TIMELINE.deploying && prevElapsed < DEPLOY_TIMELINE.deploying) {
+      setIsDeploying(true)
+    }
+
+    // Deployed
+    if (elapsed >= DEPLOY_TIMELINE.deployed && prevElapsed < DEPLOY_TIMELINE.deployed) {
+      setIsDeploying(false)
+      setIsDeployed(true)
+      setCursorPos({ x: 500, y: 150 }) // Move cursor out of the way
+    }
+
+    // Tickets appearing and resolving
+    if (elapsed >= DEPLOY_TIMELINE.ticket1 && prevElapsed < DEPLOY_TIMELINE.ticket1) setActiveTicket(0)
+    if (elapsed >= DEPLOY_TIMELINE.ticket1Resolved && prevElapsed < DEPLOY_TIMELINE.ticket1Resolved) {
+      setResolvedTickets(prev => [...prev, 0])
+      setActiveTicket(null)
+    }
+    if (elapsed >= DEPLOY_TIMELINE.ticket2 && prevElapsed < DEPLOY_TIMELINE.ticket2) setActiveTicket(1)
+    if (elapsed >= DEPLOY_TIMELINE.ticket2Resolved && prevElapsed < DEPLOY_TIMELINE.ticket2Resolved) {
+      setResolvedTickets(prev => [...prev, 1])
+      setActiveTicket(null)
+    }
+    if (elapsed >= DEPLOY_TIMELINE.ticket3 && prevElapsed < DEPLOY_TIMELINE.ticket3) setActiveTicket(2)
+    if (elapsed >= DEPLOY_TIMELINE.ticket3Resolved && prevElapsed < DEPLOY_TIMELINE.ticket3Resolved) {
+      setResolvedTickets(prev => [...prev, 2])
+      setActiveTicket(null)
+    }
+    if (elapsed >= DEPLOY_TIMELINE.ticket4 && prevElapsed < DEPLOY_TIMELINE.ticket4) setActiveTicket(3)
+    if (elapsed >= DEPLOY_TIMELINE.ticket4Resolved && prevElapsed < DEPLOY_TIMELINE.ticket4Resolved) {
+      setResolvedTickets(prev => [...prev, 3])
+      setActiveTicket(null)
+    }
+  }, [progress, getElementCenter])
+
+  // Auto-scroll ticket feed as new tickets appear
+  useEffect(() => {
+    if (ticketFeedRef.current && (activeTicket !== null || resolvedTickets.length > 0)) {
+      setTimeout(() => {
+        ticketFeedRef.current?.scrollTo({
+          top: ticketFeedRef.current.scrollHeight,
+          behavior: 'smooth'
+        })
+      }, 100)
+    }
+  }, [activeTicket, resolvedTickets])
+
+  return (
+    <div ref={containerRef} className="h-full flex relative">
+      <DeployCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+
+      {!isDeployed ? (
+        // Pre-deployment view
+        <div className="flex-1 flex flex-col">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded bg-amber-500/20 flex items-center justify-center">
+                <Rocket className="w-3.5 h-3.5 text-amber-400" />
+              </div>
+              <span className="text-sm font-medium text-white">Deploy Agent</span>
+            </div>
+          </div>
+
+          <div className="flex-1 p-4 flex flex-col justify-center items-center">
+            {isDeploying ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center"
+              >
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                  className="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mx-auto mb-4"
+                >
+                  <Rocket className="w-8 h-8 text-amber-400" />
+                </motion.div>
+                <div className="text-sm text-white mb-2">Deploying to Zendesk...</div>
+                <div className="text-xs text-zinc-500">Connecting agent to live support channel</div>
+              </motion.div>
+            ) : (
+              <div className="w-full max-w-xs space-y-4">
+                {/* Channel */}
+                <div className="p-3 rounded-xl border border-amber-500/20 bg-amber-500/5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[#03363D] flex items-center justify-center">
+                      <SiZendesk className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-white">Zendesk</div>
+                      <div className="text-[10px] text-zinc-500">Support tickets</div>
+                    </div>
+                    <Check className="w-5 h-5 text-amber-400" />
+                  </div>
+                </div>
+
+                {/* Mode */}
+                <div className="p-3 rounded-xl border border-amber-500/30 bg-amber-500/5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">⚡</span>
+                    <span className="text-sm font-medium text-white">Live Mode</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 ml-auto">Active</span>
+                  </div>
+                </div>
+
+                {/* Deploy button */}
+                <button 
+                  ref={deployButtonRef}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium text-sm flex items-center justify-center gap-2"
+                >
+                  <Rocket className="w-4 h-4" />
+                  Deploy to Zendesk
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        // Post-deployment live view
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center">
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+              </div>
+              <span className="text-sm font-medium text-white">Duckie is Live</span>
+              <span className="flex items-center gap-1.5 text-[10px] text-emerald-400">
+                <motion.span
+                  animate={{ opacity: [1, 0.4, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="w-1.5 h-1.5 rounded-full bg-emerald-400"
+                />
+                Active on Zendesk
+              </span>
+            </div>
+            <div className="text-xs text-zinc-500">
+              <span className="text-emerald-400 font-medium">{resolvedTickets.length}</span> resolved
+            </div>
+          </div>
+
+          {/* Live ticket feed */}
+          <div ref={ticketFeedRef} className="flex-1 p-3 overflow-auto custom-scrollbar" style={scrollbarStyles}>
+            <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Live Activity</div>
+            <div className="space-y-2">
+              {liveTickets.map((ticket, idx) => {
+                const isResolved = resolvedTickets.includes(idx)
+                const isActive = activeTicket === idx
+                const isVisible = isResolved || isActive
+
+                return (
+                  <AnimatePresence key={ticket.id}>
+                    {isVisible && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                        className={`p-3 rounded-xl border transition-colors ${
+                          isResolved 
+                            ? 'border-emerald-500/20 bg-emerald-500/5' 
+                            : 'border-amber-500/30 bg-amber-500/5'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                            isResolved ? 'bg-emerald-500/20' : 'bg-amber-500/20'
+                          }`}>
+                            {isResolved ? (
+                              <Check className="w-4 h-4 text-emerald-400" />
+                            ) : (
+                              <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                                className="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full"
+                              />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-[10px] font-mono text-zinc-500">{ticket.id}</span>
+                              <span className="text-xs text-white">{ticket.customer}</span>
+                              {isResolved && (
+                                <span className="text-[10px] text-zinc-500 ml-auto">{ticket.time}</span>
+                              )}
+                            </div>
+                            <div className="text-[11px] text-zinc-400 mb-1 truncate">{ticket.query}</div>
+                            {isResolved && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="text-[11px] text-emerald-400 flex items-center gap-1"
+                              >
+                                <Check className="w-3 h-3" />
+                                {ticket.response}
+                              </motion.div>
+                            )}
+                            {isActive && !isResolved && (
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="text-[11px] text-amber-400 flex items-center gap-1"
+                              >
+                                <motion.span
+                                  animate={{ opacity: [1, 0.3, 1] }}
+                                  transition={{ duration: 0.8, repeat: Infinity }}
+                                >
+                                  Processing...
+                                </motion.span>
+                              </motion.div>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Stats bar */}
+          <div className="px-4 py-3 border-t border-white/5 bg-emerald-500/5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-white">{resolvedTickets.length}</div>
+                  <div className="text-[9px] text-zinc-500 uppercase">Resolved</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-emerald-400">2.5s</div>
+                  <div className="text-[9px] text-zinc-500 uppercase">Avg Time</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-emerald-400">100%</div>
+                  <div className="text-[9px] text-zinc-500 uppercase">Success</div>
+                </div>
+              </div>
+              <div className="text-[10px] text-emerald-400 flex items-center gap-1">
+                <Rocket className="w-3.5 h-3.5" />
+                Duckie handling tickets
               </div>
             </div>
           </div>
         </div>
+      )}
+    </div>
+  )
+}
 
-        {/* Content Area - Changes per step */}
-        <div className="p-5 min-h-[320px] relative">
-          {/* Step 1: Connect - Show different integration categories */}
-          {activeIndex === 0 && (
-            <motion.div 
-              key="step-0"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.25, ease }}
-              className="space-y-3"
-            >
-              {/* Two categories of integrations */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="text-[10px] text-zinc-500 uppercase tracking-wider">Support Channels</div>
-                  <div className="text-[10px] text-emerald-400">Synced 2m ago</div>
-                </div>
-                <div className="flex gap-2">
-                  {[
-                    { name: "Zendesk", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="#03363D"><path d="M24 4.5v15h-9V9L24 4.5zM0 19.5v-15l9 4.5v10.5H0zM0 2.25L12 13.5 24 2.25H0z"/></svg> },
-                    { name: "Intercom", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="#1F8DED"><path d="M20.802 18.267C21.574 16.572 22 14.692 22 12.761c0-5.512-4.486-10-10-10S2 7.25 2 12.76c0 5.513 4.486 10.001 10 10.001 1.932 0 3.812-.426 5.507-1.198l4.244 1.439-1.949-4.735zM8 14a1 1 0 110-2 1 1 0 010 2zm4 0a1 1 0 110-2 1 1 0 010 2zm4 0a1 1 0 110-2 1 1 0 010 2z"/></svg> },
-                    { name: "Slack", icon: <SlackIcon className="w-4 h-4" /> },
-                  ].map((item, idx) => (
-                    <motion.div 
-                      key={idx}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.05, duration: 0.2 }}
-                      className="flex-1 rounded-lg px-3 py-2.5 flex flex-col items-center gap-1.5"
-                      style={{
-                        background: 'rgba(16, 185, 129, 0.06)',
-                        boxShadow: 'inset 0 1px 0 rgba(16, 185, 129, 0.08), 0 0 0 1px rgba(16, 185, 129, 0.1)',
-                      }}
-                    >
-                      {item.icon}
-                      <div className="text-[10px] font-medium text-zinc-300">{item.name}</div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="text-[10px] text-zinc-500 uppercase tracking-wider">Knowledge Sources</div>
-                  <div className="text-[10px] text-purple-400">1,247 articles</div>
-                </div>
-                <div className="flex gap-2">
-                  {[
-                    { name: "Notion", icon: <NotionIcon className="w-4 h-4 text-zinc-200" /> },
-                    { name: "Confluence", icon: <ConfluenceIcon className="w-4 h-4" /> },
-                    { name: "Google Drive", icon: <GoogleDriveIcon className="w-4 h-4" /> },
-                  ].map((item, idx) => (
-                    <motion.div 
-                      key={idx}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.15 + idx * 0.05, duration: 0.2 }}
-                      className="flex-1 rounded-lg px-3 py-2.5 flex flex-col items-center gap-1.5"
-                      style={{
-                        background: 'rgba(168, 85, 247, 0.06)',
-                        boxShadow: 'inset 0 1px 0 rgba(168, 85, 247, 0.08), 0 0 0 1px rgba(168, 85, 247, 0.1)',
-                      }}
-                    >
-                      {item.icon}
-                      <div className="text-[10px] font-medium text-zinc-300">{item.name}</div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-              
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.3 }}
-                className="rounded-lg px-3 py-2.5 flex items-center gap-2"
-                style={{
-                  background: 'rgba(16, 185, 129, 0.06)',
-                  boxShadow: 'inset 0 1px 0 rgba(16, 185, 129, 0.08), 0 0 0 1px rgba(16, 185, 129, 0.1)',
-                }}
-              >
-                <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                </svg>
-                <span className="text-sm font-medium text-emerald-300">6 integrations connected</span>
-                <span className="text-xs text-zinc-500 ml-auto">OAuth secured</span>
-              </motion.div>
-            </motion.div>
-          )}
+export function ImplementationContent() {
+  const [activeStep, setActiveStep] = useState(-1)
+  const [progress, setProgress] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+  const [isHovering, setIsHovering] = useState(false)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const STEP_DURATION = 9000
 
-          {/* Step 2: Build Runbook - Show runbook editor with embedded tools */}
-          {activeIndex === 1 && (
-            <motion.div 
-              key="step-1"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.25, ease }}
-              className="space-y-3"
-            >
-              {/* Runbook editor mockup */}
-              <div className="rounded-lg overflow-hidden" style={cardStyle}>
-                {/* Runbook header */}
-                <div className="px-3 py-2 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-purple-400" />
-                    <span className="text-xs font-medium text-zinc-200">Subscription Cancellation</span>
-                  </div>
-                  <span className="text-[10px] text-zinc-500 px-1.5 py-0.5 rounded" style={{ background: 'rgba(168, 85, 247, 0.15)' }}>Runbook</span>
-                </div>
-                
-                {/* Runbook steps */}
-                <div className="p-3 space-y-2.5">
-                  <motion.div 
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1, duration: 0.2 }}
-                    className="flex gap-2"
-                  >
-                    <span className="text-[10px] text-zinc-500 w-3 shrink-0">1.</span>
-                    <div className="space-y-1.5">
-                      <p className="text-xs text-zinc-300 leading-relaxed">Greet the customer and ask why they want to cancel.</p>
-                      <div className="inline-flex items-center gap-1.5 rounded px-2 py-1" style={{ background: 'rgba(56, 189, 248, 0.1)', boxShadow: '0 0 0 1px rgba(56, 189, 248, 0.2)' }}>
-                        <svg className="w-2.5 h-2.5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>
-                        <span className="text-[10px] font-medium text-sky-300">Ask and Wait</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                  
-                  <motion.div 
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2, duration: 0.2 }}
-                    className="flex gap-2"
-                  >
-                    <span className="text-[10px] text-zinc-500 w-3 shrink-0">2.</span>
-                    <div className="space-y-1.5">
-                      <p className="text-xs text-zinc-300 leading-relaxed">Look up their subscription details and billing history.</p>
-                      <div className="inline-flex items-center gap-1.5 rounded px-2 py-1" style={{ background: 'rgba(168, 85, 247, 0.1)', boxShadow: '0 0 0 1px rgba(168, 85, 247, 0.2)' }}>
-                        <svg className="w-2.5 h-2.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                        <span className="text-[10px] font-medium text-purple-300">Lookup Subscription</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                  
-                  <motion.div 
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.2 }}
-                    className="flex gap-2"
-                  >
-                    <span className="text-[10px] text-zinc-500 w-3 shrink-0">3.</span>
-                    <div className="space-y-1.5">
-                      <p className="text-xs text-zinc-300 leading-relaxed">If they confirm, process the cancellation.</p>
-                      <div className="inline-flex items-center gap-1.5 rounded px-2 py-1" style={{ background: 'rgba(16, 185, 129, 0.1)', boxShadow: '0 0 0 1px rgba(16, 185, 129, 0.2)' }}>
-                        <Check className="w-2.5 h-2.5 text-emerald-400" />
-                        <span className="text-[10px] font-medium text-emerald-300">Cancel Subscription</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
-              
-              {/* Snippet and validation indicators */}
-              <div className="flex items-center justify-between">
-                <motion.div 
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.2 }}
-                  className="flex items-center gap-2 text-[10px] text-zinc-500"
-                >
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                  <span>Using snippet: <span className="text-purple-400">Verify Customer Identity</span></span>
-                </motion.div>
-                <motion.div 
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.45, duration: 0.2 }}
-                  className="text-[10px] text-zinc-500"
-                >
-                  ~2 min avg resolution
-                </motion.div>
-              </div>
-              
-              {/* Validation status */}
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.3 }}
-                className="rounded-lg px-3 py-2 flex items-center gap-2"
-                style={{
-                  background: 'rgba(16, 185, 129, 0.06)',
-                  boxShadow: 'inset 0 1px 0 rgba(16, 185, 129, 0.08), 0 0 0 1px rgba(16, 185, 129, 0.1)',
-                }}
-              >
-                <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="text-xs font-medium text-emerald-300">Runbook validated</span>
-                <span className="text-[10px] text-zinc-500 ml-auto">No errors</span>
-              </motion.div>
-            </motion.div>
-          )}
+  const advanceStep = useCallback(() => {
+    setActiveStep((prev) => {
+      const next = prev + 1
+      if (next >= steps.length) return 0
+      return next
+    })
+    setProgress(0)
+  }, [])
 
-          {/* Step 3: Test - Show interactive playground style */}
-          {activeIndex === 2 && (
-            <motion.div 
-              key="step-2"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.25, ease }}
-              className="space-y-3"
-            >
-              {/* Simulated chat test */}
-              <div className="rounded-lg p-3 space-y-2" style={cardStyle}>
-                <motion.div 
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1, duration: 0.2 }}
-                  className="flex justify-end"
-                >
-                  <div className="rounded-lg px-3 py-1.5 text-xs text-zinc-300 max-w-[80%]" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                    I want to cancel my subscription
-                  </div>
-                </motion.div>
-                <motion.div 
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.2 }}
-                  className="flex"
-                >
-                  <div className="rounded-lg px-3 py-1.5 text-xs text-sky-200 max-w-[80%]" style={{ background: 'rgba(56, 189, 248, 0.1)' }}>
-                    I can help you with that. Before I proceed, may I ask why you're cancelling? We'd love to improve.
-                  </div>
-                </motion.div>
-              </div>
-              
-              {/* Test results summary */}
-              <div className="grid grid-cols-4 gap-2">
-                {[
-                  { label: "Tests Run", value: "24", color: "sky" },
-                  { label: "Passed", value: "24", color: "emerald" },
-                  { label: "Coverage", value: "94%", color: "emerald" },
-                  { label: "Avg Time", value: "1.2s", color: "sky" },
-                ].map((item, idx) => (
-                  <motion.div 
-                    key={idx}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.5 + idx * 0.05, duration: 0.2 }}
-                    className="rounded-lg px-2 py-2 text-center"
-                    style={item.color === "emerald" ? {
-                      background: 'rgba(16, 185, 129, 0.06)',
-                      boxShadow: 'inset 0 1px 0 rgba(16, 185, 129, 0.08), 0 0 0 1px rgba(16, 185, 129, 0.1)',
-                    } : {
-                      background: 'rgba(56, 189, 248, 0.06)',
-                      boxShadow: 'inset 0 1px 0 rgba(56, 189, 248, 0.08), 0 0 0 1px rgba(56, 189, 248, 0.1)',
-                    }}
-                  >
-                    <div className="text-[10px] text-zinc-500 uppercase tracking-wider">{item.label}</div>
-                    <div className={`text-sm font-medium ${item.color === "emerald" ? "text-emerald-300" : "text-sky-300"}`}>{item.value}</div>
-                  </motion.div>
-                ))}
-              </div>
-              
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.3 }}
-                className="rounded-lg px-3 py-2 flex items-center justify-between"
-                style={{
-                  background: 'rgba(16, 185, 129, 0.06)',
-                  boxShadow: 'inset 0 1px 0 rgba(16, 185, 129, 0.08), 0 0 0 1px rgba(16, 185, 129, 0.1)',
-                }}
-              >
-                <div className="flex items-center gap-2">
-                  <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
-                  </svg>
-                  <span className="text-xs font-medium text-emerald-300">All scenarios passed</span>
-                </div>
-                <span className="text-[10px] text-zinc-500">Ready to deploy</span>
-              </motion.div>
-            </motion.div>
-          )}
+  // Handle initial load
+  useEffect(() => {
+    if (activeStep === -1) {
+      timerRef.current = setTimeout(() => {
+        setActiveStep(0)
+        setProgress(0)
+      }, 600)
+      return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+    }
+  }, [activeStep])
 
-          {/* Step 4: Deploy - Show deployment modes */}
-          {activeIndex === 3 && (
-            <motion.div 
-              key="step-3"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.25, ease }}
-              className="space-y-3"
-            >
-              {/* Deployment modes */}
-              <div className="space-y-2">
-                {[
-                  { mode: "Shadow", desc: "AI drafts, humans review", selected: true },
-                  { mode: "Live", desc: "AI responds directly", selected: false },
-                  { mode: "Testing", desc: "Internal only", selected: false },
-                ].map((item, idx) => (
-                  <motion.div 
-                    key={idx}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.1, duration: 0.2 }}
-                    className="flex items-center gap-3 rounded-lg px-3 py-2.5"
-                    style={item.selected ? {
-                      background: 'rgba(251, 191, 36, 0.08)',
-                      boxShadow: 'inset 0 1px 0 rgba(251, 191, 36, 0.1), 0 0 0 1px rgba(251, 191, 36, 0.2)',
-                    } : cardStyle}
-                  >
-                    <div 
-                      className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${item.selected ? 'border-amber-400' : 'border-zinc-600'}`}
-                    >
-                      {item.selected && <div className="w-2 h-2 rounded-full bg-amber-400" />}
-                    </div>
-                    <div className="flex-1">
-                      <div className={`text-sm font-medium ${item.selected ? 'text-amber-200' : 'text-zinc-400'}`}>{item.mode}</div>
-                      <div className="text-xs text-zinc-500">{item.desc}</div>
-                    </div>
-                    {item.selected && (
-                      <span className="text-[10px] text-amber-400 font-medium uppercase">Selected</span>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
-              
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.3 }}
-                className="rounded-lg px-3 py-2.5 flex items-center gap-2"
-                style={{
-                  background: 'rgba(16, 185, 129, 0.06)',
-                  boxShadow: 'inset 0 1px 0 rgba(16, 185, 129, 0.08), 0 0 0 1px rgba(16, 185, 129, 0.1)',
-                }}
-              >
-                <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-                </svg>
-                <div className="flex items-center gap-2">
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="#03363D"><path d="M24 4.5v15h-9V9L24 4.5zM0 19.5v-15l9 4.5v10.5H0zM0 2.25L12 13.5 24 2.25H0z"/></svg>
-                  <span className="text-sm font-medium text-emerald-300">Agent deployed to Zendesk</span>
-                </div>
-                <span className="text-[10px] text-zinc-500 ml-auto">Jan 11, 2:34 PM</span>
-              </motion.div>
-            </motion.div>
-          )}
-        </div>
-      </div>
-    )
+  // Track progress for resuming
+  const progressRef = useRef(0)
+  progressRef.current = progress
+
+  // Main animation loop
+  useEffect(() => {
+    if (activeStep === -1) return
+    if (isPaused) return
+    if (timerRef.current) clearTimeout(timerRef.current)
+
+    const startTime = Date.now() - (progressRef.current / 100) * STEP_DURATION // Resume from current progress
+    let rafId: number
+
+    const tick = () => {
+      const elapsed = Date.now() - startTime
+      const newProgress = Math.min((elapsed / STEP_DURATION) * 100, 100)
+
+      if (newProgress >= 100) {
+        advanceStep()
+      } else {
+        setProgress(newProgress)
+        rafId = requestAnimationFrame(tick)
+      }
+    }
+
+    rafId = requestAnimationFrame(tick)
+
+    return () => {
+      cancelAnimationFrame(rafId)
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [activeStep, advanceStep, isPaused])
+
+  const handleStepClick = (index: number) => {
+    setActiveStep(index)
+    setProgress(0)
   }
 
-  const panelIcon = (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-    </svg>
-  )
+  const currentStep = steps[Math.max(0, activeStep)]
+  const colors = colorMap[currentStep.color as keyof typeof colorMap]
+
+  // Calculate total days progress
+  // Connect: 1 day, Build: 4 days, Train: 3 days, Test: 5 days, Deploy: 1 day = 14 total
+  const getTotalDays = () => {
+    if (activeStep < 0) return 0
+    const daysByStep = [1, 5, 8, 13, 14] // Cumulative days
+    const currentDays = daysByStep[activeStep] || 0
+    const prevDays = activeStep > 0 ? daysByStep[activeStep - 1] : 0
+    const stepDays = currentDays - prevDays
+    return Math.round(prevDays + (stepDays * progress / 100))
+  }
 
   return (
-    <>
-      {/* Desktop */}
-      <InteractiveShowcase
-        sectionTitle={content.implementation.title}
-        sectionSubtitle={content.implementation.subtitle}
-        eyebrowLabel="Implementation"
-        panelIcon={panelIcon}
-        panelTitle="Setup Process"
-        panelDescription="Most teams go from zero to live in under 2 weeks"
-        ctaText="Start Setup"
-        ctaHref="/contact"
-        items={items}
-        backgroundImages={backgrounds}
-        renderContent={renderContent}
-        imagePosition="right"
-        autoRotate={true}
-        rotationDuration={undefined}
-        accentGradient="linear-gradient(135deg, #7dd3fc 0%, #ffffff 40%)"
-      />
-      {/* Mobile */}
-      <InteractiveShowcaseMobile
-        sectionTitle={content.implementation.title}
-        sectionSubtitle={content.implementation.subtitle}
-        eyebrowLabel="Implementation"
-        panelIcon={panelIcon}
-        panelTitle="Setup Process"
-        panelDescription="Most teams go from zero to live in under 2 weeks"
-        ctaText="Start Setup"
-        ctaHref="/contact"
-        items={items}
-        renderContent={renderContent}
-        accentGradient="linear-gradient(135deg, #7dd3fc 0%, #ffffff 40%)"
-      />
-    </>
+    <div className="relative py-28 lg:py-40">
+      {/* Inject scrollbar styles */}
+      <style dangerouslySetInnerHTML={{ __html: scrollbarCSS }} />
+      
+      <div className="container mx-auto px-6">
+        {/* Header */}
+        <div className="mb-16 lg:mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease }}
+            className="mb-6"
+          >
+            <div className="flex items-center gap-4">
+              <span className="text-xs font-medium text-sky-400 uppercase tracking-[0.2em]">
+                Implementation
+              </span>
+              <motion.div 
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.3, ease }}
+                className="h-px w-16 bg-gradient-to-r from-sky-400/60 to-transparent origin-left"
+              />
+            </div>
+          </motion.div>
+
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 lg:gap-8">
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1, ease }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-medium text-white tracking-[-0.03em] leading-[1.1]"
+            >
+              Enterprise-ready
+              <br />
+              <span className="text-zinc-500">in under 2 weeks</span>
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2, ease }}
+              className="text-lg text-zinc-400 max-w-md lg:text-right"
+            >
+              {content.implementation.subtitle}
+            </motion.p>
+          </div>
+        </div>
+
+        {/* Main content */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.2, ease }}
+        >
+          {/* Step timeline - constrained */}
+          <div className="flex items-center gap-2 mb-6 max-w-5xl mx-auto">
+            {steps.map((step, index) => {
+              const stepColors = colorMap[step.color as keyof typeof colorMap]
+              const isActive = index === activeStep
+              const isPast = index < activeStep && activeStep >= 0
+              const Icon = step.icon
+
+              return (
+                <button
+                  key={step.id}
+                  onClick={() => handleStepClick(index)}
+                  className="flex-1 group cursor-pointer"
+                >
+                  <div className="relative">
+                    {/* Progress bar background */}
+                    <div 
+                      className="h-1.5 rounded-full transition-colors"
+                      style={{ 
+                        background: isPast ? stepColors.border : isActive ? stepColors.bg : 'rgba(255,255,255,0.05)'
+                      }}
+                    >
+                      {/* Active progress fill */}
+                      {isActive && (
+                        <motion.div
+                          className="h-full rounded-full"
+                          style={{ 
+                            width: `${progress}%`,
+                            background: stepColors.text,
+                          }}
+                        />
+                      )}
+                      {isPast && (
+                        <div className="h-full rounded-full w-full" style={{ background: stepColors.text }} />
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 mt-3">
+                    <div 
+                      className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+                      style={{
+                        background: isPast || isActive ? stepColors.bg : 'transparent',
+                        boxShadow: isActive ? `0 0 12px ${stepColors.glow}` : 'none',
+                      }}
+                    >
+                      {isPast ? (
+                        <Check className="w-4 h-4" style={{ color: stepColors.text }} />
+                      ) : (
+                        <Icon 
+                          className="w-4 h-4 transition-colors" 
+                          style={{ color: isActive ? stepColors.text : 'rgb(113, 113, 122)' }} 
+                        />
+                      )}
+                    </div>
+                    <div className="text-left">
+                      <div 
+                        className="text-sm font-medium transition-colors"
+                        style={{ color: isPast || isActive ? 'white' : 'rgb(113, 113, 122)' }}
+                      >
+                        {step.label}
+                      </div>
+                      <div className="text-[10px] text-zinc-500">{step.duration}</div>
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Sky background section - fills section width */}
+          <div 
+            className="relative rounded-2xl overflow-hidden"
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+          >
+            {/* Background sky images - crossfade on step change */}
+            {[1, 2, 3, 4, 5].map((num, index) => (
+              <motion.div
+                key={`sky-bg-${num}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: activeStep === index ? 1 : 0 }}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: `url(/images/sky-${num}.jpg)`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
+            ))}
+            
+            {/* Subtle vignette overlay for depth */}
+            <div 
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.4) 100%)',
+              }}
+            />
+            
+            {/* Product mockup card floating on top */}
+            <div className="relative px-20 py-10 lg:px-80 lg:py-16">
+              <div 
+                className="rounded-2xl border border-white/10 overflow-hidden"
+                style={{ 
+                  background: '#0a0a0c',
+                  boxShadow: '0 30px 60px -15px rgba(0,0,0,0.8), 0 15px 30px -10px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)',
+                }}
+              >
+            {/* Pause/Play button - appears on hover */}
+            <AnimatePresence>
+              {isHovering && (
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.6 }}
+                  exit={{ opacity: 0 }}
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.15 }}
+                  onClick={() => setIsPaused(!isPaused)}
+                  className="absolute bottom-3 right-3 z-50 w-7 h-7 flex items-center justify-center rounded-full transition-colors hover:bg-white/10"
+                >
+                  {isPaused ? (
+                    <Play className="w-3.5 h-3.5 text-zinc-400" />
+                  ) : (
+                    <Pause className="w-3.5 h-3.5 text-zinc-500" />
+                  )}
+                </motion.button>
+              )}
+            </AnimatePresence>
+            {/* Browser chrome */}
+            <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-red-500/60" />
+                <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
+                <div className="w-3 h-3 rounded-full bg-green-500/60" />
+              </div>
+              <div className="flex-1 flex justify-center">
+                <div className="px-4 py-1 rounded-lg bg-white/5 text-xs text-zinc-500 flex items-center gap-2">
+                  <Search className="w-3 h-3" />
+                  app.duckie.ai
+                </div>
+              </div>
+              <div className="w-16" /> {/* Spacer for centering */}
+            </div>
+
+            {/* App content */}
+            <div className="h-[420px]">
+              <AnimatePresence mode="wait">
+                {activeStep === 0 && (
+                  <motion.div
+                    key="connect"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="h-full"
+                  >
+                    <ConnectionsUI progress={progress} />
+                  </motion.div>
+                )}
+                {activeStep === 1 && (
+                  <motion.div
+                    key="build"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="h-full"
+                  >
+                    <BuildUI progress={progress} />
+                  </motion.div>
+                )}
+                {activeStep === 2 && (
+                  <motion.div
+                    key="train"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="h-full"
+                  >
+                    <TrainUI progress={progress} />
+                  </motion.div>
+                )}
+                {activeStep === 3 && (
+                  <motion.div
+                    key="test"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="h-full"
+                  >
+                    <TestUI progress={progress} />
+                  </motion.div>
+                )}
+                {activeStep === 4 && (
+                  <motion.div
+                    key="deploy"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="h-full"
+                  >
+                    <DeployUI progress={progress} />
+                  </motion.div>
+                )}
+                {activeStep === -1 && (
+                  <motion.div
+                    key="initial"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="h-full flex items-center justify-center"
+                  >
+                    <div className="text-center">
+                      <motion.div
+                        animate={{ scale: [1, 1.05, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4"
+                      >
+                        <Clock className="w-8 h-8 text-zinc-500" />
+                      </motion.div>
+                      <p className="text-zinc-500 text-sm">Loading setup journey...</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+          </div>
+          </div>
+
+          {/* Time indicator */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="flex items-center justify-center gap-3 mt-6 text-sm max-w-5xl mx-auto"
+          >
+            <Clock className="w-4 h-4 text-zinc-500" />
+            <span className="text-zinc-500">Time to go live:</span>
+            <span className="text-white font-medium tabular-nums">{getTotalDays()} days</span>
+            <span className="text-zinc-600">/</span>
+            <span className="text-zinc-500">~14 days total</span>
+          </motion.div>
+        </motion.div>
+      </div>
+    </div>
   )
+}
+
+export function ImplementationCanvas() {
+  return <ImplementationContent />
 }
 
 export default ImplementationCanvas

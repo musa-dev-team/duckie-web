@@ -2,18 +2,19 @@
 
 :root {
   --font-satoshi: "Satoshi", system-ui, sans-serif;
+  --font-helvetica: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --bg-deep-blue: #090B0F;
   --bg-interactive-showcase: #080b0f;
 }
 
 body {
-  font-family: var(--font-satoshi);
+  font-family: var(--font-helvetica);
   background: var(--bg-deep-blue);
   color: #fafafa;
 }
 
 .font-serif {
-  font-family: var(--font-display), "Playfair Display", "Georgia", serif !important;
+  font-family: var(--font-helvetica) !important;
 }
 
 /* Smooth scrolling */

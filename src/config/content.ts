@@ -75,7 +75,7 @@ export const content = {
   // The 5-step flow
   // ============================================
   howItWorks: {
-    title: "How tickets close themselves",
+    title: "Tickets that close themselves",
     subtitle: "Watch Duckie understand, verify, and resolve a real request.",
     steps: [
       {

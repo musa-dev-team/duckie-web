@@ -133,7 +133,7 @@ export function Navigation({ variant = "transparent" }: { variant?: "transparent
                   "text-xl font-semibold tracking-tight transition-colors duration-300",
                   isDark ? "text-zinc-900" : scrolled ? "text-zinc-50" : "text-white"
                 )}
-                style={{ fontFamily: "var(--font-geist)" }}
+                style={{ fontFamily: "var(--font-helvetica)" }}
               >
                 Duckie<span className={cn(
                   "transition-colors duration-300",
