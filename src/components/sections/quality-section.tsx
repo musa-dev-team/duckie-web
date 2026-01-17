@@ -461,7 +461,7 @@ function ApprovalDashboard({ isPaused }: { isPaused: boolean }) {
 
       {/* Approval Modal */}
       <AnimatePresence>
-        {(phase === 'reviewing' || phase === 'approving' || phase === 'approved') && phase !== 'idle' && (
+        {(phase === 'reviewing' || phase === 'approving' || phase === 'approved') && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
