@@ -1,7 +1,7 @@
 "use client"
 
 import { content } from "@/config/content"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion, useInView } from "framer-motion"
 import { Brain, FileText, Pause, Play, Search, Shield, Sparkles, Zap } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
@@ -213,8 +213,10 @@ export function HowItWorksContent() {
   const [elapsedTime, setElapsedTime] = useState(0)
   const [understandKey, setUnderstandKey] = useState(0)
   const documentRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const startTimeRef = useRef<number>(0)
   const rafRef = useRef<number>(0)
+  const isInView = useInView(containerRef, { once: false, margin: "-100px" })
   
   // Step durations based on content length (in ms)
   // Step 0 (Classify): needs time for message + classification
@@ -248,7 +250,8 @@ export function HowItWorksContent() {
   // Simple continuous timer
   useEffect(() => {
     if (activeStep === -1) {
-      // Initial delay before starting
+      // Initial delay before starting (only if in view)
+      if (!isInView) return
       const timeout = setTimeout(() => {
         setActiveStep(0)
         startTimeRef.current = Date.now()
@@ -256,7 +259,7 @@ export function HowItWorksContent() {
       return () => clearTimeout(timeout)
     }
 
-    if (isPaused) return
+    if (isPaused || !isInView) return
 
     const tick = () => {
       const now = Date.now()
@@ -281,6 +284,8 @@ export function HowItWorksContent() {
       rafRef.current = requestAnimationFrame(tick)
     }
 
+    // Adjust start time to account for pause duration
+    startTimeRef.current = Date.now() - elapsedTime
     rafRef.current = requestAnimationFrame(tick)
 
     return () => {
@@ -288,7 +293,7 @@ export function HowItWorksContent() {
         cancelAnimationFrame(rafRef.current)
       }
     }
-  }, [activeStep, isPaused])
+  }, [activeStep, isPaused, isInView, elapsedTime])
 
   // Always scroll to bottom when playing (not paused)
   useEffect(() => {
@@ -361,6 +366,7 @@ export function HowItWorksContent() {
 
         {/* Main visualization */}
         <motion.div
+          ref={containerRef}
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

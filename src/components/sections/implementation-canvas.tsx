@@ -6,7 +6,7 @@ import {
   SlackIcon
 } from "@/components/icons"
 import { content } from "@/config/content"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion, useInView } from "framer-motion"
 import { Check, ChevronRight, Clock, FileText, FlaskConical, GitBranch, Link2, MessageSquare, Pause, Play, Plus, Rocket, Search, Workflow } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { SiHubspot, SiIntercom, SiZendesk } from "react-icons/si"
@@ -1875,6 +1875,8 @@ export function ImplementationContent() {
   const [isPaused, setIsPaused] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(containerRef, { once: false, margin: "-100px" })
   const STEP_DURATION = 9000
 
   const advanceStep = useCallback(() => {
@@ -1889,13 +1891,14 @@ export function ImplementationContent() {
   // Handle initial load
   useEffect(() => {
     if (activeStep === -1) {
+      if (!isInView) return
       timerRef.current = setTimeout(() => {
         setActiveStep(0)
         setProgress(0)
       }, 600)
       return () => { if (timerRef.current) clearTimeout(timerRef.current) }
     }
-  }, [activeStep])
+  }, [activeStep, isInView])
 
   // Track progress for resuming
   const progressRef = useRef(0)
@@ -1904,7 +1907,7 @@ export function ImplementationContent() {
   // Main animation loop
   useEffect(() => {
     if (activeStep === -1) return
-    if (isPaused) return
+    if (isPaused || !isInView) return
     if (timerRef.current) clearTimeout(timerRef.current)
 
     const startTime = Date.now() - (progressRef.current / 100) * STEP_DURATION // Resume from current progress
@@ -1928,7 +1931,7 @@ export function ImplementationContent() {
       cancelAnimationFrame(rafId)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [activeStep, advanceStep, isPaused])
+  }, [activeStep, advanceStep, isPaused, isInView])
 
   const handleStepClick = (index: number) => {
     setActiveStep(index)
@@ -2005,6 +2008,7 @@ export function ImplementationContent() {
 
         {/* Main content */}
         <motion.div
+          ref={containerRef}
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

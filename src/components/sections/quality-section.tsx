@@ -75,13 +75,18 @@ function ApprovalDashboard({ isPaused }: { isPaused: boolean }) {
   }, [isPaused])
 
   // Get element center position relative to container
+  // Account for CSS scale transform by comparing visual size to actual size
   const getElementCenter = (ref: React.RefObject<HTMLElement | null>) => {
     if (!ref.current || !containerRef.current) return null
     const containerRect = containerRef.current.getBoundingClientRect()
     const elementRect = ref.current.getBoundingClientRect()
+    
+    // Detect scale by comparing actual size to visual size
+    const scale = containerRect.width / containerRef.current.offsetWidth
+    
     return {
-      x: elementRect.left - containerRect.left + elementRect.width / 2,
-      y: elementRect.top - containerRect.top + elementRect.height / 2,
+      x: (elementRect.left - containerRect.left + elementRect.width / 2) / scale,
+      y: (elementRect.top - containerRect.top + elementRect.height / 2) / scale,
     }
   }
 
