@@ -216,52 +216,52 @@ const getTimeBasedTotal = () => {
 
 const colorMap: Record<string, { bg: string; border: string; text: string; glow: string }> = {
   emerald: { 
-    bg: 'rgba(16, 185, 129, 0.08)', 
-    border: 'rgba(16, 185, 129, 0.2)', 
-    text: 'rgb(110, 231, 183)',
-    glow: 'rgba(16, 185, 129, 0.4)'
+    bg: 'rgba(110, 160, 140, 0.08)', 
+    border: 'rgba(110, 160, 140, 0.18)', 
+    text: 'rgb(145, 195, 175)',
+    glow: 'rgba(110, 160, 140, 0.3)'
   },
   sky: { 
-    bg: 'rgba(56, 189, 248, 0.08)', 
-    border: 'rgba(56, 189, 248, 0.2)', 
-    text: 'rgb(125, 211, 252)',
-    glow: 'rgba(56, 189, 248, 0.4)'
+    bg: 'rgba(120, 160, 190, 0.08)', 
+    border: 'rgba(120, 160, 190, 0.18)', 
+    text: 'rgb(155, 190, 215)',
+    glow: 'rgba(120, 160, 190, 0.3)'
   },
   amber: { 
-    bg: 'rgba(251, 191, 36, 0.08)', 
-    border: 'rgba(251, 191, 36, 0.2)', 
-    text: 'rgb(252, 211, 77)',
-    glow: 'rgba(251, 191, 36, 0.4)'
+    bg: 'rgba(190, 165, 110, 0.08)', 
+    border: 'rgba(190, 165, 110, 0.18)', 
+    text: 'rgb(215, 195, 145)',
+    glow: 'rgba(190, 165, 110, 0.3)'
   },
   purple: { 
-    bg: 'rgba(168, 85, 247, 0.08)', 
-    border: 'rgba(168, 85, 247, 0.2)', 
-    text: 'rgb(216, 180, 254)',
-    glow: 'rgba(168, 85, 247, 0.4)'
+    bg: 'rgba(150, 130, 180, 0.08)', 
+    border: 'rgba(150, 130, 180, 0.18)', 
+    text: 'rgb(185, 170, 210)',
+    glow: 'rgba(150, 130, 180, 0.3)'
   },
   pink: { 
-    bg: 'rgba(236, 72, 153, 0.08)', 
-    border: 'rgba(236, 72, 153, 0.2)', 
-    text: 'rgb(244, 114, 182)',
-    glow: 'rgba(236, 72, 153, 0.4)'
+    bg: 'rgba(180, 130, 155, 0.08)', 
+    border: 'rgba(180, 130, 155, 0.18)', 
+    text: 'rgb(210, 165, 185)',
+    glow: 'rgba(180, 130, 155, 0.3)'
   },
   orange: { 
-    bg: 'rgba(251, 146, 60, 0.08)', 
-    border: 'rgba(251, 146, 60, 0.2)', 
-    text: 'rgb(253, 186, 116)',
-    glow: 'rgba(251, 146, 60, 0.4)'
+    bg: 'rgba(190, 150, 115, 0.08)', 
+    border: 'rgba(190, 150, 115, 0.18)', 
+    text: 'rgb(215, 180, 150)',
+    glow: 'rgba(190, 150, 115, 0.3)'
   },
   teal: { 
-    bg: 'rgba(20, 184, 166, 0.08)', 
-    border: 'rgba(20, 184, 166, 0.2)', 
-    text: 'rgb(94, 234, 212)',
-    glow: 'rgba(20, 184, 166, 0.4)'
+    bg: 'rgba(100, 155, 150, 0.08)', 
+    border: 'rgba(100, 155, 150, 0.18)', 
+    text: 'rgb(140, 190, 185)',
+    glow: 'rgba(100, 155, 150, 0.3)'
   },
   rose: { 
-    bg: 'rgba(244, 63, 94, 0.08)', 
-    border: 'rgba(244, 63, 94, 0.2)', 
-    text: 'rgb(251, 113, 133)',
-    glow: 'rgba(244, 63, 94, 0.4)'
+    bg: 'rgba(180, 120, 135, 0.08)', 
+    border: 'rgba(180, 120, 135, 0.18)', 
+    text: 'rgb(210, 155, 170)',
+    glow: 'rgba(180, 120, 135, 0.3)'
   },
 }
 
@@ -507,7 +507,7 @@ export function WhatDuckiesDoesContent() {
             className="mb-6"
           >
             <div className="flex items-center gap-4">
-              <span className="text-xs font-medium text-emerald-400 uppercase tracking-[0.2em]">
+              <span className="text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
                 Capabilities
               </span>
               <motion.div 
@@ -515,7 +515,7 @@ export function WhatDuckiesDoesContent() {
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.3, ease }}
-                className="h-px w-16 bg-gradient-to-r from-emerald-400/60 to-transparent origin-left"
+                className="h-px w-16 bg-gradient-to-r from-zinc-500/60 to-transparent origin-left"
               />
             </div>
           </motion.div>

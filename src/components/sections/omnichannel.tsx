@@ -1,23 +1,23 @@
 "use client"
 
 import {
-  ConfluenceIcon,
-  DiscordIcon,
-  FreshdeskIcon,
-  GitHubIcon,
-  GoogleDriveIcon,
-  JiraIcon,
-  LinearIcon,
-  NotionIcon,
-  SlackIcon,
+    ConfluenceIcon,
+    DiscordIcon,
+    FreshdeskIcon,
+    GitHubIcon,
+    GoogleDriveIcon,
+    JiraIcon,
+    LinearIcon,
+    NotionIcon,
+    SlackIcon,
 } from "@/components/icons"
 import { AnimatePresence, motion } from "framer-motion"
 import { Globe, MessageSquare, Zap } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
-  SiHubspot,
-  SiIntercom,
-  SiZendesk,
+    SiHubspot,
+    SiIntercom,
+    SiZendesk,
 } from "react-icons/si"
 
 const ease = [0.22, 1, 0.36, 1] as const
@@ -70,9 +70,9 @@ const features = [
 ]
 
 const colorMap: Record<string, { bg: string; border: string; text: string }> = {
-  sky: { bg: 'rgba(56, 189, 248, 0.08)', border: 'rgba(56, 189, 248, 0.2)', text: 'rgb(125, 211, 252)' },
-  amber: { bg: 'rgba(251, 191, 36, 0.08)', border: 'rgba(251, 191, 36, 0.2)', text: 'rgb(252, 211, 77)' },
-  emerald: { bg: 'rgba(16, 185, 129, 0.08)', border: 'rgba(16, 185, 129, 0.2)', text: 'rgb(110, 231, 183)' },
+  sky: { bg: 'rgba(120, 160, 190, 0.08)', border: 'rgba(120, 160, 190, 0.18)', text: 'rgb(155, 190, 215)' },
+  amber: { bg: 'rgba(190, 165, 110, 0.08)', border: 'rgba(190, 165, 110, 0.18)', text: 'rgb(215, 195, 145)' },
+  emerald: { bg: 'rgba(110, 160, 140, 0.08)', border: 'rgba(110, 160, 140, 0.18)', text: 'rgb(145, 195, 175)' },
 }
 
 // Simulated conversation flow - one for each of the 8 displayed integrations
@@ -325,25 +325,41 @@ function LanguageWave() {
 function FeatureCard({ feature, index }: { feature: typeof features[0]; index: number }) {
   const colors = colorMap[feature.color]
   const Icon = feature.icon
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [mousePos, setMousePos] = useState({ x: 50, y: 0 })
+  const [isHovered, setIsHovered] = useState(false)
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    setMousePos({ x, y })
+  }
 
   return (
     <motion.div
+      ref={cardRef}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1, ease }}
       whileHover={{ y: -2 }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className="group relative rounded-2xl p-4 transition-all duration-300"
       style={{
         background: 'rgba(255,255,255,0.02)',
         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(255,255,255,0.04)',
       }}
     >
-      {/* Hover glow */}
+      {/* Cursor-following glow */}
       <div 
-        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        className="absolute inset-0 rounded-2xl transition-opacity duration-300 pointer-events-none"
         style={{
-          background: `radial-gradient(circle at 50% 0%, ${colors.bg} 0%, transparent 70%)`,
+          opacity: isHovered ? 1 : 0,
+          background: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, ${colors.bg} 0%, transparent 60%)`,
         }}
       />
       
@@ -393,9 +409,9 @@ export function OmnichannelContent() {
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.3, ease }}
-              className="h-px w-12 bg-gradient-to-r from-transparent to-sky-400/60 origin-right"
+              className="h-px w-12 bg-gradient-to-r from-transparent to-zinc-500/60 origin-right"
             />
-            <span className="text-xs font-medium text-sky-400 uppercase tracking-[0.2em]">
+            <span className="text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
               Omnichannel
             </span>
             <motion.div 
@@ -403,7 +419,7 @@ export function OmnichannelContent() {
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.3, ease }}
-              className="h-px w-12 bg-gradient-to-r from-sky-400/60 to-transparent origin-left"
+              className="h-px w-12 bg-gradient-to-r from-zinc-500/60 to-transparent origin-left"
             />
           </motion.div>
 
@@ -451,7 +467,7 @@ export function OmnichannelContent() {
               className="pt-6 border-t border-white/5"
             >
               <div className="flex items-center gap-2 mb-4">
-                <Globe className="w-4 h-4 text-emerald-400" />
+                <Globe className="w-4 h-4 text-zinc-400" />
                 <span className="text-sm font-medium text-zinc-400">Supported languages</span>
               </div>
               <LanguageWave />

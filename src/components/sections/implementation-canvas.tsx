@@ -44,11 +44,11 @@ const steps = [
 ]
 
 const colorMap = {
-  emerald: { bg: 'rgba(16, 185, 129, 0.1)', border: 'rgba(16, 185, 129, 0.3)', text: 'rgb(110, 231, 183)', glow: 'rgba(16, 185, 129, 0.15)' },
-  purple: { bg: 'rgba(168, 85, 247, 0.1)', border: 'rgba(168, 85, 247, 0.3)', text: 'rgb(216, 180, 254)', glow: 'rgba(168, 85, 247, 0.15)' },
-  rose: { bg: 'rgba(244, 63, 94, 0.1)', border: 'rgba(244, 63, 94, 0.3)', text: 'rgb(251, 113, 133)', glow: 'rgba(244, 63, 94, 0.15)' },
-  sky: { bg: 'rgba(56, 189, 248, 0.1)', border: 'rgba(56, 189, 248, 0.3)', text: 'rgb(125, 211, 252)', glow: 'rgba(56, 189, 248, 0.15)' },
-  amber: { bg: 'rgba(251, 191, 36, 0.1)', border: 'rgba(251, 191, 36, 0.3)', text: 'rgb(252, 211, 77)', glow: 'rgba(251, 191, 36, 0.15)' },
+  emerald: { bg: 'rgba(110, 160, 140, 0.08)', border: 'rgba(110, 160, 140, 0.18)', text: 'rgb(145, 195, 175)', glow: 'rgba(110, 160, 140, 0.12)' },
+  purple: { bg: 'rgba(150, 130, 180, 0.08)', border: 'rgba(150, 130, 180, 0.18)', text: 'rgb(185, 170, 210)', glow: 'rgba(150, 130, 180, 0.12)' },
+  rose: { bg: 'rgba(180, 120, 135, 0.08)', border: 'rgba(180, 120, 135, 0.18)', text: 'rgb(210, 155, 170)', glow: 'rgba(180, 120, 135, 0.12)' },
+  sky: { bg: 'rgba(120, 160, 190, 0.08)', border: 'rgba(120, 160, 190, 0.18)', text: 'rgb(155, 190, 215)', glow: 'rgba(120, 160, 190, 0.12)' },
+  amber: { bg: 'rgba(190, 165, 110, 0.08)', border: 'rgba(190, 165, 110, 0.18)', text: 'rgb(215, 195, 145)', glow: 'rgba(190, 165, 110, 0.12)' },
 }
 
 // Animated cursor component for ConnectionsUI
@@ -279,7 +279,7 @@ function ConnectionsUI({ progress }: { progress: number }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-40"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-40 rounded-2xl"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -1965,7 +1965,7 @@ export function ImplementationContent() {
             className="mb-6"
           >
             <div className="flex items-center gap-4">
-              <span className="text-xs font-medium text-sky-400 uppercase tracking-[0.2em]">
+              <span className="text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
                 Implementation
               </span>
               <motion.div 
@@ -1973,7 +1973,7 @@ export function ImplementationContent() {
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.3, ease }}
-                className="h-px w-16 bg-gradient-to-r from-sky-400/60 to-transparent origin-left"
+                className="h-px w-16 bg-gradient-to-r from-zinc-500/60 to-transparent origin-left"
               />
             </div>
           </motion.div>
@@ -2010,8 +2010,8 @@ export function ImplementationContent() {
           viewport={{ once: true }}
           transition={{ duration: 0.7, delay: 0.2, ease }}
         >
-          {/* Step timeline - constrained */}
-          <div className="flex items-center gap-2 mb-6 max-w-5xl mx-auto">
+          {/* Step timeline */}
+          <div className="flex items-center gap-2 mb-6">
             {steps.map((step, index) => {
               const stepColors = colorMap[step.color as keyof typeof colorMap]
               const isActive = index === activeStep

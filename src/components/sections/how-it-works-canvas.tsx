@@ -16,12 +16,73 @@ const steps = [
 ]
 
 const colorMap = {
-  // Solid bg colors (not transparent) for icon cards, with a dark base mixed with the accent
-  sky: { bg: '#0c2a3d', bgSolid: '#0f3347', border: 'rgba(56, 189, 248, 0.3)', text: 'rgb(125, 211, 252)', dot: 'rgb(56, 189, 248)' },
-  emerald: { bg: '#0a2922', bgSolid: '#0d3329', border: 'rgba(16, 185, 129, 0.3)', text: 'rgb(110, 231, 183)', dot: 'rgb(16, 185, 129)' },
-  purple: { bg: '#1f1433', bgSolid: '#261a3d', border: 'rgba(168, 85, 247, 0.3)', text: 'rgb(216, 180, 254)', dot: 'rgb(168, 85, 247)' },
-  amber: { bg: '#2a2210', bgSolid: '#332a14', border: 'rgba(251, 191, 36, 0.3)', text: 'rgb(252, 211, 77)', dot: 'rgb(251, 191, 36)' },
-  pink: { bg: '#2a1422', bgSolid: '#331a2a', border: 'rgba(236, 72, 153, 0.3)', text: 'rgb(244, 114, 182)', dot: 'rgb(236, 72, 153)' },
+  // Muted, zinc-influenced colors for the step icons
+  sky: { bg: '#1a2228', bgSolid: '#1e272e', border: 'rgba(120, 160, 190, 0.25)', text: 'rgb(155, 190, 215)', dot: 'rgb(120, 160, 190)' },
+  emerald: { bg: '#1a2320', bgSolid: '#1e2824', border: 'rgba(110, 160, 140, 0.25)', text: 'rgb(145, 195, 175)', dot: 'rgb(110, 160, 140)' },
+  purple: { bg: '#1f1c24', bgSolid: '#24212b', border: 'rgba(150, 130, 180, 0.25)', text: 'rgb(185, 170, 210)', dot: 'rgb(150, 130, 180)' },
+  amber: { bg: '#232018', bgSolid: '#28251c', border: 'rgba(190, 165, 110, 0.25)', text: 'rgb(215, 195, 145)', dot: 'rgb(190, 165, 110)' },
+  pink: { bg: '#231a1e', bgSolid: '#281f23', border: 'rgba(180, 130, 155, 0.25)', text: 'rgb(210, 165, 185)', dot: 'rgb(180, 130, 155)' },
+}
+
+// Revealing text component - text is always present but characters reveal from transparent to visible
+function RevealingText({ text, isActive, delay = 0 }: { text: string; isActive: boolean; delay?: number }) {
+  const [revealedCount, setRevealedCount] = useState(0)
+  const [isComplete, setIsComplete] = useState(false)
+  const [hasStarted, setHasStarted] = useState(false)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    if (!isActive) {
+      if (!isComplete && intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+      return
+    }
+
+    if (isComplete && hasStarted) return
+
+    setHasStarted(true)
+    const startTimeout = setTimeout(() => {
+      let currentIndex = 0
+      setRevealedCount(0)
+      setIsComplete(false)
+
+      intervalRef.current = setInterval(() => {
+        if (currentIndex < text.length) {
+          const chunkSize = Math.random() > 0.8 ? 2 : 1
+          currentIndex = Math.min(currentIndex + chunkSize, text.length)
+          setRevealedCount(currentIndex)
+        } else {
+          setIsComplete(true)
+          if (intervalRef.current) clearInterval(intervalRef.current)
+        }
+      }, 18)
+    }, delay)
+
+    return () => {
+      clearTimeout(startTimeout)
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [isActive, text, delay, isComplete, hasStarted])
+
+  return (
+    <span className="relative">
+      {/* Full text always rendered for layout */}
+      <span className="relative">
+        {text.split('').map((char, i) => (
+          <span
+            key={i}
+            className="transition-colors duration-150"
+            style={{ 
+              color: i < revealedCount ? 'rgb(212, 212, 216)' : 'transparent' 
+            }}
+          >
+            {char}
+          </span>
+        ))}
+      </span>
+    </span>
+  )
 }
 
 // Streaming text component - keeps text visible after streaming completes
@@ -243,6 +304,10 @@ export function HowItWorksContent() {
     startTimeRef.current = Date.now() - newElapsed
     setActiveStep(index)
     setElapsedTime(newElapsed)
+    // Reset the reveal animation when clicking Understand
+    if (index === 0) {
+      setUnderstandKey(prev => prev + 1)
+    }
   }
 
   return (
@@ -258,7 +323,7 @@ export function HowItWorksContent() {
             className="mb-6"
           >
             <div className="flex items-center gap-4">
-              <span className="text-xs font-medium text-purple-400 uppercase tracking-[0.2em]">
+              <span className="text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
                 How It Works
               </span>
               <motion.div 
@@ -266,7 +331,7 @@ export function HowItWorksContent() {
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.3, ease }}
-                className="h-px w-16 bg-gradient-to-r from-purple-400/60 to-transparent origin-left"
+                className="h-px w-16 bg-gradient-to-r from-zinc-500/60 to-transparent origin-left"
               />
             </div>
           </motion.div>
@@ -370,7 +435,8 @@ export function HowItWorksContent() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ delay: 0.3, type: "spring", stiffness: 300 }}
-                        className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center text-white text-xs font-semibold"
+                        className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-semibold"
+                        style={{ background: 'linear-gradient(135deg, rgb(180, 160, 175) 0%, rgb(160, 150, 170) 100%)' }}
                       >
                         JD
                       </motion.div>
@@ -386,24 +452,19 @@ export function HowItWorksContent() {
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.5, type: "spring", stiffness: 300 }}
-                        className="ml-auto px-2 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-400"
+                        className="ml-auto px-2 py-0.5 rounded text-[10px] font-medium bg-zinc-700/50 text-zinc-400"
                       >
                         Urgent
                       </motion.span>
                     </motion.div>
-                    <motion.p 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.6, duration: 0.4 }}
-                      className="text-sm text-zinc-300 leading-relaxed"
-                    >
-                      <StreamingText 
-                        key={`stream-${understandKey}`}
+                    <p className="text-sm leading-relaxed">
+                      <RevealingText 
+                        key={`reveal-${understandKey}`}
                         text={`"I need a refund for my order. The package never arrived and it's been 2 weeks. This is really frustrating!"`}
                         isActive={activeStep === 0}
                         delay={700}
                       />
-                    </motion.p>
+                    </p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -493,23 +554,18 @@ export function HowItWorksContent() {
                             )}
                           </div>
                           
-                          {/* Show detail for active/past steps */}
-                          <AnimatePresence>
-                            {(isActive || isPast) && (
-                              <motion.p
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                className="text-xs text-zinc-500 mt-0.5 leading-relaxed"
-                              >
-                                {index === 0 && "Identified refund request"}
-                                {index === 1 && "Confirmed auto-refund eligible"}
-                                {index === 2 && "Retrieved order & customer data"}
-                                {index === 3 && "Refund processed, response sent"}
-                                {index === 4 && "Resolution logged"}
-                              </motion.p>
-                            )}
-                          </AnimatePresence>
+                          {/* Step subtitle - always visible, muted when not yet run */}
+                          <p
+                            className={`text-xs mt-0.5 leading-relaxed transition-colors duration-300 ${
+                              isFuture ? 'text-zinc-700' : 'text-zinc-500'
+                            }`}
+                          >
+                            {index === 0 && "Identified refund request"}
+                            {index === 1 && "Confirmed auto-refund eligible"}
+                            {index === 2 && "Retrieved order & customer data"}
+                            {index === 3 && "Refund processed, response sent"}
+                            {index === 4 && "Resolution logged"}
+                          </p>
                         </div>
                       </motion.button>
                     )
@@ -538,9 +594,9 @@ export function HowItWorksContent() {
             </div>
 
             {/* RIGHT: Live Document (8 cols) */}
-            <div className="lg:col-span-8">
+            <div className="lg:col-span-8 flex">
               {/* Container with tree background image */}
-              <div className="relative rounded-2xl overflow-hidden h-[650px]">
+              <div className="relative rounded-2xl overflow-hidden flex-1 min-h-[500px]">
                 {/* Background tree images - crossfade on step change */}
                 {[1, 3, 2, 4, 5].map((num, index) => (
                   <motion.div

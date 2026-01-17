@@ -2,172 +2,154 @@
 
 import { content } from "@/config/content"
 import { motion } from "framer-motion"
+import { ArrowRight, Calendar, CheckCircle2 } from "lucide-react"
 
 const ease = [0.22, 1, 0.36, 1] as const
 
 export function CtaContent() {
   return (
-    <div className="relative overflow-hidden bg-[#F5F5F5]">
-      {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Large gradient circle - positioned to be fully visible */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, ease }}
-          className="absolute top-32 -right-20 w-[500px] h-[500px] rounded-full"
-          style={{
-            background: 'radial-gradient(circle, rgba(255,107,53,0.15) 0%, rgba(255,107,53,0) 70%)',
-          }}
-        />
-        
-        {/* Floating shapes */}
-        <motion.div
-          animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-56 right-[15%] w-16 h-16 rounded-2xl bg-[#FF6B35]/10 backdrop-blur-sm"
-          style={{ transform: 'rotate(12deg)' }}
-        />
-        <motion.div
-          animate={{ y: [0, 15, 0], rotate: [0, -5, 0] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-          className="absolute bottom-32 left-[10%] w-12 h-12 rounded-xl bg-[#FF6B35]/10 backdrop-blur-sm"
-          style={{ transform: 'rotate(-8deg)' }}
-        />
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute top-1/2 left-[20%] w-8 h-8 rounded-lg bg-[#10B981]/10 backdrop-blur-sm"
-        />
-        
-        {/* Dotted pattern */}
-        <div 
-          className="absolute bottom-0 left-0 right-0 h-40 opacity-30"
-          style={{
-            backgroundImage: 'radial-gradient(circle, #1a1a1a 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
-            maskImage: 'linear-gradient(to top, black, transparent)',
-            WebkitMaskImage: 'linear-gradient(to top, black, transparent)',
-          }}
-        />
-      </div>
-
+    <div className="relative pt-48 lg:pt-48 pb-28 lg:pb-36">
       {/* Main content */}
-      <div className="container mx-auto px-6 pt-28 lg:pt-36 pb-28 lg:pb-36 relative z-10">
-        <div className="max-w-4xl mx-auto">
-          {/* Stacked headline with accent */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease }}
-            className="mb-12"
-          >
-            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-medium text-[#1a1a1a] leading-[1.05] tracking-[-0.03em]">
-              Ready to see
-              <br />
-              <span className="relative inline-block">
-                Duckie
-                <motion.span 
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.4, ease }}
-                  className="absolute -bottom-2 left-0 right-0 h-3 bg-[#FF6B35]/20 origin-left -z-10"
-                />
-              </span>
-              {" "}in action?
-            </h2>
-          </motion.div>
-
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2, ease }}
-            className="text-lg lg:text-xl text-[#666] mb-10 max-w-xl"
-          >
-            Join the teams resolving 80%+ of tickets automatically.
-          </motion.p>
-
-          {/* CTA row */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3, ease }}
-            className="flex flex-wrap items-center gap-4"
-          >
-            <motion.button
-              whileHover={{ scale: 1.02, boxShadow: '0 20px 40px -10px rgba(255,107,53,0.3)' }}
-              whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center justify-center h-14 px-8 rounded-full text-base font-semibold text-white transition-shadow"
-              style={{
-                background: 'linear-gradient(135deg, #FF6B35 0%, #E85D2B 100%)',
-                boxShadow: '0 10px 30px -5px rgba(255,107,53,0.25)',
-              }}
-            >
-              {content.finalCta.cta}
-              <svg 
-                className="ml-2 w-5 h-5" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-                strokeWidth={2}
+      <div className="container mx-auto px-6 relative">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left: Content */}
+            <div>
+              {/* Badge */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, ease }}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 mb-6"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </motion.button>
-            
-            <span className="text-sm text-[#999]">or</span>
-            
-            <motion.a
-              href="/how-it-works"
-              whileHover={{ x: 4 }}
-              className="inline-flex items-center text-base font-medium text-[#1a1a1a] group"
-            >
-              Watch a 2-min demo
-              <svg 
-                className="ml-2 w-5 h-5 text-[#999] group-hover:text-[#1a1a1a] transition-colors" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
-              </svg>
-            </motion.a>
-          </motion.div>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="text-xs font-medium text-emerald-700">No credit card required</span>
+              </motion.div>
 
-          {/* Company logos */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.5, ease }}
-            className="mt-16 pt-12 border-t border-[#e0e0e0]"
-          >
-            <p className="text-xs font-medium text-[#999] uppercase tracking-[0.15em] mb-6">
-              Trusted by teams at
-            </p>
-            <div className="flex flex-wrap items-center gap-x-10 gap-y-4">
-              {['Acme Corp', 'TechScale', 'CloudCart', 'GrowthLabs', 'FinServe'].map((company, i) => (
-                <motion.span
-                  key={company}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.6 + i * 0.05, ease }}
-                  className="text-lg font-semibold text-[#ccc] hover:text-[#999] transition-colors cursor-default"
+              {/* Headline */}
+              <motion.h2
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.1, ease }}
+                className="text-4xl sm:text-5xl lg:text-[3.25rem] font-medium text-[#1a1a1a] leading-[1.1] tracking-[-0.02em] mb-5"
+              >
+                Ready to transform your support?
+              </motion.h2>
+
+              {/* Subtitle */}
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2, ease }}
+                className="text-lg text-[#666] mb-8 leading-relaxed"
+              >
+                Join teams resolving 80%+ of tickets automatically. See results in your first week.
+              </motion.p>
+
+              {/* CTA buttons */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3, ease }}
+                className="flex flex-col sm:flex-row gap-3"
+              >
+                <motion.button
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  className="inline-flex items-center justify-center h-12 px-6 rounded-lg text-sm font-semibold text-white bg-[#1a1a1a] hover:bg-[#333] transition-colors"
                 >
-                  {company}
-                </motion.span>
-              ))}
+                  {content.finalCta.cta}
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </motion.button>
+                
+                <motion.a
+                  href="/demo"
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  className="inline-flex items-center justify-center h-12 px-6 rounded-lg text-sm font-semibold text-[#1a1a1a] bg-white border border-[#ddd] hover:border-[#bbb] hover:bg-[#fafafa] transition-colors"
+                >
+                  <Calendar className="mr-2 w-4 h-4 text-[#666]" />
+                  Schedule a demo
+                </motion.a>
+              </motion.div>
+
+              {/* Trust indicators */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4, ease }}
+                className="mt-8 pt-8 border-t border-[#e0e0e0]"
+              >
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-[#888]">
+                  <span className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#aaa]" />
+                    14-day free trial
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#aaa]" />
+                    Setup in minutes
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#aaa]" />
+                    Cancel anytime
+                  </span>
+                </div>
+              </motion.div>
             </div>
-          </motion.div>
+
+            {/* Right: Stats card */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.2, ease }}
+              className="relative"
+            >
+              <div 
+                className="rounded-2xl p-8 lg:p-10 bg-white"
+                style={{
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)',
+                }}
+              >
+                <p className="text-xs font-medium text-[#999] uppercase tracking-[0.1em] mb-6">
+                  Average customer results
+                </p>
+                
+                <div className="space-y-6">
+                  {[
+                    { metric: '82%', label: 'Tickets resolved automatically' },
+                    { metric: '3.2x', label: 'Faster response times' },
+                    { metric: '47%', label: 'Reduction in support costs' },
+                  ].map((item, i) => (
+                    <motion.div
+                      key={item.label}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: 0.4 + i * 0.1, ease }}
+                      className="flex items-baseline gap-4"
+                    >
+                      <span className="text-4xl lg:text-5xl font-semibold text-[#1a1a1a] tracking-tight tabular-nums">
+                        {item.metric}
+                      </span>
+                      <span className="text-sm text-[#666]">{item.label}</span>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-[#f0f0f0]">
+                  <p className="text-xs text-[#999]">
+                    Based on data from 200+ support teams using Duckie
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </div>

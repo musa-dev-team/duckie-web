@@ -7,7 +7,7 @@ export function Footer() {
   const { brand, footer, navigation } = content
 
   return (
-    <footer className="relative bg-[#F5F5F5] border-t border-[#e5e5e5]">
+    <footer className="relative bg-white border-t border-[#e5e5e5]">
       <div className="container mx-auto px-6 py-16">
         <div className="flex flex-col lg:flex-row lg:justify-between gap-12">
           {/* Brand Column */}

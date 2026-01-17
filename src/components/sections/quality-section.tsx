@@ -236,7 +236,7 @@ function ApprovalDashboard({ isPaused }: { isPaused: boolean }) {
   return (
     <div 
       ref={containerRef}
-      className="rounded-2xl overflow-hidden border border-white/10 h-[580px] relative"
+      className="rounded-2xl overflow-hidden border border-white/10 flex-1 min-h-0 relative"
       style={{
         background: '#0a0a0c',
         boxShadow: '0 30px 60px -15px rgba(0,0,0,0.8), 0 15px 30px -10px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)',
@@ -467,7 +467,7 @@ function ApprovalDashboard({ isPaused }: { isPaused: boolean }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-6"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-6 rounded-2xl"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -573,24 +573,24 @@ function ApprovalDashboard({ isPaused }: { isPaused: boolean }) {
 
 const colorMap: Record<string, { bg: string; border: string; text: string }> = {
   emerald: { 
-    bg: 'rgba(16, 185, 129, 0.08)', 
-    border: 'rgba(16, 185, 129, 0.2)', 
-    text: 'rgb(110, 231, 183)',
+    bg: 'rgba(110, 160, 140, 0.08)', 
+    border: 'rgba(110, 160, 140, 0.18)', 
+    text: 'rgb(145, 195, 175)',
   },
   amber: { 
-    bg: 'rgba(251, 191, 36, 0.08)', 
-    border: 'rgba(251, 191, 36, 0.2)', 
-    text: 'rgb(252, 211, 77)',
+    bg: 'rgba(190, 165, 110, 0.08)', 
+    border: 'rgba(190, 165, 110, 0.18)', 
+    text: 'rgb(215, 195, 145)',
   },
   sky: { 
-    bg: 'rgba(56, 189, 248, 0.08)', 
-    border: 'rgba(56, 189, 248, 0.2)', 
-    text: 'rgb(125, 211, 252)',
+    bg: 'rgba(120, 160, 190, 0.08)', 
+    border: 'rgba(120, 160, 190, 0.18)', 
+    text: 'rgb(155, 190, 215)',
   },
   purple: { 
-    bg: 'rgba(168, 85, 247, 0.08)', 
-    border: 'rgba(168, 85, 247, 0.2)', 
-    text: 'rgb(216, 180, 254)',
+    bg: 'rgba(150, 130, 180, 0.08)', 
+    border: 'rgba(150, 130, 180, 0.18)', 
+    text: 'rgb(185, 170, 210)',
   },
 }
 
@@ -609,27 +609,54 @@ function StatCard({
   color?: keyof typeof colorMap
 }) {
   const colors = colorMap[color]
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [mousePos, setMousePos] = useState({ x: 50, y: 0 })
+  const [isHovered, setIsHovered] = useState(false)
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    setMousePos({ x, y })
+  }
 
   return (
     <motion.div
+      ref={cardRef}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, ease }}
-      className="rounded-2xl p-5"
+      whileHover={{ y: -2 }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="group relative rounded-2xl p-5 transition-all duration-300"
       style={{
         background: 'rgba(255,255,255,0.02)',
         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(255,255,255,0.04)',
       }}
     >
+      {/* Cursor-following glow */}
       <div 
-        className="text-3xl font-bold mb-1"
-        style={{ color: colors.text }}
-      >
-        <AnimatedStat value={value} suffix={suffix} />
+        className="absolute inset-0 rounded-2xl transition-opacity duration-300 pointer-events-none"
+        style={{
+          opacity: isHovered ? 1 : 0,
+          background: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, ${colors.bg} 0%, transparent 60%)`,
+        }}
+      />
+      
+      <div className="relative">
+        <div 
+          className="text-3xl font-bold mb-1"
+          style={{ color: colors.text }}
+        >
+          <AnimatedStat value={value} suffix={suffix} />
+        </div>
+        <div className="text-sm font-medium text-zinc-300 mb-1">{label}</div>
+        <div className="text-xs text-zinc-500">{description}</div>
       </div>
-      <div className="text-sm font-medium text-zinc-300 mb-1">{label}</div>
-      <div className="text-xs text-zinc-500">{description}</div>
     </motion.div>
   )
 }
@@ -647,27 +674,54 @@ function FeatureCard({
   color?: keyof typeof colorMap
 }) {
   const colors = colorMap[color]
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [mousePos, setMousePos] = useState({ x: 50, y: 0 })
+  const [isHovered, setIsHovered] = useState(false)
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    setMousePos({ x, y })
+  }
   
   return (
     <motion.div
+      ref={cardRef}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, ease }}
-      className="rounded-2xl p-5"
+      whileHover={{ y: -2 }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="group relative rounded-2xl p-5 transition-all duration-300"
       style={{
         background: 'rgba(255,255,255,0.02)',
         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(255,255,255,0.04)',
       }}
     >
+      {/* Cursor-following glow */}
       <div 
-        className="w-9 h-9 rounded-xl flex items-center justify-center mb-4"
-        style={{ background: colors.bg }}
-      >
-        <Icon className="w-4 h-4" style={{ color: colors.text }} />
+        className="absolute inset-0 rounded-2xl transition-opacity duration-300 pointer-events-none"
+        style={{
+          opacity: isHovered ? 1 : 0,
+          background: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, ${colors.bg} 0%, transparent 60%)`,
+        }}
+      />
+      
+      <div className="relative">
+        <div 
+          className="w-9 h-9 rounded-xl flex items-center justify-center mb-4"
+          style={{ background: colors.bg }}
+        >
+          <Icon className="w-4 h-4" style={{ color: colors.text }} />
+        </div>
+        <div className="text-sm font-semibold text-zinc-100 mb-1">{title}</div>
+        <div className="text-xs text-zinc-500 leading-relaxed">{description}</div>
       </div>
-      <div className="text-sm font-semibold text-zinc-100 mb-1">{title}</div>
-      <div className="text-xs text-zinc-500 leading-relaxed">{description}</div>
     </motion.div>
   )
 }
@@ -688,7 +742,7 @@ export function QualityContent() {
           className="mb-10 lg:mb-12"
         >
           <div className="flex items-center gap-4 mb-4 sm:mb-6">
-            <span className="text-xs font-medium text-purple-400 uppercase tracking-[0.2em]">
+            <span className="text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
               Quality & Control
             </span>
             <motion.div 
@@ -696,7 +750,7 @@ export function QualityContent() {
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.3, ease }}
-              className="h-px w-16 bg-gradient-to-r from-purple-400/60 to-transparent origin-left"
+              className="h-px w-16 bg-gradient-to-r from-zinc-500/60 to-transparent origin-left"
             />
           </div>
           
@@ -710,64 +764,67 @@ export function QualityContent() {
           </div>
         </motion.div>
 
-        {/* Two column layout - dashboard takes 2/3 */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
-          {/* Left: Large animated dashboard with ocean background (2/3 width) */}
+        {/* Two column layout - right side determines height */}
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:gap-8">
+          {/* Left: Container that stretches to match right side */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease }}
-            className="relative rounded-2xl overflow-hidden lg:col-span-2"
+            className="relative rounded-2xl overflow-hidden min-h-[400px] lg:min-h-0"
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
           >
-            {/* Ocean background image */}
-            <div 
-              className="absolute inset-0"
-              style={{
-                backgroundImage: 'url(/images/ocean-bg-4.jpg)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            />
-            
-            {/* Subtle vignette overlay for depth */}
-            <div 
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: 'radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.4) 100%)',
-              }}
-            />
-            
-            {/* Pause/Play button - appears on hover, positioned on background */}
-            <AnimatePresence>
-              {isHovering && (
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.6 }}
-                  exit={{ opacity: 0 }}
-                  whileHover={{ opacity: 1 }}
-                  transition={{ duration: 0.15 }}
-                  onClick={() => setIsPaused(!isPaused)}
-                  className="absolute bottom-3 right-3 z-50 w-7 h-7 flex items-center justify-center rounded-full transition-colors hover:bg-white/10"
-                >
-                  {isPaused ? (
-                    <Play className="w-3.5 h-3.5 text-zinc-400" />
-                  ) : (
-                    <Pause className="w-3.5 h-3.5 text-zinc-500" />
-                  )}
-                </motion.button>
-              )}
-            </AnimatePresence>
-            
-            {/* Dashboard floating on top */}
-            <div className="relative px-12 py-8 lg:px-40 lg:py-14">
-              <ApprovalDashboard isPaused={isPaused} />
+            {/* ALL content is absolute - doesn't affect height on desktop */}
+            <div className="absolute inset-0">
+              {/* Ocean background image */}
+              <div 
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: 'url(/images/ocean-bg-4.jpg)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
+              
+              {/* Subtle vignette overlay for depth */}
+              <div 
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: 'radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.4) 100%)',
+                }}
+              />
+              
+              {/* Pause/Play button */}
+              <AnimatePresence>
+                {isHovering && (
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.6 }}
+                    exit={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.15 }}
+                    onClick={() => setIsPaused(!isPaused)}
+                    className="absolute bottom-3 right-3 z-50 w-7 h-7 flex items-center justify-center rounded-full transition-colors hover:bg-white/10"
+                  >
+                    {isPaused ? (
+                      <Play className="w-3.5 h-3.5 text-zinc-400" />
+                    ) : (
+                      <Pause className="w-3.5 h-3.5 text-zinc-500" />
+                    )}
+                  </motion.button>
+                )}
+              </AnimatePresence>
+              
+              {/* Dashboard centered in the space - scaled down to show more background */}
+              <div className="absolute inset-0 flex items-center justify-center p-4 lg:p-6 scale-[0.8] lg:scale-[0.82]">
+                <ApprovalDashboard isPaused={isPaused} />
+              </div>
             </div>
           </motion.div>
 
-          {/* Right: Stats and features stacked */}
+          {/* Right: Stats and features - THIS determines the row height */}
           <div className="space-y-4">
             {/* Stat cards */}
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
