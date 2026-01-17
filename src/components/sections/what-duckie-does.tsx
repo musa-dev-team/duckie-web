@@ -469,10 +469,13 @@ function ActionCard({
 
 // Total counter at the top
 function TotalCounter() {
-  // Initialize with time-based total so refreshing maintains continuity
-  const [total, setTotal] = useState(() => getTimeBasedTotal())
+  // Initialize with static value to avoid hydration mismatch
+  const [total, setTotal] = useState(67000)
   
   useEffect(() => {
+    // Set time-based total on client only
+    setTotal(getTimeBasedTotal())
+    
     const interval = setInterval(() => {
       const inc = Math.floor(Math.random() * 8) + 5
       setTotal(prev => prev + inc)

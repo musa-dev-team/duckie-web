@@ -63,42 +63,53 @@ export function Hero() {
       {/* Content */}
       <div className="relative z-10 flex h-full flex-col items-center justify-center px-6">
         <div className="max-w-7xl text-center">
+          {/* Section indicator */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease }}
+            className="mb-6 flex items-center justify-center gap-4"
+          >
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.8, delay: 0.3, ease }}
+              className="h-px w-12 bg-gradient-to-r from-transparent to-white/40 origin-right"
+            />
+            <span className="text-xs font-medium text-white/60 uppercase tracking-[0.2em]">
+              AI Support
+            </span>
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.8, delay: 0.3, ease }}
+              className="h-px w-12 bg-gradient-to-r from-white/40 to-transparent origin-left"
+            />
+          </motion.div>
+
           {/* Headline */}
           <motion.h1
             initial={{ y: 60, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, ease }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-medium leading-[1.05] tracking-[-0.03em] text-white pb-4"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-medium leading-[1.05] tracking-[-0.03em] pb-4 text-white"
+            style={{
+              filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.15))',
+            }}
           >
             AI agents that close tickets
           </motion.h1>
           
-          {/* Subheadline with dash animation */}
-          <motion.div
+          {/* Subheadline */}
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4, ease }}
-            className="mt-8 flex items-center justify-center gap-3"
+            className="mt-8 text-lg sm:text-xl md:text-2xl text-white/90 font-light tracking-wide"
+            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.3)' }}
           >
-            <motion.div 
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.4, delay: 0.6, ease }}
-              className="h-px w-8 bg-white/40 origin-right"
-            />
-            <p 
-              className="text-lg sm:text-xl md:text-2xl text-white/90 font-light tracking-wide"
-              style={{ textShadow: '0 2px 20px rgba(0,0,0,0.3)' }}
-            >
-              Not just answers — <span className="font-medium">real actions</span>
-            </p>
-            <motion.div 
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.4, delay: 0.6, ease }}
-              className="h-px w-8 bg-white/40 origin-left"
-            />
-          </motion.div>
+            Not just answers · <span className="font-medium">real actions</span>
+          </motion.p>
           
           {/* CTA */}
           <motion.div
@@ -114,16 +125,13 @@ export function Hero() {
               }}
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.2 }}
-              className="inline-flex items-center justify-center rounded-full h-12 px-8 text-base font-medium text-zinc-900"
+              className="inline-flex items-center justify-center rounded-full h-10 px-6 text-sm font-medium text-zinc-900"
               style={{
                 background: 'linear-gradient(to bottom, #ffffff 0%, #f0f0f0 100%)',
                 boxShadow: '0 0 0 1px rgba(255,255,255,0.3), 0 2px 16px rgba(0,0,0,0.1), 0 0 40px rgba(255,255,255,0.08)',
               }}
             >
               {content.ctas.primary}
-              <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
             </motion.button>
           </motion.div>
         </div>
