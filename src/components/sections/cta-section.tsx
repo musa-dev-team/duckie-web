@@ -24,7 +24,7 @@ export function CtaContent() {
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 mb-6"
               >
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="text-xs font-medium text-emerald-700">No credit card required</span>
+                <span className="text-xs font-medium text-emerald-700">Enterprise-ready fast</span>
               </motion.div>
 
               {/* Headline */}
