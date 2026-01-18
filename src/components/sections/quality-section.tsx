@@ -264,7 +264,7 @@ function ApprovalDashboard({ isPaused }: { isPaused: boolean }) {
     >
       {/* Cursor - hidden on mobile */}
       <div className="hidden md:block">
-        <AnimatedCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      <AnimatedCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
       </div>
 
       {/* Browser chrome */}
@@ -845,7 +845,7 @@ export function QualityContent() {
               {/* Dashboard centered in the space */}
               <div className="absolute inset-0 md:inset-10 lg:inset-x-36 lg:inset-y-14 flex items-center justify-center">
                 <div className="w-full h-full scale-[0.85] md:scale-100 origin-center">
-                  <ApprovalDashboard isPaused={isPaused} />
+                <ApprovalDashboard isPaused={isPaused} />
                 </div>
               </div>
             </div>

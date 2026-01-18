@@ -183,7 +183,7 @@ function ConnectionsUI({ progress }: { progress: number }) {
     <div ref={containerRef} className="h-full flex flex-col relative">
       {/* Cursor - hidden on mobile */}
       <div className="hidden md:block">
-        <ConnectionCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      <ConnectionCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
       </div>
 
       {/* App header */}
@@ -518,7 +518,7 @@ function TrainUI({ progress }: { progress: number }) {
     <div ref={containerRef} className="h-full flex flex-col relative">
       {/* Cursor - hidden on mobile */}
       <div className="hidden md:block">
-        <TrainCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      <TrainCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
       </div>
 
       {/* App header */}
@@ -1040,7 +1040,7 @@ function BuildUI({ progress }: { progress: number }) {
     <div ref={containerRef} className="h-full flex flex-col relative">
       {/* Cursor - hidden on mobile */}
       <div className="hidden md:block">
-        <BuildCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      <BuildCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
       </div>
       
       <AnimatePresence mode="wait">
@@ -1232,7 +1232,7 @@ function TestUI({ progress }: { progress: number }) {
     <div ref={containerRef} className="h-full flex relative">
       {/* Cursor - hidden on mobile */}
       <div className="hidden md:block">
-        <TestCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      <TestCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
       </div>
 
       {/* Left sidebar - Test config */}
@@ -1261,9 +1261,9 @@ function TestUI({ progress }: { progress: number }) {
         </div>
 
         <div className="hidden md:block">
-          <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Agent</div>
-          <div className="px-2.5 py-2 rounded-lg bg-white/5 text-xs text-zinc-300 mb-4">
-            Support Agent v2.1
+        <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Agent</div>
+        <div className="px-2.5 py-2 rounded-lg bg-white/5 text-xs text-zinc-300 mb-4">
+          Support Agent v2.1
           </div>
         </div>
 
@@ -1416,23 +1416,23 @@ function TestUI({ progress }: { progress: number }) {
                       </div>
                       {/* Desktop layout */}
                       <div className="hidden md:grid grid-cols-12 gap-2 text-xs">
-                        <div className="col-span-2 text-zinc-400 font-mono text-[10px]">{result.id}</div>
-                        <div className="col-span-5 text-zinc-300 truncate text-[11px]">{result.query}</div>
-                        <div className="col-span-3">
-                          <span className={`font-medium ${
-                            result.score >= 90 ? 'text-emerald-400' :
-                            result.score >= 70 ? 'text-amber-400' :
-                            'text-red-400'
-                          }`}>{result.score}%</span>
-                        </div>
-                        <div className="col-span-2">
-                          <span className={`px-1.5 py-0.5 rounded text-[10px] ${
-                            result.status === 'pass' ? 'bg-emerald-500/20 text-emerald-400' :
-                            result.status === 'review' ? 'bg-amber-500/20 text-amber-400' :
-                            'bg-red-500/20 text-red-400'
-                          }`}>
-                            {result.status === 'pass' ? '✓ Pass' : result.status === 'review' ? '? Review' : '✗ Fail'}
-                          </span>
+                      <div className="col-span-2 text-zinc-400 font-mono text-[10px]">{result.id}</div>
+                      <div className="col-span-5 text-zinc-300 truncate text-[11px]">{result.query}</div>
+                      <div className="col-span-3">
+                        <span className={`font-medium ${
+                          result.score >= 90 ? 'text-emerald-400' :
+                          result.score >= 70 ? 'text-amber-400' :
+                          'text-red-400'
+                        }`}>{result.score}%</span>
+                      </div>
+                      <div className="col-span-2">
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+                          result.status === 'pass' ? 'bg-emerald-500/20 text-emerald-400' :
+                          result.status === 'review' ? 'bg-amber-500/20 text-amber-400' :
+                          'bg-red-500/20 text-red-400'
+                        }`}>
+                          {result.status === 'pass' ? '✓ Pass' : result.status === 'review' ? '? Review' : '✗ Fail'}
+                        </span>
                         </div>
                       </div>
                     </motion.div>
@@ -1667,7 +1667,7 @@ function DeployUI({ progress }: { progress: number }) {
     <div ref={containerRef} className="h-full flex relative">
       {/* Cursor - hidden on mobile */}
       <div className="hidden md:block">
-        <DeployCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      <DeployCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
       </div>
 
       {/* Sidebar */}

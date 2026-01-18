@@ -74,7 +74,7 @@ export default function Home() {
         {/* Content */}
         <div className="relative">
           <div data-theme="light">
-            <CtaContent />
+          <CtaContent />
           </div>
           <Footer />
         </div>

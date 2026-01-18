@@ -1,23 +1,23 @@
 "use client"
 
 import {
-  ConfluenceIcon,
-  DiscordIcon,
-  FreshdeskIcon,
-  GitHubIcon,
-  GoogleDriveIcon,
-  JiraIcon,
-  LinearIcon,
-  NotionIcon,
-  SlackIcon,
+    ConfluenceIcon,
+    DiscordIcon,
+    FreshdeskIcon,
+    GitHubIcon,
+    GoogleDriveIcon,
+    JiraIcon,
+    LinearIcon,
+    NotionIcon,
+    SlackIcon,
 } from "@/components/icons"
 import { AnimatePresence, motion } from "framer-motion"
 import { Globe, MessageSquare, Zap } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import {
-  SiHubspot,
-  SiIntercom,
-  SiZendesk,
+    SiHubspot,
+    SiIntercom,
+    SiZendesk,
 } from "react-icons/si"
 
 const ease = [0.22, 1, 0.36, 1] as const

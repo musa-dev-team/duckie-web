@@ -347,14 +347,29 @@ function ActionCard({
   const colors = colorMap[action.color]
   const Icon = action.icon
   
+  // Track if this is a touch interaction to prevent hover conflicts
+  const handlePointerEnter = (e: React.PointerEvent) => {
+    // Only trigger hover on mouse, not touch
+    if (e.pointerType === 'mouse') {
+      onHover()
+    }
+  }
+  
+  const handlePointerLeave = (e: React.PointerEvent) => {
+    // Only trigger leave on mouse, not touch
+    if (e.pointerType === 'mouse') {
+      onLeave()
+    }
+  }
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.06, ease }}
-      onMouseEnter={onHover}
-      onMouseLeave={onLeave}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
       onClick={onToggle}
       className="relative cursor-pointer"
     >
