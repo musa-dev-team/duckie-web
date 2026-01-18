@@ -30,7 +30,7 @@ export default function Home() {
       
       {/* Light sections container with unified background */}
       <div 
-        className="relative bg-[#FFFFFF] pb-48 md:pb-86"
+        className="relative bg-[#FFFFFF] pb-48 md:pb-86 overflow-hidden"
         data-theme="light"
       >
         {/* Subtle grid pattern */}
