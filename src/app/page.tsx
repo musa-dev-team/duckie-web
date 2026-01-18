@@ -54,7 +54,7 @@ export default function Home() {
       <div className="relative rounded-t-[3rem] overflow-hidden -mt-12 bg-[#FFFFFF]">
         {/* Background image - using img tag so drop-shadow respects transparency */}
         <img 
-          src="/images/pond-2.webp"
+          src="/images/pond-3.webp"
           alt=""
           aria-hidden="true"
           className="absolute inset-0 w-full h-full object-cover object-top"
