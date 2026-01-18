@@ -1,23 +1,23 @@
 "use client"
 
 import {
-    ConfluenceIcon,
-    DiscordIcon,
-    FreshdeskIcon,
-    GitHubIcon,
-    GoogleDriveIcon,
-    JiraIcon,
-    LinearIcon,
-    NotionIcon,
-    SlackIcon,
+  ConfluenceIcon,
+  DiscordIcon,
+  FreshdeskIcon,
+  GitHubIcon,
+  GoogleDriveIcon,
+  JiraIcon,
+  LinearIcon,
+  NotionIcon,
+  SlackIcon,
 } from "@/components/icons"
 import { AnimatePresence, motion } from "framer-motion"
 import { Globe, MessageSquare, Zap } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import {
-    SiHubspot,
-    SiIntercom,
-    SiZendesk,
+  SiHubspot,
+  SiIntercom,
+  SiZendesk,
 } from "react-icons/si"
 
 const ease = [0.22, 1, 0.36, 1] as const
@@ -292,7 +292,7 @@ function IntegrationOrbit() {
 
 function LanguageWave() {
   return (
-    <div className="flex flex-wrap justify-center gap-2">
+    <div className="flex flex-wrap justify-center gap-1.5 md:gap-2">
       {languages.map((lang, index) => (
         <motion.div
           key={lang.code}
@@ -301,10 +301,10 @@ function LanguageWave() {
           viewport={{ once: true }}
           transition={{ duration: 0.3, delay: index * 0.05 }}
           whileHover={{ scale: 1.05, y: -2 }}
-          className="px-3 py-1.5 rounded-full flex items-center gap-2 cursor-default bg-white/[0.03] ring-1 ring-white/5 hover:ring-white/10 hover:bg-white/[0.05] transition-colors"
+          className="px-2 md:px-3 py-1 md:py-1.5 rounded-full flex items-center gap-1.5 md:gap-2 cursor-default bg-white/[0.03] ring-1 ring-white/5 hover:ring-white/10 hover:bg-white/[0.05] transition-colors"
         >
-          <span className="text-sm">{lang.flag}</span>
-          <span className="text-xs font-medium text-zinc-400">
+          <span className="text-xs md:text-sm">{lang.flag}</span>
+          <span className="text-[10px] md:text-xs font-medium text-zinc-400">
             {lang.name}
           </span>
         </motion.div>
@@ -314,9 +314,9 @@ function LanguageWave() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.3, delay: languages.length * 0.05 }}
-        className="px-3 py-1.5 rounded-full bg-white/[0.03] ring-1 ring-white/5"
+        className="px-2 md:px-3 py-1 md:py-1.5 rounded-full bg-white/[0.03] ring-1 ring-white/5"
       >
-        <span className="text-xs text-zinc-500">+32 more</span>
+        <span className="text-[10px] md:text-xs text-zinc-500">+32 more</span>
       </motion.div>
     </div>
   )
@@ -348,7 +348,7 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative rounded-2xl p-4 transition-all duration-300"
+      className="group relative rounded-xl md:rounded-2xl p-3 md:p-4 transition-all duration-300"
       style={{
         background: 'rgba(255,255,255,0.02)',
         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(255,255,255,0.04)',
@@ -356,7 +356,7 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
     >
       {/* Cursor-following glow */}
       <div 
-        className="absolute inset-0 rounded-2xl transition-opacity duration-300 pointer-events-none"
+        className="absolute inset-0 rounded-xl md:rounded-2xl transition-opacity duration-300 pointer-events-none"
         style={{
           opacity: isHovered ? 1 : 0,
           background: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, ${colors.bg} 0%, transparent 60%)`,
@@ -364,16 +364,16 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
       />
       
       <div className="relative">
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-2.5 md:gap-3">
           <div 
-            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center shrink-0"
             style={{ background: colors.bg }}
           >
-            <Icon className="w-5 h-5" style={{ color: colors.text }} />
+            <Icon className="w-4 h-4 md:w-5 md:h-5" style={{ color: colors.text }} />
           </div>
           <div>
-            <h4 className="text-sm font-medium text-white mb-1">{feature.title}</h4>
-            <p className="text-xs text-zinc-500 leading-relaxed">{feature.desc}</p>
+            <h4 className="text-xs md:text-sm font-medium text-white mb-0.5 md:mb-1">{feature.title}</h4>
+            <p className="text-[10px] md:text-xs text-zinc-500 leading-relaxed">{feature.desc}</p>
           </div>
         </div>
       </div>
@@ -383,35 +383,35 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
 
 export function OmnichannelContent() {
   return (
-    <div className="relative py-28 lg:py-40 overflow-hidden">
+    <div className="relative py-16 md:py-28 lg:py-40 overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-30"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] md:w-[800px] h-[500px] md:h-[800px] rounded-full opacity-30"
           style={{
             background: 'radial-gradient(circle, rgba(56, 189, 248, 0.05) 0%, transparent 60%)',
           }}
         />
       </div>
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-5 md:px-6 relative z-10">
         {/* Header */}
-        <div className="max-w-5xl mx-auto text-center mb-16 lg:mb-20">
+        <div className="max-w-5xl mx-auto text-center mb-10 md:mb-16 lg:mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease }}
-            className="mb-6 flex items-center justify-center gap-4"
+            className="mb-4 md:mb-6 flex items-center justify-center gap-3 md:gap-4"
           >
             <motion.div 
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.3, ease }}
-              className="h-px w-12 bg-gradient-to-r from-transparent to-zinc-500/60 origin-right"
+              className="h-px w-8 md:w-12 bg-gradient-to-r from-transparent to-zinc-500/60 origin-right"
             />
-            <span className="text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
+            <span className="text-[10px] md:text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
               Omnichannel
             </span>
             <motion.div 
@@ -419,7 +419,7 @@ export function OmnichannelContent() {
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.3, ease }}
-              className="h-px w-12 bg-gradient-to-r from-zinc-500/60 to-transparent origin-left"
+              className="h-px w-8 md:w-12 bg-gradient-to-r from-zinc-500/60 to-transparent origin-left"
             />
           </motion.div>
 
@@ -428,7 +428,7 @@ export function OmnichannelContent() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1, ease }}
-            className="text-4xl sm:text-5xl lg:text-6xl font-medium text-white tracking-[-0.03em] leading-[1.1] mb-6"
+            className="text-3xl sm:text-5xl lg:text-6xl font-medium text-white tracking-[-0.03em] leading-[1.1] mb-4 md:mb-6"
           >
             One agent.
             <br />
@@ -437,7 +437,7 @@ export function OmnichannelContent() {
         </div>
 
         {/* Main content - Two columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center mb-10 md:mb-16">
           
           {/* Left: Integration Orbit */}
           <motion.div
@@ -445,14 +445,15 @@ export function OmnichannelContent() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.2, ease }}
+            className=""
           >
             <IntegrationOrbit />
           </motion.div>
 
           {/* Right: Features & Languages */}
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8">
             {/* Features */}
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               {features.map((feature, index) => (
                 <FeatureCard key={feature.title} feature={feature} index={index} />
               ))}
@@ -464,11 +465,11 @@ export function OmnichannelContent() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4, ease }}
-              className="pt-6 border-t border-white/5"
+              className="pt-4 md:pt-6 border-t border-white/5"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <Globe className="w-4 h-4 text-zinc-400" />
-                <span className="text-sm font-medium text-zinc-400">Supported languages</span>
+              <div className="flex items-center justify-center gap-2 mb-3 md:mb-4">
+                <Globe className="w-3.5 h-3.5 md:w-4 md:h-4 text-zinc-400" />
+                <span className="text-xs md:text-sm font-medium text-zinc-400">Supported languages</span>
               </div>
               <LanguageWave />
             </motion.div>
@@ -481,7 +482,7 @@ export function OmnichannelContent() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.5, ease }}
-          className="flex flex-wrap items-center justify-center gap-8 pt-8 border-t border-white/5"
+          className="flex flex-wrap items-center justify-center gap-6 md:gap-8 pt-6 md:pt-8 border-t border-white/5"
         >
           {[
             { value: "35+", label: "Channel integrations" },
@@ -496,8 +497,8 @@ export function OmnichannelContent() {
               transition={{ duration: 0.4, delay: 0.6 + index * 0.1, ease }}
               className="text-center"
             >
-              <div className="text-2xl sm:text-3xl font-semibold text-white mb-1">{stat.value}</div>
-              <div className="text-xs text-zinc-500">{stat.label}</div>
+              <div className="text-xl md:text-2xl sm:text-3xl font-semibold text-white mb-0.5 md:mb-1">{stat.value}</div>
+              <div className="text-[10px] md:text-xs text-zinc-500">{stat.label}</div>
             </motion.div>
           ))}
         </motion.div>

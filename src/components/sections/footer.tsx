@@ -7,18 +7,18 @@ export function Footer() {
   const { brand, footer, navigation } = content
 
   return (
-    <footer className="relative px-4 pt-24 pb-36">
+    <footer className="relative px-3 md:px-4 pt-38 md:pt-24 pb-3 md:pb-36">
       {/* Footer card with rounded corners sitting on blue background */}
-      <div className="max-w-6xl mx-auto bg-[#faf9f7] backdrop-blur-sm rounded-[2.5rem] overflow-hidden shadow-[0_-20px_60px_rgba(0,0,0,0.15),0_-8px_25px_rgba(0,0,0,0.1),0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-white/50 ring-inset transform -translate-y-4">
-        <div className="px-8 lg:px-16">
+      <div className="max-w-6xl mx-auto bg-[#faf9f7] backdrop-blur-sm rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden shadow-[0_-20px_60px_rgba(0,0,0,0.15),0_-8px_25px_rgba(0,0,0,0.1),0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-white/50 ring-inset transform -translate-y-4">
+        <div className="px-5 md:px-8 lg:px-16">
           {/* Top Section - Logo, Tagline & Stats */}
-          <div className="pt-12 lg:pt-16 pb-10 lg:pb-12 border-b border-[#e5e5e5]">
-            <div className="flex flex-col lg:flex-row lg:justify-between gap-10 lg:gap-16">
+          <div className="pt-8 md:pt-12 lg:pt-16 pb-8 md:pb-10 lg:pb-12 border-b border-[#e5e5e5]">
+            <div className="flex flex-col lg:flex-row lg:justify-between gap-8 md:gap-10 lg:gap-16">
               {/* Left: Logo, Tagline & CTA */}
               <div className="flex-1">
-                <Link href="/" className="inline-block mb-8">
+                <Link href="/" className="inline-block mb-5 md:mb-8">
                   <span 
-                    className="text-3xl font-semibold tracking-tight text-[#1a1a1a]"
+                    className="text-2xl md:text-3xl font-semibold tracking-tight text-[#1a1a1a]"
                     style={{ fontFamily: "var(--font-helvetica)" }}
                   >
                     {brand.name}<span className="text-[#FF6B35]">.</span>
@@ -26,38 +26,38 @@ export function Footer() {
                 </Link>
 
                 <div className="max-w-md">
-                  <p className="text-2xl lg:text-3xl font-medium text-[#1a1a1a] leading-tight mb-6">
+                  <p className="text-xl md:text-2xl lg:text-3xl font-medium text-[#1a1a1a] leading-tight mb-0 md:mb-6">
                     AI-powered support that actually resolves tickets.
                   </p>
                   <Link
                     href="/demo"
-                    className="inline-flex items-center justify-center h-11 px-6 rounded-full text-sm font-medium text-white bg-[#1a1a1a] hover:bg-[#333] transition-colors"
+                    className="hidden md:inline-flex items-center justify-center h-10 md:h-11 px-5 md:px-6 rounded-full text-xs md:text-sm font-medium text-white bg-[#1a1a1a] hover:bg-[#333] transition-colors"
                   >
                     Book a demo
-                    <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="ml-1.5 md:ml-2 w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>
                 </div>
               </div>
 
-              {/* Right: Stats */}
-              <div className="lg:max-w-sm">
-                <p className="text-xs font-semibold tracking-wider text-[#666] uppercase mb-6">
+              {/* Right: Stats - hidden on mobile */}
+              <div className="hidden md:block lg:max-w-sm">
+                <p className="text-[10px] md:text-xs font-semibold tracking-wider text-[#666] uppercase mb-4 md:mb-6">
                   Average Customer Results
                 </p>
-                <div className="space-y-4">
-                  <div className="flex items-baseline gap-4">
-                    <span className="text-4xl lg:text-5xl font-bold text-[#1a1a1a]">82%</span>
-                    <span className="text-sm text-[#666]">Tickets resolved automatically</span>
+                <div className="space-y-3 md:space-y-4">
+                  <div className="flex items-baseline gap-3 md:gap-4">
+                    <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a1a1a]">82%</span>
+                    <span className="text-xs md:text-sm text-[#666]">Tickets resolved automatically</span>
                   </div>
-                  <div className="flex items-baseline gap-4">
-                    <span className="text-4xl lg:text-5xl font-bold text-[#1a1a1a]">3.2x</span>
-                    <span className="text-sm text-[#666]">Faster response times</span>
+                  <div className="flex items-baseline gap-3 md:gap-4">
+                    <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a1a1a]">3.2x</span>
+                    <span className="text-xs md:text-sm text-[#666]">Faster response times</span>
                   </div>
-                  <div className="flex items-baseline gap-4">
-                    <span className="text-4xl lg:text-5xl font-bold text-[#1a1a1a]">47%</span>
-                    <span className="text-sm text-[#666]">Reduction in support costs</span>
+                  <div className="flex items-baseline gap-3 md:gap-4">
+                    <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a1a1a]">47%</span>
+                    <span className="text-xs md:text-sm text-[#666]">Reduction in support costs</span>
                   </div>
                 </div>
               </div>
@@ -65,16 +65,16 @@ export function Footer() {
           </div>
 
           {/* Navigation Links */}
-          <div className="py-10 lg:py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-12">
+          <div className="py-6 md:py-10 lg:py-12 grid grid-cols-3 lg:grid-cols-5 gap-3 md:gap-8 lg:gap-12">
             {/* Product Links */}
             <div>
-              <h3 className="text-sm font-semibold text-[#1a1a1a] mb-4">Product</h3>
-              <ul className="space-y-3">
+              <h3 className="text-xs md:text-sm font-semibold text-[#1a1a1a] mb-3 md:mb-4">Product</h3>
+              <ul className="space-y-2 md:space-y-3">
                 {navigation.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-[#666] hover:text-[#1a1a1a] transition-colors"
+                      className="text-xs md:text-sm text-[#666] hover:text-[#1a1a1a] transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -85,15 +85,15 @@ export function Footer() {
 
             {/* Company Links */}
             <div>
-              <h3 className="text-sm font-semibold text-[#1a1a1a] mb-4">
+              <h3 className="text-xs md:text-sm font-semibold text-[#1a1a1a] mb-3 md:mb-4">
                 {footer.company.title}
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-2 md:space-y-3">
                 {footer.company.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-[#666] hover:text-[#1a1a1a] transition-colors"
+                      className="text-xs md:text-sm text-[#666] hover:text-[#1a1a1a] transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -104,15 +104,15 @@ export function Footer() {
 
             {/* Legal Links */}
             <div>
-              <h3 className="text-sm font-semibold text-[#1a1a1a] mb-4">
+              <h3 className="text-xs md:text-sm font-semibold text-[#1a1a1a] mb-3 md:mb-4">
                 {footer.legal.title}
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-2 md:space-y-3">
                 {footer.legal.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-[#666] hover:text-[#1a1a1a] transition-colors"
+                      className="text-xs md:text-sm text-[#666] hover:text-[#1a1a1a] transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -123,8 +123,8 @@ export function Footer() {
           </div>
 
           {/* Bottom Section */}
-          <div className="py-6 border-t border-[#e5e5e5] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <p className="text-sm text-[#999]">{brand.copyright}</p>
+          <div className="py-4 md:py-6 border-t border-[#e5e5e5] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
+            <p className="text-xs md:text-sm text-[#999]">{brand.copyright}</p>
             <div className="flex items-center gap-2">
               {footer.social.map((social) => (
                 <a
@@ -132,7 +132,7 @@ export function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center w-9 h-9 rounded-full bg-white border border-[#e5e5e5] text-[#666] hover:text-[#1a1a1a] hover:border-[#ccc] transition-all"
+                  className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white border border-[#e5e5e5] text-[#666] hover:text-[#1a1a1a] hover:border-[#ccc] transition-all"
                 >
                   <span className="sr-only">{social.name}</span>
                   <SocialIcon name={social.name} />
@@ -148,7 +148,7 @@ export function Footer() {
 
 // Social Icons Component
 function SocialIcon({ name }: { name: string }) {
-  const iconClass = "h-5 w-5"
+  const iconClass = "h-4 w-4 md:h-5 md:w-5"
 
   switch (name) {
     case "Twitter":

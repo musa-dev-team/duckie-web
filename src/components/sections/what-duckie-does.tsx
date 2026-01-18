@@ -2,15 +2,15 @@
 
 import { AnimatePresence, motion } from "framer-motion"
 import {
-  Check,
-  CreditCard,
-  FileText,
-  Key,
-  MessageSquare,
-  Package,
-  RefreshCcw,
-  ShieldCheck,
-  UserCog,
+    Check,
+    CreditCard,
+    FileText,
+    Key,
+    MessageSquare,
+    Package,
+    RefreshCcw,
+    ShieldCheck,
+    UserCog,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 
@@ -305,7 +305,7 @@ function AnimatedCounter({
   return (
     <span 
       suppressHydrationWarning
-      className="tabular-nums font-semibold text-2xl transition-all duration-300"
+      className="tabular-nums font-semibold text-xl md:text-2xl transition-all duration-300"
       style={{ 
         color: colors.text,
       }}
@@ -335,12 +335,14 @@ function ActionCard({
   isExpanded,
   onHover,
   onLeave,
+  onToggle,
 }: { 
   action: typeof actions[0]
   index: number
   isExpanded: boolean
   onHover: () => void
   onLeave: () => void
+  onToggle: () => void
 }) {
   const colors = colorMap[action.color]
   const Icon = action.icon
@@ -353,12 +355,13 @@ function ActionCard({
       transition={{ duration: 0.5, delay: index * 0.06, ease }}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
-      className="relative"
+      onClick={onToggle}
+      className="relative cursor-pointer"
     >
       <motion.div 
         animate={{ height: 'auto' }}
         transition={{ duration: 0.5, ease }}
-        className="relative rounded-2xl overflow-hidden transition-shadow duration-500"
+        className="relative rounded-xl md:rounded-2xl overflow-hidden transition-shadow duration-500"
         style={{
           background: isExpanded ? colors.bg : 'rgba(255,255,255,0.02)',
           boxShadow: isExpanded 
@@ -367,16 +370,16 @@ function ActionCard({
         }}
       >
         {/* Compact header - always visible */}
-        <div className="p-5">
-          <div className="flex items-start justify-between mb-3">
+        <div className="p-4 md:p-5">
+          <div className="flex items-start justify-between mb-2.5 md:mb-3">
             <div 
-              className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300"
+              className="w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl flex items-center justify-center transition-all duration-300"
               style={{ 
                 background: colors.bg,
               }}
             >
               <Icon 
-                className="w-4 h-4"
+                className="w-3.5 h-3.5 md:w-4 md:h-4"
                 style={{ color: colors.text }} 
               />
             </div>
@@ -386,7 +389,7 @@ function ActionCard({
             />
           </div>
           
-          <div className="mb-1">
+          <div className="mb-0.5 md:mb-1">
             <AnimatedCounter 
               baseCount={action.baseCount}
               increment={action.increment}
@@ -395,11 +398,11 @@ function ActionCard({
             />
           </div>
           
-          <div className="text-sm text-zinc-400">
+          <div className="text-xs md:text-sm text-zinc-400">
             {action.label}
           </div>
           
-          <div className="text-xs text-zinc-600 mt-1">
+          <div className="text-[10px] md:text-xs text-zinc-600 mt-0.5 md:mt-1">
             {action.detail}
           </div>
         </div>
@@ -415,13 +418,13 @@ function ActionCard({
               className="overflow-hidden"
             >
               <div 
-                className="px-5 pb-5 pt-2 space-y-2"
+                className="px-4 pb-4 md:px-5 md:pb-5 pt-2 space-y-2"
                 style={{ borderTop: `1px solid ${colors.border}` }}
               >
                 {/* Customer message - aligned left */}
                 <div className="flex justify-start">
                   <div 
-                    className="rounded-xl rounded-tl-sm px-3 py-2 text-xs text-zinc-300 max-w-[90%]"
+                    className="rounded-lg md:rounded-xl rounded-tl-sm px-2.5 py-1.5 md:px-3 md:py-2 text-[11px] md:text-xs text-zinc-300 max-w-[95%] md:max-w-[90%]"
                     style={{ background: 'rgba(255,255,255,0.06)' }}
                   >
                     {action.example.message}
@@ -431,7 +434,7 @@ function ActionCard({
                 {/* Duckie response - aligned right */}
                 <div className="flex justify-end">
                   <div 
-                    className="rounded-xl rounded-tr-sm px-3 py-2 text-xs text-zinc-300 max-w-[90%]"
+                    className="rounded-lg md:rounded-xl rounded-tr-sm px-2.5 py-1.5 md:px-3 md:py-2 text-[11px] md:text-xs text-zinc-300 max-w-[95%] md:max-w-[90%]"
                     style={{ background: colors.bg }}
                   >
                     {renderResponse(action.example.response, action.color)}
@@ -440,28 +443,28 @@ function ActionCard({
 
                 {/* Actions taken */}
                 <div 
-                  className="rounded-lg p-3"
+                  className="rounded-md md:rounded-lg p-2.5 md:p-3"
                   style={{ 
                     background: 'rgba(0,0,0,0.2)',
                   }}
                 >
-                  <div className="text-[9px] text-zinc-500 uppercase tracking-wider mb-2">
+                  <div className="text-[8px] md:text-[9px] text-zinc-500 uppercase tracking-wider mb-1.5 md:mb-2">
                     Actions completed
                   </div>
-                  <div className="space-y-1.5">
+                  <div className="space-y-1 md:space-y-1.5">
                     {action.example.steps.map((step, i) => (
                       <motion.div
                         key={i}
                         initial={{ opacity: 0, x: -5 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.2, delay: i * 0.05 }}
-                        className="flex items-center justify-between text-[11px]"
+                        className="flex items-center justify-between text-[10px] md:text-[11px]"
                       >
-                        <div className="flex items-center gap-1.5">
-                          <Check className="w-3 h-3" style={{ color: colors.text }} />
+                        <div className="flex items-center gap-1 md:gap-1.5">
+                          <Check className="w-2.5 h-2.5 md:w-3 md:h-3" style={{ color: colors.text }} />
                           <span className="text-zinc-300">{step.label}</span>
                         </div>
-                        <span className="text-zinc-500 text-[10px]">{step.detail}</span>
+                        <span className="text-zinc-500 text-[9px] md:text-[10px]">{step.detail}</span>
                       </motion.div>
                     ))}
                   </div>
@@ -494,10 +497,10 @@ function TotalCounter() {
   
   return (
     <div className="flex items-baseline gap-2">
-      <span className="text-5xl sm:text-6xl lg:text-7xl font-semibold text-white tabular-nums">
+      <span className="text-4xl sm:text-5xl lg:text-7xl font-semibold text-white tabular-nums">
         {total.toLocaleString()}
       </span>
-      <span className="text-lg text-zinc-500">actions today</span>
+      <span className="text-sm md:text-lg text-zinc-500">actions today</span>
     </div>
   )
 }
@@ -506,19 +509,19 @@ export function WhatDuckiesDoesContent() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   
   return (
-    <div className="relative py-28 lg:py-40">
-      <div className="container mx-auto px-6 relative z-10">
+    <div className="relative py-16 md:py-28 lg:py-40">
+      <div className="container mx-auto px-5 md:px-6 relative z-10">
         {/* Header */}
-        <div className="mb-12 lg:mb-16">
+        <div className="mb-10 md:mb-12 lg:mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease }}
-            className="mb-6"
+            className="mb-4 md:mb-6"
           >
-            <div className="flex items-center gap-4">
-              <span className="text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
+            <div className="flex items-center gap-3 md:gap-4">
+              <span className="text-[10px] md:text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
                 Capabilities
               </span>
               <motion.div 
@@ -526,18 +529,18 @@ export function WhatDuckiesDoesContent() {
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.3, ease }}
-                className="h-px w-16 bg-gradient-to-r from-zinc-500/60 to-transparent origin-left"
+                className="h-px w-12 md:w-16 bg-gradient-to-r from-zinc-500/60 to-transparent origin-left"
               />
             </div>
           </motion.div>
 
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 lg:gap-8 mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 lg:gap-8 mb-6 md:mb-8">
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1, ease }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-medium text-white tracking-[-0.03em] leading-[1.1]"
+              className="text-3xl sm:text-5xl lg:text-6xl font-medium text-white tracking-[-0.03em] leading-[1.1]"
             >
               Not just answers.
               <br />
@@ -549,7 +552,7 @@ export function WhatDuckiesDoesContent() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2, ease }}
-              className="text-lg text-zinc-400 max-w-md lg:text-right"
+              className="text-base md:text-lg text-zinc-400 max-w-md lg:text-right"
             >
               Duckie doesn't explain how to fix problems — it actually fixes them. 
               Here's what's happening right now.
@@ -581,6 +584,7 @@ export function WhatDuckiesDoesContent() {
                     isExpanded={hoveredId === action.id}
                     onHover={() => setHoveredId(action.id)}
                     onLeave={() => setHoveredId(null)}
+                    onToggle={() => setHoveredId(hoveredId === action.id ? null : action.id)}
                   />
                 ))}
             </div>
@@ -588,9 +592,9 @@ export function WhatDuckiesDoesContent() {
         </div>
         
         {/* Mobile: 2 columns */}
-        <div className="flex lg:hidden gap-4">
+        <div className="flex lg:hidden gap-3 md:gap-4">
           {[0, 1].map((colIndex) => (
-            <div key={colIndex} className="flex-1 space-y-4">
+            <div key={colIndex} className="flex-1 space-y-3 md:space-y-4">
               {actions
                 .filter((_, i) => i % 2 === colIndex)
                 .map((action, idx) => (
@@ -601,6 +605,7 @@ export function WhatDuckiesDoesContent() {
                     isExpanded={hoveredId === action.id}
                     onHover={() => setHoveredId(action.id)}
                     onLeave={() => setHoveredId(null)}
+                    onToggle={() => setHoveredId(hoveredId === action.id ? null : action.id)}
                   />
                 ))}
             </div>
@@ -613,10 +618,10 @@ export function WhatDuckiesDoesContent() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.8 }}
-          className="mt-8 text-center"
+          className="mt-6 md:mt-8 text-center"
         >
-          <span className="text-xs text-zinc-600">
-            Hover any card to see a real example
+          <span className="text-[10px] md:text-xs text-zinc-600">
+            Tap any card to see a real example
           </span>
         </motion.div>
       </div>

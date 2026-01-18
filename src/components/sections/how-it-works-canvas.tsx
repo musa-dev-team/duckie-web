@@ -316,19 +316,19 @@ export function HowItWorksContent() {
   }
 
   return (
-    <div className="relative py-28 lg:py-40">
-      <div className="container mx-auto px-6">
+    <div className="relative py-16 md:py-28 lg:py-40">
+      <div className="container mx-auto px-5 md:px-6">
         {/* Header */}
-        <div className="mb-16 lg:mb-20">
+        <div className="mb-10 md:mb-16 lg:mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease }}
-            className="mb-6"
+            className="mb-4 md:mb-6"
           >
-            <div className="flex items-center gap-4">
-              <span className="text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
+            <div className="flex items-center gap-3 md:gap-4">
+              <span className="text-[10px] md:text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
                 How It Works
               </span>
               <motion.div 
@@ -336,18 +336,18 @@ export function HowItWorksContent() {
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.3, ease }}
-                className="h-px w-16 bg-gradient-to-r from-zinc-500/60 to-transparent origin-left"
+                className="h-px w-12 md:w-16 bg-gradient-to-r from-zinc-500/60 to-transparent origin-left"
               />
             </div>
           </motion.div>
 
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 lg:gap-8">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 lg:gap-8">
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1, ease }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-medium text-white tracking-[-0.03em] leading-[1.1]"
+              className="text-3xl sm:text-5xl lg:text-6xl font-medium text-white tracking-[-0.03em] leading-[1.1]"
             >
               {content.howItWorks.title}
             </motion.h2>
@@ -357,7 +357,7 @@ export function HowItWorksContent() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2, ease }}
-              className="text-lg text-zinc-400 max-w-md lg:text-right"
+              className="text-base md:text-lg text-zinc-400 max-w-md lg:text-right"
             >
               {content.howItWorks.subtitle}
             </motion.p>
@@ -396,12 +396,13 @@ export function HowItWorksContent() {
             )}
           </AnimatePresence>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-6 lg:gap-8">
             
             {/* LEFT: Activity Feed (4 cols) */}
-            <div className="lg:col-span-4 space-y-6">
+            <div className="lg:col-span-4 flex flex-col gap-4 md:gap-6">
               
               {/* Customer Message - appears when Understand step starts */}
+              {/* On mobile: order-2 (between steps and document), on desktop: order-1 (first) */}
               <AnimatePresence mode="wait">
                 {activeStep >= 0 && (
                   <motion.div 
@@ -410,7 +411,7 @@ export function HowItWorksContent() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -20, scale: 0.95 }}
                     transition={{ duration: 0.6, ease }}
-                    className="rounded-2xl p-5 overflow-hidden relative"
+                    className="rounded-xl md:rounded-2xl p-4 md:p-5 overflow-hidden relative order-2 md:order-1"
                     style={{
                       background: 'rgba(255,255,255,0.02)',
                       boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(255,255,255,0.04)',
@@ -435,13 +436,13 @@ export function HowItWorksContent() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.2, duration: 0.4 }}
-                      className="flex items-center gap-3 mb-3"
+                      className="flex items-center gap-2.5 md:gap-3 mb-2.5 md:mb-3"
                     >
                       <motion.div 
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ delay: 0.3, type: "spring", stiffness: 300 }}
-                        className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-semibold"
+                        className="w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center text-white text-[10px] md:text-xs font-semibold"
                         style={{ background: 'linear-gradient(135deg, rgb(180, 160, 175) 0%, rgb(160, 150, 170) 100%)' }}
                       >
                         JD
@@ -451,19 +452,19 @@ export function HowItWorksContent() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4, duration: 0.3 }}
                       >
-                        <div className="text-sm font-medium text-white">Jane Doe</div>
-                        <div className="text-xs text-zinc-500">Order #12345</div>
+                        <div className="text-xs md:text-sm font-medium text-white">Jane Doe</div>
+                        <div className="text-[10px] md:text-xs text-zinc-500">Order #12345</div>
                       </motion.div>
                       <motion.span 
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.5, type: "spring", stiffness: 300 }}
-                        className="ml-auto px-2 py-0.5 rounded text-[10px] font-medium bg-zinc-700/50 text-zinc-400"
+                        className="ml-auto px-1.5 md:px-2 py-0.5 rounded text-[9px] md:text-[10px] font-medium bg-zinc-700/50 text-zinc-400"
                       >
                         Urgent
                       </motion.span>
                     </motion.div>
-                    <p className="text-sm leading-relaxed">
+                    <p className="text-xs md:text-sm leading-relaxed">
                       <RevealingText 
                         key={`reveal-${understandKey}`}
                         text={`"I need a refund for my order. The package never arrived and it's been 2 weeks. This is really frustrating!"`}
@@ -476,11 +477,12 @@ export function HowItWorksContent() {
               </AnimatePresence>
               
               {/* Placeholder for message before it appears */}
+              {/* On mobile: order-2, on desktop: order-1 */}
               {activeStep < 0 && (
                 <motion.div 
                   initial={{ opacity: 0.3 }}
                   animate={{ opacity: 0.3 }}
-                  className="rounded-2xl p-5 border border-dashed border-white/10"
+                  className="rounded-2xl p-5 border border-dashed border-white/10 order-2 md:order-1"
                   style={{
                     background: 'rgba(255,255,255,0.01)',
                   }}
@@ -499,6 +501,8 @@ export function HowItWorksContent() {
                 </motion.div>
               )}
 
+              {/* Activity Timeline + Progress - On mobile: order-1 (first), on desktop: order-2 */}
+              <div className="order-1 md:order-2">
               {/* Activity Timeline */}
               <div className="relative">
                 {/* Steps that build up */}
@@ -517,11 +521,11 @@ export function HowItWorksContent() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.3 + index * 0.1, duration: 0.4 }}
-                        className="relative flex items-start gap-3 w-full text-left group cursor-pointer"
+                        className="relative flex items-start gap-2.5 md:gap-3 w-full text-left group cursor-pointer"
                       >
                         {/* Icon as timeline marker - ALWAYS solid background */}
                         <div 
-                          className="relative z-10 w-[30px] h-[30px] rounded-lg flex items-center justify-center shrink-0 transition-all duration-300"
+                          className="relative z-10 w-[26px] h-[26px] md:w-[30px] md:h-[30px] rounded-lg flex items-center justify-center shrink-0 transition-all duration-300"
                           style={{
                             background: isPast || isActive ? colors.bgSolid : '#18181b',
                             boxShadow: isActive 
@@ -532,7 +536,7 @@ export function HowItWorksContent() {
                           }}
                         >
                           <Icon 
-                            className="w-4 h-4 transition-colors" 
+                            className="w-3.5 h-3.5 md:w-4 md:h-4 transition-colors" 
                             style={{ 
                               color: isPast || isActive ? colors.text : '#71717a',
                             }}
@@ -540,10 +544,10 @@ export function HowItWorksContent() {
                         </div>
 
                         {/* Content */}
-                        <div className={`flex-1 min-w-0 pt-1 transition-opacity ${isFuture ? 'opacity-50' : 'opacity-100'}`}>
-                          <div className="flex items-center gap-2">
+                        <div className={`flex-1 min-w-0 pt-0.5 md:pt-1 transition-opacity ${isFuture ? 'opacity-50' : 'opacity-100'}`}>
+                          <div className="flex items-center gap-1.5 md:gap-2">
                             <span 
-                              className="text-sm font-medium transition-colors"
+                              className="text-xs md:text-sm font-medium transition-colors"
                               style={{ color: isPast || isActive ? 'white' : '#a1a1aa' }}
                             >
                               {step.label}
@@ -552,7 +556,7 @@ export function HowItWorksContent() {
                               <motion.span 
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                className="text-[10px] font-medium px-1.5 py-0.5 rounded"
+                                className="text-[9px] md:text-[10px] font-medium px-1 md:px-1.5 py-0.5 rounded"
                                 style={{ background: colors.bgSolid, color: colors.text }}
                               >
                                 Now
@@ -562,7 +566,7 @@ export function HowItWorksContent() {
                           
                           {/* Step subtitle - always visible, muted when not yet run */}
                           <p
-                            className={`text-xs mt-0.5 leading-relaxed transition-colors duration-300 ${
+                            className={`text-[10px] md:text-xs mt-0.5 leading-relaxed transition-colors duration-300 ${
                               isFuture ? 'text-zinc-700' : 'text-zinc-500'
                             }`}
                           >
@@ -580,16 +584,16 @@ export function HowItWorksContent() {
               </div>
 
               {/* Progress indicator */}
-              <div className="mt-6 pt-4 border-t border-white/5">
-                <div className="flex items-center justify-between text-xs text-zinc-500 mb-2">
+              <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-white/5">
+                <div className="flex items-center justify-between text-[10px] md:text-xs text-zinc-500 mb-1.5 md:mb-2">
                   <span>Progress</span>
                   <span className="tabular-nums">
                     {activeStep >= 0 ? Math.round((elapsedTime / 21000) * 100) : 0}%
                   </span>
                 </div>
-                <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                <div className="h-1.5 md:h-2 bg-zinc-800 rounded-full overflow-hidden">
                   <div
-                    className="h-2 rounded-full min-w-[2px]"
+                    className="h-1.5 md:h-2 rounded-full min-w-[2px]"
                     style={{ 
                       width: `${activeStep >= 0 ? Math.max(1, (elapsedTime / 21000) * 100) : 0}%`,
                       background: 'linear-gradient(90deg, #3f3f46, #71717a)',
@@ -597,12 +601,13 @@ export function HowItWorksContent() {
                   />
                 </div>
               </div>
+              </div>{/* End of Activity Timeline + Progress wrapper */}
             </div>
 
             {/* RIGHT: Live Document (8 cols) */}
             <div className="lg:col-span-8 flex">
               {/* Container with tree background image */}
-              <div className="relative rounded-2xl overflow-hidden flex-1 min-h-[500px]">
+              <div className="relative rounded-xl md:rounded-2xl overflow-hidden flex-1 min-h-[380px] md:min-h-[500px]">
                 {/* Background tree images - crossfade on step change */}
                 {[1, 3, 2, 4, 5].map((num, index) => (
                   <motion.div
@@ -628,7 +633,7 @@ export function HowItWorksContent() {
                 />
                 
                 {/* Runbook card floating on top of background */}
-                <div className="absolute inset-10 lg:inset-x-36 lg:inset-y-14">
+                <div className="absolute inset-5 md:inset-10 lg:inset-x-36 lg:inset-y-14">
                   <div 
                     className="h-full flex flex-col rounded-xl overflow-hidden"
                     style={{
@@ -637,27 +642,27 @@ export function HowItWorksContent() {
                     }}
                   >
                 {/* Document header */}
-                <div className="px-5 py-3 flex items-center justify-between border-b border-white/5 shrink-0 bg-black/30">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-4 h-4 text-zinc-500" />
-                    <span className="text-sm font-medium text-zinc-300">Runbook: Refund Request</span>
-                    <span className="text-[10px] text-zinc-600">•</span>
-                    <span className="text-[10px] text-zinc-500">TKT-12345</span>
+                <div className="px-3 md:px-5 py-2.5 md:py-3 flex items-center justify-between border-b border-white/5 shrink-0 bg-black/30">
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <FileText className="w-3.5 h-3.5 md:w-4 md:h-4 text-zinc-500" />
+                    <span className="text-xs md:text-sm font-medium text-zinc-300">Runbook: Refund Request</span>
+                    <span className="text-[10px] text-zinc-600 hidden md:inline">•</span>
+                    <span className="text-[10px] text-zinc-500 hidden md:inline">TKT-12345</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 md:gap-2">
                     <motion.div 
                       animate={{ opacity: [1, 0.5, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="w-2 h-2 rounded-full bg-emerald-400" 
+                      className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-400" 
                     />
-                    <span className="text-xs text-zinc-500">Processing</span>
+                    <span className="text-[10px] md:text-xs text-zinc-500">Processing</span>
                   </div>
                 </div>
 
                 {/* Scrolling document content - continuous timeline */}
                 <div 
                   ref={documentRef}
-                  className={`flex-1 p-6 ${isPaused ? 'overflow-y-auto' : 'overflow-y-hidden'}`}
+                  className={`flex-1 p-4 md:p-6 ${isPaused ? 'overflow-y-auto' : 'overflow-y-hidden'}`}
                   style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}
                 >
                   {/* Timeline starts after message streams in (step 0 starts at 0ms) */}

@@ -30,7 +30,7 @@ export default function Home() {
       
       {/* Light sections container with unified background */}
       <div 
-        className="relative bg-[#FFFFFF] pb-86"
+        className="relative bg-[#FFFFFF] pb-48 md:pb-86"
         data-theme="light"
       >
         {/* Subtle grid pattern */}
@@ -51,13 +51,13 @@ export default function Home() {
       </div>
       
       {/* CTA + Footer section with pond background */}
-      <div className="relative rounded-t-[3rem] overflow-hidden -mt-12 bg-[#FFFFFF]">
+      <div className="relative overflow-hidden -mt-4 md:-mt-12 bg-[#FFFFFF]">
         {/* Background image - using img tag so drop-shadow respects transparency */}
         <img 
           src="/images/pond-3.webp"
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover object-top"
+          className="absolute inset-0 w-full h-full object-cover pond-bg-image"
           style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.15))" }}
         />
         {/* Vignette overlay for bottom corners */}
@@ -73,7 +73,9 @@ export default function Home() {
         />
         {/* Content */}
         <div className="relative">
-          <CtaContent />
+          <div data-theme="light">
+            <CtaContent />
+          </div>
           <Footer />
         </div>
       </div>

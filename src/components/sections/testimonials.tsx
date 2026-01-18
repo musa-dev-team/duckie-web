@@ -37,20 +37,20 @@ export function TestimonialsContent() {
   const { featuredTestimonial } = content.socialProof
 
   return (
-    <div className="relative py-28 lg:py-36">
-      <div className="container relative mx-auto px-6 max-w-7xl">
+    <div className="relative py-16 md:py-28 lg:py-36">
+      <div className="container relative mx-auto px-5 md:px-6 max-w-7xl">
         {/* Large stat callout - top left */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease }}
-          className="mb-16 lg:mb-20"
+          className="mb-10 md:mb-16 lg:mb-20"
         >
           {featuredTestimonial.stat && (
-            <div className="flex items-baseline gap-4">
+            <div className="flex items-baseline gap-2 md:gap-4">
               <span 
-                className="text-[7rem] sm:text-[9rem] lg:text-[12rem] font-bold leading-none tracking-[-0.04em]"
+                className="text-[5rem] sm:text-[7rem] md:text-[9rem] lg:text-[12rem] font-bold leading-none tracking-[-0.04em]"
                 style={{
                   background: 'linear-gradient(180deg, #1a1a1a 0%, #4a4a4a 100%)',
                   WebkitBackgroundClip: 'text',
@@ -60,17 +60,17 @@ export function TestimonialsContent() {
                 <AnimatedStat value={parseInt(featuredTestimonial.stat.value)} suffix="%" />
               </span>
               <div className="flex flex-col gap-1">
-                <span className="text-sm font-medium text-[#666] uppercase tracking-[0.2em]">
+                <span className="text-[10px] md:text-sm font-medium text-[#666] uppercase tracking-[0.2em]">
                   {featuredTestimonial.stat.label}
                 </span>
-                <div className="h-px w-16 bg-[#1a1a1a]" />
+                <div className="h-px w-10 md:w-16 bg-[#1a1a1a]" />
               </div>
             </div>
           )}
         </motion.div>
 
         {/* Main content grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-end">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 lg:gap-8 items-end">
           {/* Left column - Quote and attribution */}
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -84,7 +84,7 @@ export function TestimonialsContent() {
               <motion.img 
                 src={featuredTestimonial.logo}
                 alt={featuredTestimonial.company}
-                className="h-6 w-auto mb-8 opacity-60"
+                className="h-5 md:h-6 w-auto mb-6 md:mb-8 opacity-60"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 0.6 }}
                 viewport={{ once: true }}
@@ -93,19 +93,19 @@ export function TestimonialsContent() {
             )}
 
             {/* Title/Quote */}
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-medium leading-[1.15] tracking-[-0.025em] text-[#1a1a1a] mb-8">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-medium leading-[1.15] tracking-[-0.025em] text-[#1a1a1a] mb-5 md:mb-8">
               {featuredTestimonial.title}
             </h2>
 
             {/* Description */}
-            <p className="text-lg text-[#555] leading-relaxed mb-10 max-w-xl">
+            <p className="text-base md:text-lg text-[#555] leading-relaxed mb-6 md:mb-10 max-w-xl">
               {featuredTestimonial.description}
             </p>
 
             {/* Author */}
-            <div className="flex items-center gap-5 pb-8 border-b border-[#e5e5e5]">
+            <div className="flex items-center gap-3 md:gap-5 pb-6 md:pb-8 border-b border-[#e5e5e5]">
               <div 
-                className="flex h-14 w-14 items-center justify-center rounded-full text-lg font-medium text-white"
+                className="flex h-11 w-11 md:h-14 md:w-14 items-center justify-center rounded-full text-base md:text-lg font-medium text-white"
                 style={{
                   background: '#1a1a1a',
                 }}
@@ -113,10 +113,10 @@ export function TestimonialsContent() {
                 {featuredTestimonial.author.charAt(0)}
               </div>
               <div>
-                <div className="text-base font-semibold text-[#1a1a1a]">
+                <div className="text-sm md:text-base font-semibold text-[#1a1a1a]">
                   {featuredTestimonial.author}
                 </div>
-                <div className="text-sm text-[#777]">
+                <div className="text-xs md:text-sm text-[#777]">
                   {featuredTestimonial.role}
                 </div>
               </div>
@@ -129,12 +129,12 @@ export function TestimonialsContent() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: 0.5, ease }}
-              className="inline-flex items-center gap-3 mt-8 text-sm font-semibold text-[#1a1a1a] group"
+              className="inline-flex items-center gap-2 md:gap-3 mt-6 md:mt-8 text-xs md:text-sm font-semibold text-[#1a1a1a] group"
             >
               <span>Read the case study</span>
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#1a1a1a] group-hover:bg-[#333] transition-colors">
+              <span className="flex items-center justify-center w-7 h-7 md:w-8 md:h-8 rounded-full bg-[#1a1a1a] group-hover:bg-[#333] transition-colors">
                 <svg 
-                  className="w-4 h-4 text-white" 
+                  className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" 
                   fill="none" 
                   viewBox="0 0 24 24" 
                   stroke="currentColor"
@@ -160,14 +160,14 @@ export function TestimonialsContent() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3, ease }}
-              className="absolute -right-4 lg:-right-8 top-8 lg:top-16 bottom-8 lg:bottom-16 w-[70%] rounded-2xl"
+              className="absolute -right-2 md:-right-4 lg:-right-8 top-4 md:top-8 lg:top-16 bottom-4 md:bottom-8 lg:bottom-16 w-[60%] md:w-[70%] rounded-xl md:rounded-2xl"
               style={{
                 background: 'linear-gradient(135deg, #FF6B35 0%, #F7931A 100%)',
               }}
             />
             
             <div 
-              className="relative aspect-[4/5] lg:aspect-[3/4] rounded-2xl overflow-hidden"
+              className="relative aspect-[4/5] lg:aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden"
               style={{
                 boxShadow: `
                   0 25px 50px -12px rgba(0,0,0,0.25),

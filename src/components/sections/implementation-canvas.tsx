@@ -181,45 +181,47 @@ function ConnectionsUI({ progress }: { progress: number }) {
 
   return (
     <div ref={containerRef} className="h-full flex flex-col relative">
-      {/* Cursor */}
-      <ConnectionCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      {/* Cursor - hidden on mobile */}
+      <div className="hidden md:block">
+        <ConnectionCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      </div>
 
       {/* App header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center">
-            <Link2 className="w-3.5 h-3.5 text-emerald-400" />
+      <div className="flex items-center justify-between px-3 md:px-4 py-2 md:py-3 border-b border-white/5">
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <div className="w-5 h-5 md:w-6 md:h-6 rounded bg-emerald-500/20 flex items-center justify-center">
+            <Link2 className="w-3 h-3 md:w-3.5 md:h-3.5 text-emerald-400" />
           </div>
-          <span className="text-sm font-medium text-white">Connections</span>
+          <span className="text-xs md:text-sm font-medium text-white">Connections</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 md:gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[10px] text-zinc-500">{connectedCount} connected</span>
+          <span className="text-[9px] md:text-[10px] text-zinc-500">{connectedCount} connected</span>
         </div>
       </div>
 
       {/* Stats row */}
-      <div className="px-4 py-3 border-b border-white/5">
-        <div className="grid grid-cols-3 gap-3">
+      <div className="px-3 md:px-4 py-2 md:py-3 border-b border-white/5">
+        <div className="grid grid-cols-3 gap-2 md:gap-3">
           {[
             { label: "Connected", value: connectedCount.toString(), color: "emerald" },
             { label: "Syncing", value: connectedCount.toString(), color: "sky" },
             { label: "Data Sources", value: "12", color: "white" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className={`text-lg font-bold ${
+              <div className={`text-base md:text-lg font-bold ${
                 stat.color === 'emerald' ? 'text-emerald-400' : 
                 stat.color === 'sky' ? 'text-sky-400' : 'text-white'
               }`}>{stat.value}</div>
-              <div className="text-[9px] text-zinc-500">{stat.label}</div>
+              <div className="text-[8px] md:text-[9px] text-zinc-500">{stat.label}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-3 overflow-auto custom-scrollbar" style={scrollbarStyles}>
-        <div className="grid grid-cols-2 gap-2">
+      <div className="flex-1 p-2 md:p-3 overflow-auto custom-scrollbar" style={scrollbarStyles}>
+        <div className="grid grid-cols-2 gap-1.5 md:gap-2">
           {integrations.map((int, idx) => (
             <motion.div
               key={int.name}
@@ -227,7 +229,7 @@ function ConnectionsUI({ progress }: { progress: number }) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 + idx * 0.05 }}
-              className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+              className={`p-2 md:p-2.5 rounded-lg md:rounded-xl border transition-all cursor-pointer ${
                 int.isTarget && phase === 'hovering' ? 'ring-1 ring-[#FF7A59]/40' : ''
               } ${
                 int.connected 
@@ -235,25 +237,25 @@ function ConnectionsUI({ progress }: { progress: number }) {
                   : 'border-dashed border-white/10 bg-transparent'
               }`}
             >
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2 md:gap-2.5">
                 <div 
-                  className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                  className="w-6 h-6 md:w-8 md:h-8 rounded-md md:rounded-lg flex items-center justify-center flex-shrink-0"
                   style={{ 
                     background: int.connected ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.03)',
                   }}
                 >
-                  <int.Icon className="w-4 h-4" style={int.color ? { color: int.color } : undefined} />
+                  <int.Icon className="w-3 h-3 md:w-4 md:h-4" style={int.color ? { color: int.color } : undefined} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-medium text-white truncate">{int.name}</div>
-                  <div className="text-[9px] text-zinc-500">
+                  <div className="text-[10px] md:text-xs font-medium text-white truncate">{int.name}</div>
+                  <div className="text-[8px] md:text-[9px] text-zinc-500">
                     {int.connected ? `Synced ${int.synced}` : "Not connected"}
                   </div>
                 </div>
                 {int.connected ? (
-                  <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                  <Check className="w-3 h-3 md:w-3.5 md:h-3.5 text-emerald-400 flex-shrink-0" />
                 ) : (
-                  <Plus className="w-3.5 h-3.5 text-zinc-600 flex-shrink-0" />
+                  <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 text-zinc-600 flex-shrink-0" />
                 )}
               </div>
             </motion.div>
@@ -262,13 +264,13 @@ function ConnectionsUI({ progress }: { progress: number }) {
       </div>
 
       {/* Bottom status */}
-      <div className="px-4 py-2.5 border-t border-white/5 bg-emerald-500/5">
+      <div className="px-3 md:px-4 py-2 md:py-2.5 border-t border-white/5 bg-emerald-500/5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Check className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-[10px] text-emerald-400">All systems syncing</span>
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <Check className="w-3 h-3 md:w-3.5 md:h-3.5 text-emerald-400" />
+            <span className="text-[9px] md:text-[10px] text-emerald-400">All systems syncing</span>
           </div>
-          <span className="text-[9px] text-zinc-500">Last sync: 1m ago</span>
+          <span className="text-[8px] md:text-[9px] text-zinc-500">Last sync: 1m ago</span>
         </div>
       </div>
 
@@ -279,72 +281,72 @@ function ConnectionsUI({ progress }: { progress: number }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-40 rounded-2xl"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 md:p-4 z-40 rounded-xl md:rounded-2xl"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="w-full max-w-[280px] rounded-xl overflow-hidden"
+              className="w-full max-w-[240px] md:max-w-[280px] rounded-lg md:rounded-xl overflow-hidden"
               style={{
                 background: 'linear-gradient(180deg, #1a1a1f 0%, #0f0f12 100%)',
                 boxShadow: '0 0 0 1px rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.5)',
               }}
             >
               {/* Modal header */}
-              <div className="px-4 py-3 border-b border-white/5 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#FF7A59]/20 flex items-center justify-center">
-                  <SiHubspot className="w-4 h-4 text-[#FF7A59]" />
+              <div className="px-3 md:px-4 py-2 md:py-3 border-b border-white/5 flex items-center gap-2 md:gap-3">
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-[#FF7A59]/20 flex items-center justify-center">
+                  <SiHubspot className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#FF7A59]" />
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-white">Connect HubSpot</div>
-                  <div className="text-[10px] text-zinc-500">OAuth 2.0</div>
+                  <div className="text-xs md:text-sm font-medium text-white">Connect HubSpot</div>
+                  <div className="text-[9px] md:text-[10px] text-zinc-500">OAuth 2.0</div>
                 </div>
               </div>
 
               {/* Modal content */}
-              <div className="p-4">
+              <div className="p-3 md:p-4">
                 {phase === 'connected' ? (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="text-center py-4"
+                    className="text-center py-3 md:py-4"
                   >
-                    <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-3">
-                      <Check className="w-6 h-6 text-emerald-400" />
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-2 md:mb-3">
+                      <Check className="w-5 h-5 md:w-6 md:h-6 text-emerald-400" />
                     </div>
-                    <div className="text-sm font-medium text-white mb-1">Connected!</div>
-                    <div className="text-[10px] text-zinc-500">Syncing your data...</div>
+                    <div className="text-xs md:text-sm font-medium text-white mb-1">Connected!</div>
+                    <div className="text-[9px] md:text-[10px] text-zinc-500">Syncing your data...</div>
                   </motion.div>
                 ) : phase === 'connecting' ? (
-                  <div className="text-center py-4">
+                  <div className="text-center py-3 md:py-4">
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="w-10 h-10 rounded-full border-2 border-[#FF7A59]/20 border-t-[#FF7A59] mx-auto mb-3"
+                      className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-[#FF7A59]/20 border-t-[#FF7A59] mx-auto mb-2 md:mb-3"
                     />
-                    <div className="text-[11px] text-zinc-400">Connecting...</div>
+                    <div className="text-[10px] md:text-[11px] text-zinc-400">Connecting...</div>
                   </div>
                 ) : (
                   <>
-                    <div className="text-[11px] text-zinc-400 mb-3">
+                    <div className="text-[10px] md:text-[11px] text-zinc-400 mb-2 md:mb-3">
                       Duckie will access:
                     </div>
-                    <div className="space-y-2 mb-4">
+                    <div className="space-y-1.5 md:space-y-2 mb-3 md:mb-4">
                       {["Contact records", "Ticket data", "Company info"].map((perm, i) => (
-                        <div key={i} className="flex items-center gap-2 text-[10px]">
-                          <Check className="w-3 h-3 text-emerald-400" />
+                        <div key={i} className="flex items-center gap-1.5 md:gap-2 text-[9px] md:text-[10px]">
+                          <Check className="w-2.5 h-2.5 md:w-3 md:h-3 text-emerald-400" />
                           <span className="text-zinc-300">{perm}</span>
                         </div>
                       ))}
                     </div>
                     <button
                       ref={authorizeButtonRef}
-                      className="w-full py-2.5 rounded-lg bg-[#FF7A59] text-white text-xs font-medium hover:bg-[#ff6a45] transition-colors"
+                      className="w-full py-2 md:py-2.5 rounded-lg bg-[#FF7A59] text-white text-[10px] md:text-xs font-medium hover:bg-[#ff6a45] transition-colors"
                     >
                       Authorize Connection
                     </button>
-                    <div className="text-[9px] text-zinc-600 text-center mt-2">
+                    <div className="text-[8px] md:text-[9px] text-zinc-600 text-center mt-1.5 md:mt-2">
                       You can revoke access anytime
                     </div>
                   </>
@@ -514,47 +516,50 @@ function TrainUI({ progress }: { progress: number }) {
 
   return (
     <div ref={containerRef} className="h-full flex flex-col relative">
-      <TrainCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      {/* Cursor - hidden on mobile */}
+      <div className="hidden md:block">
+        <TrainCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      </div>
 
       {/* App header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-purple-500/20 flex items-center justify-center">
-            <FileText className="w-3.5 h-3.5 text-purple-400" />
+      <div className="flex items-center justify-between px-3 md:px-4 py-2 md:py-3 border-b border-white/5">
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <div className="w-5 h-5 md:w-6 md:h-6 rounded bg-purple-500/20 flex items-center justify-center">
+            <FileText className="w-3 h-3 md:w-3.5 md:h-3.5 text-purple-400" />
           </div>
-          <span className="text-sm font-medium text-white">Training</span>
+          <span className="text-xs md:text-sm font-medium text-white">Training</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] text-zinc-500">{articleCount} articles indexed</span>
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <span className="text-[9px] md:text-[10px] text-zinc-500">{articleCount} articles</span>
           <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
         </div>
       </div>
 
       {/* Stats row */}
-      <div className="px-4 py-3 border-b border-white/5">
-        <div className="grid grid-cols-3 gap-3">
+      <div className="px-3 md:px-4 py-2 md:py-3 border-b border-white/5">
+        <div className="grid grid-cols-3 gap-2 md:gap-3">
           {[
-            { label: "Knowledge Articles", value: articleCount.toString(), color: "purple" },
+            { label: "Articles", value: articleCount.toString(), color: "purple" },
             { label: "Guidelines", value: "12", color: "emerald" },
             { label: "Runbooks", value: "8", color: "white" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className={`text-lg font-bold ${
+              <div className={`text-base md:text-lg font-bold ${
                 stat.color === 'purple' ? 'text-purple-400' : 
                 stat.color === 'emerald' ? 'text-emerald-400' : 'text-white'
               }`}>{stat.value}</div>
-              <div className="text-[9px] text-zinc-500">{stat.label}</div>
+              <div className="text-[8px] md:text-[9px] text-zinc-500">{stat.label}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Content - Two columns */}
-      <div className="flex-1 p-3 overflow-auto custom-scrollbar grid grid-cols-2 gap-3" style={scrollbarStyles}>
+      <div className="flex-1 p-2 md:p-3 overflow-auto custom-scrollbar grid grid-cols-2 gap-2 md:gap-3" style={scrollbarStyles}>
         {/* Left: Knowledge Sources */}
         <div>
-          <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Knowledge Sources</div>
-          <div className="space-y-2">
+          <div className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-wider mb-1.5 md:mb-2">Sources</div>
+          <div className="space-y-1.5 md:space-y-2">
             {knowledgeSources.map((source, idx) => {
               const isNotion = source.isTarget
               const isStringIcon = typeof source.icon === 'string'
@@ -566,46 +571,46 @@ function TrainUI({ progress }: { progress: number }) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 + idx * 0.05 }}
-                  className={`p-2.5 rounded-xl border transition-all ${
+                  className={`p-2 md:p-2.5 rounded-lg md:rounded-xl border transition-all ${
                     isNotion && phase === 'hoverNotion' ? 'ring-1 ring-purple-500/40' : ''
                   } ${
                     isNotion && (phase === 'syncing') ? 'border-purple-500/30 bg-purple-500/5' : 
                     'border-white/5 bg-white/[0.02]'
                   }`}
                 >
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
+                  <div className="flex items-center gap-1.5 md:gap-2">
+                    <div className="w-6 h-6 md:w-7 md:h-7 rounded-md md:rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
                       {isStringIcon ? (
-                        <span className="text-sm">{source.icon as string}</span>
+                        <span className="text-xs md:text-sm">{source.icon as string}</span>
                       ) : (
-                        <source.icon className="w-4 h-4 text-white" />
+                        <source.icon className="w-3 h-3 md:w-4 md:h-4 text-white" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs font-medium text-white">{source.name}</div>
-                      <div className="text-[9px] text-zinc-500">
+                      <div className="text-[10px] md:text-xs font-medium text-white">{source.name}</div>
+                      <div className="text-[8px] md:text-[9px] text-zinc-500">
                         {isNotion && phase === 'syncing' ? (
-                          <span className="text-purple-400">Syncing... {Math.round(syncProgress)}%</span>
+                          <span className="text-purple-400">{Math.round(syncProgress)}%</span>
                         ) : (
                           `${source.articles} articles`
                         )}
                       </div>
                     </div>
                     {source.synced ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                      <Check className="w-3 h-3 md:w-3.5 md:h-3.5 text-emerald-400 flex-shrink-0" />
                     ) : isNotion && phase === 'syncing' ? (
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        className="w-3.5 h-3.5 border border-purple-400/30 border-t-purple-400 rounded-full"
+                        className="w-3 h-3 md:w-3.5 md:h-3.5 border border-purple-400/30 border-t-purple-400 rounded-full"
                       />
                     ) : (
-                      <Plus className="w-3.5 h-3.5 text-zinc-600 flex-shrink-0" />
+                      <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 text-zinc-600 flex-shrink-0" />
                     )}
                   </div>
                   {/* Sync progress bar */}
                   {isNotion && phase === 'syncing' && (
-                    <div className="mt-2 h-1 rounded-full bg-white/5 overflow-hidden">
+                    <div className="mt-1.5 md:mt-2 h-0.5 md:h-1 rounded-full bg-white/5 overflow-hidden">
                       <motion.div 
                         className="h-full bg-purple-500 rounded-full"
                         style={{ width: `${syncProgress}%` }}
@@ -620,8 +625,8 @@ function TrainUI({ progress }: { progress: number }) {
 
         {/* Right: Guidelines */}
         <div>
-          <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Guidelines</div>
-          <div className="space-y-2">
+          <div className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-wider mb-1.5 md:mb-2">Guidelines</div>
+          <div className="space-y-1.5 md:space-y-2">
             {guidelines.map((guideline, idx) => (
               <motion.div
                 key={guideline.id}
@@ -629,7 +634,7 @@ function TrainUI({ progress }: { progress: number }) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + idx * 0.05 }}
-                className={`p-2.5 rounded-xl border transition-all ${
+                className={`p-2 md:p-2.5 rounded-lg md:rounded-xl border transition-all ${
                   guideline.isTarget && phase === 'hoverGuideline' ? 'ring-1 ring-purple-500/40' : ''
                 } ${
                   guideline.isTarget && (phase === 'editingGuideline' || phase === 'saved') 
@@ -637,20 +642,20 @@ function TrainUI({ progress }: { progress: number }) {
                     : 'border-white/5 bg-white/[0.02]'
                 }`}
               >
-                <div className="flex items-center justify-between mb-1">
-                  <div className="text-xs font-medium text-white">{guideline.title}</div>
+                <div className="flex items-center justify-between mb-0.5 md:mb-1">
+                  <div className="text-[10px] md:text-xs font-medium text-white">{guideline.title}</div>
                   {guideline.isTarget && phase === 'saved' && (
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-0.5 md:gap-1"
                     >
-                      <Check className="w-3 h-3 text-emerald-400" />
-                      <span className="text-[9px] text-emerald-400">Saved</span>
+                      <Check className="w-2.5 h-2.5 md:w-3 md:h-3 text-emerald-400" />
+                      <span className="text-[8px] md:text-[9px] text-emerald-400">Saved</span>
                     </motion.div>
                   )}
                 </div>
-                <div className={`text-[10px] ${
+                <div className={`text-[9px] md:text-[10px] line-clamp-2 ${
                   guideline.isTarget && phase === 'editingGuideline' ? 'text-white' : 'text-zinc-500'
                 }`}>
                   {guideline.description}
@@ -669,31 +674,31 @@ function TrainUI({ progress }: { progress: number }) {
       </div>
 
       {/* Bottom status */}
-      <div className="px-4 py-2.5 border-t border-white/5 bg-purple-500/5">
+      <div className="px-3 md:px-4 py-2 md:py-2.5 border-t border-white/5 bg-purple-500/5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 md:gap-2">
             {phase === 'saved' ? (
               <>
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-[10px] text-emerald-400">All changes saved</span>
+                <Check className="w-3 h-3 md:w-3.5 md:h-3.5 text-emerald-400" />
+                <span className="text-[9px] md:text-[10px] text-emerald-400">All saved</span>
               </>
             ) : phase === 'syncing' ? (
               <>
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="w-3.5 h-3.5 border border-purple-400/30 border-t-purple-400 rounded-full"
+                  className="w-3 h-3 md:w-3.5 md:h-3.5 border border-purple-400/30 border-t-purple-400 rounded-full"
                 />
-                <span className="text-[10px] text-purple-400">Syncing knowledge...</span>
+                <span className="text-[9px] md:text-[10px] text-purple-400">Syncing...</span>
               </>
             ) : (
               <>
-                <Check className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-[10px] text-purple-400">Training data ready</span>
+                <Check className="w-3 h-3 md:w-3.5 md:h-3.5 text-purple-400" />
+                <span className="text-[9px] md:text-[10px] text-purple-400">Ready</span>
               </>
             )}
           </div>
-          <span className="text-[9px] text-zinc-500">Last updated: 2m ago</span>
+          <span className="text-[8px] md:text-[9px] text-zinc-500">Updated: 2m ago</span>
         </div>
       </div>
     </div>
@@ -709,12 +714,7 @@ const BUILD_TIMELINE = {
   hoverWorkflow: 4000,    // 3500-4000: cursor moves to workflow
   clickWorkflow: 4300,    // 4000-4300: hover
   transitionToWf: 4500,   // 4300-4500: click
-  viewingWorkflow: 6500,  // 4500-6500: viewing workflow (2s)
-  moveToRunbook: 7000,    // 6500-7000: pause
-  hoverRunbook: 7500,     // 7000-7500: cursor moves to runbook node
-  clickRunbook: 7800,     // 7500-7800: hover
-  transitionToRb: 8000,   // 7800-8000: click
-  viewingRunbook2: 9000,  // 8000-9000: viewing second runbook
+  viewingWorkflow: 9000,  // 4500-9000: viewing workflow until end
   end: 9000,
 }
 
@@ -762,7 +762,7 @@ function ToolBadge({ children, color = "zinc" }: { children: React.ReactNode; co
 }
 
 function BuildUI({ progress }: { progress: number }) {
-  const [view, setView] = useState<'runbook' | 'workflow' | 'runbook2'>('runbook')
+  const [view, setView] = useState<'runbook' | 'workflow'>('runbook')
   const [cursorPos, setCursorPos] = useState({ x: 350, y: 280 })
   const [clicking, setClicking] = useState(false)
   const [scrollY, setScrollY] = useState(0)
@@ -810,28 +810,10 @@ function BuildUI({ progress }: { progress: number }) {
         setClicking(true)
         setTimeout(() => setClicking(false), 100)
       }
-    } else if (elapsed < BUILD_TIMELINE.viewingWorkflow) {
+    } else {
+      // Stay on workflow view until end
       setView('workflow')
       setHoveredElement(null)
-      setCursorPos({ x: 350, y: 200 })
-    } else if (elapsed < BUILD_TIMELINE.moveToRunbook) {
-      // Pause viewing workflow
-    } else if (elapsed < BUILD_TIMELINE.hoverRunbook) {
-      if (prevElapsed < BUILD_TIMELINE.moveToRunbook) {
-        const pos = getElementCenter(runbookNodeRef)
-        if (pos) setCursorPos(pos)
-      }
-    } else if (elapsed < BUILD_TIMELINE.clickRunbook) {
-      setHoveredElement('runbookNode')
-    } else if (elapsed < BUILD_TIMELINE.transitionToRb) {
-      if (prevElapsed < BUILD_TIMELINE.clickRunbook) {
-        setClicking(true)
-        setTimeout(() => setClicking(false), 100)
-      }
-    } else {
-      setView('runbook2')
-      setHoveredElement(null)
-      setScrollY(0)
       setCursorPos({ x: 350, y: 200 })
     }
   }, [progress, getElementCenter])
@@ -840,26 +822,26 @@ function BuildUI({ progress }: { progress: number }) {
   const renderRunbookContent = (title: string, isSecond: boolean, currentScrollY: number) => (
     <div className="h-full flex flex-col">
       {/* Header with back button and tools */}
-      <div className="px-4 py-3 border-b border-white/5">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-6 h-6 rounded bg-amber-500/20 flex items-center justify-center">
-            <FileText className="w-3.5 h-3.5 text-amber-400" />
+      <div className="px-3 md:px-4 py-2 md:py-3 border-b border-white/5">
+        <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
+          <div className="w-5 h-5 md:w-6 md:h-6 rounded bg-amber-500/20 flex items-center justify-center">
+            <FileText className="w-3 h-3 md:w-3.5 md:h-3.5 text-amber-400" />
           </div>
-          <span className="text-sm font-medium text-white">{title}</span>
+          <span className="text-xs md:text-sm font-medium text-white">{title}</span>
         </div>
         {/* Tools row */}
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-1 md:gap-1.5">
           <ToolBadge>Responder</ToolBadge>
-          <ToolBadge color="sky">Verify account</ToolBadge>
-          <ToolBadge color="emerald">Check status</ToolBadge>
-          <ToolBadge color="amber">Escalator</ToolBadge>
+          <ToolBadge color="sky">Verify</ToolBadge>
+          <ToolBadge color="emerald">Status</ToolBadge>
+          <ToolBadge color="amber">Escalate</ToolBadge>
         </div>
       </div>
 
       {/* Scrollable content */}
       <div className="flex-1 overflow-hidden relative">
         <div 
-          className="p-4 space-y-4 absolute inset-x-0"
+          className="p-3 md:p-4 space-y-3 md:space-y-4 absolute inset-x-0"
           style={{ 
             transform: `translateY(${-currentScrollY}px)`,
             transition: 'transform 0.3s ease-out'
@@ -867,74 +849,68 @@ function BuildUI({ progress }: { progress: number }) {
         >
           {/* Use when */}
           <div>
-            <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-1">Use when</div>
-            <div className="text-xs text-zinc-300">
+            <div className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-wider mb-0.5 md:mb-1">Use when</div>
+            <div className="text-[10px] md:text-xs text-zinc-300 line-clamp-2">
               {isSecond 
-                ? "A user needs help understanding their billing or charges."
-                : "A user cannot log in or requests help resetting their password."
+                ? "User needs help with billing or charges."
+                : "User cannot log in or needs password reset."
               }
             </div>
           </div>
 
           {/* Goal */}
           <div>
-            <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-1">Goal</div>
-            <div className="text-xs text-zinc-300">
+            <div className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-wider mb-0.5 md:mb-1">Goal</div>
+            <div className="text-[10px] md:text-xs text-zinc-300 line-clamp-2">
               {isSecond
-                ? "Help the user understand their charges and resolve billing concerns."
-                : "Help the user securely reset their password with minimal friction."
+                ? "Resolve billing concerns and clarify charges."
+                : "Securely reset password with minimal friction."
               }
             </div>
           </div>
 
           {/* Section 1 */}
           <div className="pt-2 border-t border-white/5">
-            <div className="text-sm font-medium text-white mb-2">1. Collect required info</div>
-            <div className="text-xs text-zinc-400 mb-2">
-              Use <ToolBadge>Responder</ToolBadge> to gather the following:
-            </div>
-            <ul className="text-xs text-zinc-400 space-y-1 ml-4">
-              <li className="flex items-start gap-2">
+            <div className="text-xs md:text-sm font-medium text-white mb-1.5 md:mb-2">1. Collect required info</div>
+            <ul className="text-[10px] md:text-xs text-zinc-400 space-y-0.5 md:space-y-1 ml-3 md:ml-4">
+              <li className="flex items-start gap-1.5 md:gap-2">
                 <span className="text-zinc-600">•</span>
                 <span>Account email</span>
               </li>
-              <li className="flex items-start gap-2">
+              <li className="flex items-start gap-1.5 md:gap-2">
                 <span className="text-zinc-600">•</span>
-                <span>Product or app name</span>
+                <span>Product name</span>
               </li>
-              <li className="flex items-start gap-2">
+              <li className="flex items-start gap-1.5 md:gap-2">
                 <span className="text-zinc-600">•</span>
-                <span>Error message shown (if any)</span>
+                <span>Error message</span>
               </li>
             </ul>
           </div>
 
           {/* Section 2 with workflow reference */}
           <div className="pt-2 border-t border-white/5">
-            <div className="text-sm font-medium text-white mb-2">2. Verify and process</div>
-            <div className="text-xs text-zinc-400 mb-3">
-              Follow the verification flow to confirm identity:
-            </div>
+            <div className="text-xs md:text-sm font-medium text-white mb-1.5 md:mb-2">2. Verify and process</div>
             
             {/* Workflow reference */}
             {!isSecond && (
               <div
                 ref={workflowRefRef}
-                className={`p-2.5 rounded-lg border transition-all cursor-pointer ${
+                className={`p-2 md:p-2.5 rounded-md md:rounded-lg border transition-all cursor-pointer ${
                   hoveredElement === 'workflow' 
                     ? 'border-rose-500/40 bg-rose-500/10 ring-1 ring-rose-500/30' 
                     : 'border-white/10 bg-white/[0.02] hover:border-white/20'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded bg-rose-500/20 flex items-center justify-center">
-                    <GitBranch className="w-3 h-3 text-rose-400" />
+                <div className="flex items-center gap-1.5 md:gap-2">
+                  <div className="w-5 h-5 md:w-6 md:h-6 rounded bg-rose-500/20 flex items-center justify-center">
+                    <GitBranch className="w-2.5 h-2.5 md:w-3 md:h-3 text-rose-400" />
                   </div>
                   <div className="flex-1">
-                    <div className="text-[11px] font-medium text-white">Identity Verification</div>
-                    <div className="text-[9px] text-zinc-500">Workflow • 4 nodes</div>
+                    <div className="text-[10px] md:text-[11px] font-medium text-white">Identity Verification</div>
+                    <div className="text-[8px] md:text-[9px] text-zinc-500">Workflow • 4 nodes</div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-zinc-600" />
+                  <ChevronRight className="w-3.5 h-3.5 md:w-4 md:h-4 text-zinc-600" />
                 </div>
               </div>
             )}
@@ -942,10 +918,9 @@ function BuildUI({ progress }: { progress: number }) {
 
           {/* Section 3 */}
           <div className="pt-2 border-t border-white/5">
-            <div className="text-sm font-medium text-white mb-2">3. Complete or escalate</div>
-            <div className="text-xs text-zinc-400">
-              If verified, use <ToolBadge color="emerald">Check status</ToolBadge> then proceed. 
-              Otherwise, use <ToolBadge color="amber">Escalator</ToolBadge> to hand off.
+            <div className="text-xs md:text-sm font-medium text-white mb-1 md:mb-2">3. Complete or escalate</div>
+            <div className="text-[10px] md:text-xs text-zinc-400 line-clamp-2">
+              If verified, proceed. Otherwise, escalate to human support.
             </div>
           </div>
         </div>
@@ -957,12 +932,12 @@ function BuildUI({ progress }: { progress: number }) {
   const renderWorkflowContent = () => (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-white/5 flex items-center gap-3">
-        <div className="w-6 h-6 rounded bg-rose-500/20 flex items-center justify-center">
-          <GitBranch className="w-3.5 h-3.5 text-rose-400" />
+      <div className="px-3 md:px-4 py-2 md:py-3 border-b border-white/5 flex items-center gap-2 md:gap-3">
+        <div className="w-5 h-5 md:w-6 md:h-6 rounded bg-rose-500/20 flex items-center justify-center">
+          <GitBranch className="w-3 h-3 md:w-3.5 md:h-3.5 text-rose-400" />
         </div>
-        <span className="text-sm font-medium text-white">Identity Verification</span>
-        <span className="text-[10px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300">Workflow</span>
+        <span className="text-xs md:text-sm font-medium text-white">Identity Verification</span>
+        <span className="text-[9px] md:text-[10px] px-1.5 md:px-2 py-0.5 rounded bg-rose-500/20 text-rose-300">Workflow</span>
       </div>
 
       {/* Canvas with dot grid */}
@@ -970,11 +945,18 @@ function BuildUI({ progress }: { progress: number }) {
         className="flex-1 relative overflow-hidden flex items-center justify-center"
         style={{
           backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px)`,
-          backgroundSize: '24px 24px',
+          backgroundSize: '20px 20px',
         }}
       >
-        {/* Centered workflow container */}
-        <div className="relative" style={{ width: 520, height: 200 }}>
+        {/* Centered workflow container - scaled down on mobile */}
+        <div className="flex items-center justify-center w-full h-full">
+          <div 
+            className="relative scale-[0.5] md:scale-100"
+            style={{ 
+              width: 520, 
+              height: 200,
+            }}
+          >
           {/* SVG layer for edges */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: 'visible' }}>
             {/* Draw lines first */}
@@ -1048,6 +1030,7 @@ function BuildUI({ progress }: { progress: number }) {
             <FileText className="w-4 h-4 text-emerald-400" />
             <span className="text-xs text-white">Billing Help</span>
           </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1055,7 +1038,10 @@ function BuildUI({ progress }: { progress: number }) {
 
   return (
     <div ref={containerRef} className="h-full flex flex-col relative">
-      <BuildCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      {/* Cursor - hidden on mobile */}
+      <div className="hidden md:block">
+        <BuildCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      </div>
       
       <AnimatePresence mode="wait">
         {view === 'runbook' && (
@@ -1078,17 +1064,6 @@ function BuildUI({ progress }: { progress: number }) {
             className="h-full"
           >
             {renderWorkflowContent()}
-          </motion.div>
-        )}
-        {view === 'runbook2' && (
-          <motion.div
-            key="runbook2"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}
-            className="h-full"
-          >
-            {renderRunbookContent("Billing Help", true, 0)}
           </motion.div>
         )}
       </AnimatePresence>
@@ -1255,42 +1230,47 @@ function TestUI({ progress }: { progress: number }) {
 
   return (
     <div ref={containerRef} className="h-full flex relative">
-      <TestCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      {/* Cursor - hidden on mobile */}
+      <div className="hidden md:block">
+        <TestCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      </div>
 
       {/* Left sidebar - Test config */}
-      <div className="w-48 border-r border-white/5 p-3 flex flex-col">
-        <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Test Suite</div>
-        <div className="space-y-1.5 mb-4">
+      <div className="w-32 md:w-48 border-r border-white/5 p-2 md:p-3 flex flex-col">
+        <div className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-wider mb-1.5 md:mb-2">Test Suite</div>
+        <div className="space-y-1 md:space-y-1.5 mb-3 md:mb-4">
           {[
-            { name: 'Historic Tickets', count: 127, selected: true },
+            { name: 'Historic', count: 127, selected: true },
             { name: 'Edge Cases', count: 34 },
             { name: 'Regression', count: 56 },
           ].map((suite, idx) => (
             <div 
               key={idx}
-              className={`px-2.5 py-2 rounded-lg text-xs cursor-pointer transition-colors ${
+              className={`px-2 md:px-2.5 py-1.5 md:py-2 rounded-md md:rounded-lg text-[10px] md:text-xs cursor-pointer transition-colors ${
                 suite.selected 
                   ? 'bg-sky-500/10 text-sky-300 border border-sky-500/20' 
                   : 'text-zinc-400 hover:bg-white/5'
               }`}
             >
               <div className="flex items-center justify-between">
-                <span>{suite.name}</span>
-                <span className={suite.selected ? 'text-sky-400' : 'text-zinc-600'}>{suite.count}</span>
+                <span className="truncate">{suite.name}</span>
+                <span className={`ml-1 ${suite.selected ? 'text-sky-400' : 'text-zinc-600'}`}>{suite.count}</span>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Agent</div>
-        <div className="px-2.5 py-2 rounded-lg bg-white/5 text-xs text-zinc-300 mb-4">
-          Support Agent v2.1
+        <div className="hidden md:block">
+          <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Agent</div>
+          <div className="px-2.5 py-2 rounded-lg bg-white/5 text-xs text-zinc-300 mb-4">
+            Support Agent v2.1
+          </div>
         </div>
 
         <div className="mt-auto">
           <button 
             ref={runButtonRef}
-            className={`w-full py-2.5 rounded-lg text-xs font-medium flex items-center justify-center gap-2 transition-all ${
+            className={`w-full py-2 md:py-2.5 rounded-md md:rounded-lg text-[10px] md:text-xs font-medium flex items-center justify-center gap-1.5 md:gap-2 transition-all ${
               testsRunning && !testsComplete
                 ? 'bg-sky-500/20 text-sky-300'
                 : 'bg-sky-500 text-white hover:bg-sky-600'
@@ -1301,14 +1281,15 @@ function TestUI({ progress }: { progress: number }) {
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                  className="w-3 h-3 border-2 border-sky-300 border-t-transparent rounded-full"
+                  className="w-2.5 h-2.5 md:w-3 md:h-3 border-2 border-sky-300 border-t-transparent rounded-full"
                 />
-                Running...
+                <span className="hidden md:inline">Running...</span>
               </>
             ) : (
               <>
-                <Play className="w-3.5 h-3.5" />
-                Run Batch Test
+                <Play className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                <span className="hidden md:inline">Run Batch Test</span>
+                <span className="md:hidden">Run</span>
               </>
             )}
           </button>
@@ -1318,24 +1299,24 @@ function TestUI({ progress }: { progress: number }) {
       {/* Main content */}
       <div className="flex-1 flex flex-col">
         {/* Header with stats */}
-        <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded bg-sky-500/20 flex items-center justify-center">
-              <FlaskConical className="w-3.5 h-3.5 text-sky-400" />
+        <div className="px-3 md:px-4 py-2 md:py-3 border-b border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className="w-5 h-5 md:w-6 md:h-6 rounded bg-sky-500/20 flex items-center justify-center">
+              <FlaskConical className="w-3 h-3 md:w-3.5 md:h-3.5 text-sky-400" />
             </div>
-            <span className="text-sm font-medium text-white">Batch Testing</span>
+            <span className="text-xs md:text-sm font-medium text-white">Batch Testing</span>
           </div>
           
           {testsRunning && (
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex items-center gap-4"
+              className="flex items-center gap-2 md:gap-4"
             >
-              <div className="text-xs text-zinc-400">
-                <span className="text-white font-medium">{Math.min(completedTests, totalTests)}</span> / {totalTests} tests
+              <div className="text-[10px] md:text-xs text-zinc-400">
+                <span className="text-white font-medium">{Math.min(completedTests, totalTests)}</span>/{totalTests}
               </div>
-              <div className="w-32 h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div className="w-16 md:w-32 h-1 md:h-1.5 bg-white/10 rounded-full overflow-hidden">
                 <motion.div 
                   className="h-full bg-sky-500 rounded-full"
                   style={{ width: `${(Math.min(completedTests, totalTests) / totalTests) * 100}%` }}
@@ -1352,28 +1333,28 @@ function TestUI({ progress }: { progress: number }) {
             {!testsComplete ? (
               <div className="h-full flex items-center justify-center">
                 {testsRunning ? (
-                  <div className="text-center">
+                  <div className="text-center px-4">
                     <motion.div
                       animate={{ scale: [1, 1.1, 1] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
-                      className="w-16 h-16 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center mx-auto mb-4"
+                      className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center mx-auto mb-3 md:mb-4"
                     >
-                      <FlaskConical className="w-8 h-8 text-sky-400" />
+                      <FlaskConical className="w-6 h-6 md:w-8 md:h-8 text-sky-400" />
                     </motion.div>
-                    <div className="text-sm text-white mb-2">Running tests on historic tickets...</div>
-                    <div className="text-xs text-zinc-500">Evaluating agent responses against expected outcomes</div>
+                    <div className="text-xs md:text-sm text-white mb-1 md:mb-2">Running tests...</div>
+                    <div className="text-[10px] md:text-xs text-zinc-500">Evaluating responses</div>
                   </div>
                 ) : (
-                  <div className="text-center text-zinc-500">
-                    <FlaskConical className="w-10 h-10 mx-auto mb-3 opacity-30" />
-                    <div className="text-sm">Select a test suite and click Run</div>
+                  <div className="text-center text-zinc-500 px-4">
+                    <FlaskConical className="w-8 h-8 md:w-10 md:h-10 mx-auto mb-2 md:mb-3 opacity-30" />
+                    <div className="text-xs md:text-sm">Select a suite and click Run</div>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="p-3">
+              <div className="p-2 md:p-3">
                 {/* Summary cards */}
-                <div className="grid grid-cols-4 gap-2 mb-3">
+                <div className="grid grid-cols-4 gap-1.5 md:gap-2 mb-2 md:mb-3">
                   {[
                     { label: 'Total', value: '127', color: 'zinc' },
                     { label: 'Passed', value: '119', color: 'emerald' },
@@ -1385,10 +1366,10 @@ function TestUI({ progress }: { progress: number }) {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="p-2 rounded-lg bg-white/[0.02] border border-white/5"
+                      className="p-1.5 md:p-2 rounded-md md:rounded-lg bg-white/[0.02] border border-white/5"
                     >
-                      <div className="text-[9px] text-zinc-500 uppercase tracking-wider">{stat.label}</div>
-                      <div className={`text-base font-semibold ${
+                      <div className="text-[8px] md:text-[9px] text-zinc-500 uppercase tracking-wider">{stat.label}</div>
+                      <div className={`text-sm md:text-base font-semibold ${
                         stat.color === 'emerald' ? 'text-emerald-400' :
                         stat.color === 'red' ? 'text-red-400' :
                         stat.color === 'amber' ? 'text-amber-400' :
@@ -1398,44 +1379,61 @@ function TestUI({ progress }: { progress: number }) {
                   ))}
                 </div>
 
-                {/* Results table */}
-                <div className="rounded-lg border border-white/5 overflow-hidden">
-                  <div className="grid grid-cols-12 gap-2 px-3 py-1.5 bg-white/[0.02] text-[9px] text-zinc-500 uppercase tracking-wider">
+                {/* Results table - simplified on mobile */}
+                <div className="rounded-md md:rounded-lg border border-white/5 overflow-hidden">
+                  <div className="hidden md:grid grid-cols-12 gap-2 px-3 py-1.5 bg-white/[0.02] text-[9px] text-zinc-500 uppercase tracking-wider">
                     <div className="col-span-2">Ticket</div>
                     <div className="col-span-5">Query</div>
                     <div className="col-span-3">Score</div>
                     <div className="col-span-2">Status</div>
                   </div>
-                  {testResults.map((result, idx) => (
+                  {testResults.slice(0, 4).map((result, idx) => (
                     <motion.div
                       key={idx}
                       ref={idx === 2 ? resultRowRef : null}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.2 + idx * 0.05 }}
-                      className={`grid grid-cols-12 gap-2 px-3 py-2 border-t border-white/5 text-xs cursor-pointer transition-colors ${
+                      className={`px-2 md:px-3 py-1.5 md:py-2 border-t border-white/5 cursor-pointer transition-colors ${
                         selectedResult === idx 
                           ? 'bg-sky-500/10 border-l-2 border-l-sky-500' 
                           : 'hover:bg-white/[0.02]'
                       }`}
                     >
-                      <div className="col-span-2 text-zinc-400 font-mono text-[10px]">{result.id}</div>
-                      <div className="col-span-5 text-zinc-300 truncate text-[11px]">{result.query}</div>
-                      <div className="col-span-3">
-                        <span className={`font-medium ${
-                          result.score >= 90 ? 'text-emerald-400' :
-                          result.score >= 70 ? 'text-amber-400' :
-                          'text-red-400'
-                        }`}>{result.score}%</span>
+                      {/* Mobile layout */}
+                      <div className="md:hidden flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[10px] text-zinc-300 truncate">{result.query}</div>
+                          <div className="text-[9px] text-zinc-500 font-mono">{result.id}</div>
+                        </div>
+                        <div className="flex items-center gap-2 ml-2">
+                          <span className={`text-[10px] font-medium ${
+                            result.score >= 90 ? 'text-emerald-400' :
+                            result.score >= 70 ? 'text-amber-400' :
+                            'text-red-400'
+                          }`}>{result.score}%</span>
+                        </div>
                       </div>
-                      <div className="col-span-2">
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] ${
-                          result.status === 'pass' ? 'bg-emerald-500/20 text-emerald-400' :
-                          result.status === 'review' ? 'bg-amber-500/20 text-amber-400' :
-                          'bg-red-500/20 text-red-400'
-                        }`}>
-                          {result.status === 'pass' ? '✓ Pass' : result.status === 'review' ? '? Review' : '✗ Fail'}
-                        </span>
+                      {/* Desktop layout */}
+                      <div className="hidden md:grid grid-cols-12 gap-2 text-xs">
+                        <div className="col-span-2 text-zinc-400 font-mono text-[10px]">{result.id}</div>
+                        <div className="col-span-5 text-zinc-300 truncate text-[11px]">{result.query}</div>
+                        <div className="col-span-3">
+                          <span className={`font-medium ${
+                            result.score >= 90 ? 'text-emerald-400' :
+                            result.score >= 70 ? 'text-amber-400' :
+                            'text-red-400'
+                          }`}>{result.score}%</span>
+                        </div>
+                        <div className="col-span-2">
+                          <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+                            result.status === 'pass' ? 'bg-emerald-500/20 text-emerald-400' :
+                            result.status === 'review' ? 'bg-amber-500/20 text-amber-400' :
+                            'bg-red-500/20 text-red-400'
+                          }`}>
+                            {result.status === 'pass' ? '✓ Pass' : result.status === 'review' ? '? Review' : '✗ Fail'}
+                          </span>
+                        </div>
                       </div>
                     </motion.div>
                   ))}
@@ -1444,33 +1442,32 @@ function TestUI({ progress }: { progress: number }) {
             )}
           </div>
 
-          {/* Right detail panel - slides in when result selected */}
+          {/* Right detail panel - slides in when result selected, hidden on mobile */}
           <AnimatePresence>
             {selectedResult !== null && (
               <motion.div
                 initial={{ width: 0, opacity: 0 }}
-                animate={{ width: 220, opacity: 1 }}
+                animate={{ width: 180, opacity: 1 }}
                 exit={{ width: 0, opacity: 0 }}
                 transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="border-l border-white/5 overflow-hidden flex-shrink-0"
+                className="hidden md:block border-l border-white/5 overflow-hidden flex-shrink-0"
               >
-                <div className="w-[220px] h-full flex flex-col p-3">
+                <div className="w-[180px] h-full flex flex-col p-2.5">
                   {/* Header */}
-                  <div className="mb-3">
-                    <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-1">Review Result</div>
-                    <div className="text-sm font-medium text-white leading-tight">
+                  <div className="mb-2">
+                    <div className="text-[9px] text-zinc-500 uppercase tracking-wider mb-0.5">Review</div>
+                    <div className="text-xs font-medium text-white leading-tight line-clamp-2">
                       {testResults[selectedResult].query}
                     </div>
-                    <div className="text-[10px] text-zinc-500 mt-1">{testResults[selectedResult].id}</div>
                   </div>
 
                   {/* Score */}
-                  <div className="mb-3 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                  <div className="mb-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/20">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-[10px] text-amber-400 uppercase tracking-wider">Confidence</span>
-                      <span className="text-lg font-bold text-amber-400">{testResults[selectedResult].score}%</span>
+                      <span className="text-[9px] text-amber-400 uppercase">Confidence</span>
+                      <span className="text-base font-bold text-amber-400">{testResults[selectedResult].score}%</span>
                     </div>
-                    <div className="h-1.5 bg-amber-500/20 rounded-full overflow-hidden">
+                    <div className="h-1 bg-amber-500/20 rounded-full overflow-hidden">
                       <div 
                         className="h-full bg-amber-400 rounded-full"
                         style={{ width: `${testResults[selectedResult].score}%` }}
@@ -1479,40 +1476,40 @@ function TestUI({ progress }: { progress: number }) {
                   </div>
 
                   {/* Expected vs Actual */}
-                  <div className="space-y-2 mb-4 flex-1">
-                    <div className="p-2 rounded-lg bg-white/[0.02]">
-                      <div className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1">Expected</div>
-                      <div className="text-[11px] text-zinc-300">{testResults[selectedResult].expected}</div>
+                  <div className="space-y-1.5 mb-3 flex-1">
+                    <div className="p-1.5 rounded-md bg-white/[0.02]">
+                      <div className="text-[8px] text-zinc-500 uppercase mb-0.5">Expected</div>
+                      <div className="text-[10px] text-zinc-300 line-clamp-2">{testResults[selectedResult].expected}</div>
                     </div>
-                    <div className="p-2 rounded-lg bg-sky-500/5 border border-sky-500/20">
-                      <div className="text-[9px] text-sky-400 uppercase tracking-wider mb-1">Agent Response</div>
-                      <div className="text-[11px] text-zinc-300">{testResults[selectedResult].actual}</div>
+                    <div className="p-1.5 rounded-md bg-sky-500/5 border border-sky-500/20">
+                      <div className="text-[8px] text-sky-400 uppercase mb-0.5">Response</div>
+                      <div className="text-[10px] text-zinc-300 line-clamp-2">{testResults[selectedResult].actual}</div>
                     </div>
                   </div>
 
                   {/* Action buttons */}
-                  <div className="space-y-2 mt-auto">
+                  <div className="space-y-1.5 mt-auto">
                     {!scoreSubmitted ? (
                       <>
                         <button 
                           ref={scoreButtonRef}
-                          className="w-full py-2 rounded-lg text-xs font-medium bg-emerald-500 text-white hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
+                          className="w-full py-1.5 rounded-md text-[10px] font-medium bg-emerald-500 text-white hover:bg-emerald-600 transition-colors flex items-center justify-center gap-1.5"
                         >
-                          <Check className="w-3.5 h-3.5" />
-                          Approve Response
+                          <Check className="w-3 h-3" />
+                          Approve
                         </button>
-                        <button className="w-full py-2 rounded-lg text-xs bg-white/5 text-zinc-400 hover:bg-white/10 transition-colors">
-                          Mark as Fail
+                        <button className="w-full py-1.5 rounded-md text-[10px] bg-white/5 text-zinc-400 hover:bg-white/10 transition-colors">
+                          Fail
                         </button>
                       </>
                     ) : (
                       <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="w-full py-2.5 rounded-lg text-xs font-medium bg-emerald-500/20 text-emerald-400 flex items-center justify-center gap-2"
+                        className="w-full py-2 rounded-md text-[10px] font-medium bg-emerald-500/20 text-emerald-400 flex items-center justify-center gap-1.5"
                       >
-                        <Check className="w-4 h-4" />
-                        Response Approved
+                        <Check className="w-3.5 h-3.5" />
+                        Approved
                       </motion.div>
                     )}
                   </div>
@@ -1668,27 +1665,30 @@ function DeployUI({ progress }: { progress: number }) {
 
   return (
     <div ref={containerRef} className="h-full flex relative">
-      <DeployCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      {/* Cursor - hidden on mobile */}
+      <div className="hidden md:block">
+        <DeployCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
+      </div>
 
       {/* Sidebar */}
-      <div className="w-44 border-r border-white/5 flex flex-col bg-black/20">
-        <div className="p-3 border-b border-white/5">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-              <Rocket className="w-3.5 h-3.5 text-white" />
+      <div className="w-28 md:w-44 border-r border-white/5 flex flex-col bg-black/20">
+        <div className="p-2 md:p-3 border-b border-white/5">
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <div className="w-5 h-5 md:w-6 md:h-6 rounded-md md:rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+              <Rocket className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
             </div>
-            <span className="text-xs font-semibold text-white">Deployments</span>
+            <span className="text-[10px] md:text-xs font-semibold text-white">Deploy</span>
           </div>
         </div>
-        <div className="flex-1 p-2 space-y-1">
-          <div className="px-2.5 py-2 rounded-lg bg-white/5 border border-white/10">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded bg-[#03363D] flex items-center justify-center">
-                <SiZendesk className="w-3 h-3 text-white" />
+        <div className="flex-1 p-1.5 md:p-2 space-y-1">
+          <div className="px-2 md:px-2.5 py-1.5 md:py-2 rounded-md md:rounded-lg bg-white/5 border border-white/10">
+            <div className="flex items-center gap-1.5 md:gap-2">
+              <div className="w-4 h-4 md:w-5 md:h-5 rounded bg-[#03363D] flex items-center justify-center">
+                <SiZendesk className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-[10px] font-medium text-white truncate">Zendesk</div>
-                <div className="text-[8px] text-zinc-500">Support</div>
+                <div className="text-[9px] md:text-[10px] font-medium text-white truncate">Zendesk</div>
+                <div className="text-[7px] md:text-[8px] text-zinc-500">Support</div>
               </div>
               {isDeployed && (
                 <motion.div
@@ -1699,7 +1699,7 @@ function DeployUI({ progress }: { progress: number }) {
               )}
             </div>
           </div>
-          <div className="px-2.5 py-2 rounded-lg hover:bg-white/5 transition-colors opacity-40">
+          <div className="hidden md:block px-2.5 py-2 rounded-lg hover:bg-white/5 transition-colors opacity-40">
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded bg-zinc-700 flex items-center justify-center">
                 <MessageSquare className="w-3 h-3 text-zinc-400" />
@@ -1710,7 +1710,7 @@ function DeployUI({ progress }: { progress: number }) {
               </div>
             </div>
           </div>
-          <div className="px-2.5 py-2 rounded-lg hover:bg-white/5 transition-colors opacity-40">
+          <div className="hidden md:block px-2.5 py-2 rounded-lg hover:bg-white/5 transition-colors opacity-40">
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded bg-zinc-700 flex items-center justify-center">
                 <Mail className="w-3 h-3 text-zinc-400" />
@@ -1729,15 +1729,15 @@ function DeployUI({ progress }: { progress: number }) {
         {!isDeployed ? (
           // Pre-deployment view
           <>
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5">
-              <div className="flex items-center gap-2">
-                <SiZendesk className="w-4 h-4 text-[#03363D]" />
-                <span className="text-xs font-medium text-white">Zendesk Deployment</span>
+            <div className="flex items-center justify-between px-3 md:px-4 py-2 md:py-2.5 border-b border-white/5">
+              <div className="flex items-center gap-1.5 md:gap-2">
+                <SiZendesk className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#03363D]" />
+                <span className="text-[10px] md:text-xs font-medium text-white">Zendesk</span>
               </div>
-              <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">Ready</span>
+              <span className="text-[8px] md:text-[9px] px-1.5 md:px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">Ready</span>
             </div>
 
-            <div className="flex-1 p-4 overflow-auto">
+            <div className="flex-1 p-2 md:p-4 overflow-auto">
               {isDeploying ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -1747,59 +1747,54 @@ function DeployUI({ progress }: { progress: number }) {
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                    className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mb-3"
+                    className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mb-2 md:mb-3"
                   >
-                    <Rocket className="w-6 h-6 text-amber-400" />
+                    <Rocket className="w-5 h-5 md:w-6 md:h-6 text-amber-400" />
                   </motion.div>
-                  <div className="text-sm text-white mb-1">Deploying...</div>
-                  <div className="text-[10px] text-zinc-500">Connecting to Zendesk API</div>
+                  <div className="text-xs md:text-sm text-white mb-1">Deploying...</div>
+                  <div className="text-[9px] md:text-[10px] text-zinc-500">Connecting to API</div>
                 </motion.div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2 md:space-y-3">
                   {/* Configuration summary */}
-                  <div className="rounded-lg border border-white/5 overflow-hidden">
-                    <div className="px-3 py-2 bg-white/[0.02] border-b border-white/5">
-                      <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wider">Configuration</span>
+                  <div className="rounded-md md:rounded-lg border border-white/5 overflow-hidden">
+                    <div className="px-2 md:px-3 py-1.5 md:py-2 bg-white/[0.02] border-b border-white/5">
+                      <span className="text-[9px] md:text-[10px] font-medium text-zinc-400 uppercase tracking-wider">Config</span>
                     </div>
-                    <div className="p-3 space-y-2">
+                    <div className="p-2 md:p-3 space-y-1.5 md:space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] text-zinc-500">Agent</span>
-                        <span className="text-[10px] text-white">Support Agent v1.2</span>
+                        <span className="text-[9px] md:text-[10px] text-zinc-500">Agent</span>
+                        <span className="text-[9px] md:text-[10px] text-white">Support v1.2</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] text-zinc-500">Mode</span>
-                        <span className="text-[10px] text-amber-400 flex items-center gap-1">
-                          <Zap className="w-3 h-3" />
-                          Auto-respond
+                        <span className="text-[9px] md:text-[10px] text-zinc-500">Mode</span>
+                        <span className="text-[9px] md:text-[10px] text-amber-400 flex items-center gap-0.5 md:gap-1">
+                          <Zap className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                          Auto
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] text-zinc-500">Guardrails</span>
-                        <span className="text-[10px] text-emerald-400">3 active</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] text-zinc-500">Escalation</span>
-                        <span className="text-[10px] text-white">Enabled</span>
+                        <span className="text-[9px] md:text-[10px] text-zinc-500">Guardrails</span>
+                        <span className="text-[9px] md:text-[10px] text-emerald-400">3 active</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Pre-flight checks */}
-                  <div className="rounded-lg border border-white/5 overflow-hidden">
-                    <div className="px-3 py-2 bg-white/[0.02] border-b border-white/5">
-                      <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wider">Pre-flight Checks</span>
+                  <div className="rounded-md md:rounded-lg border border-white/5 overflow-hidden">
+                    <div className="px-2 md:px-3 py-1.5 md:py-2 bg-white/[0.02] border-b border-white/5">
+                      <span className="text-[9px] md:text-[10px] font-medium text-zinc-400 uppercase tracking-wider">Checks</span>
                     </div>
-                    <div className="p-3 space-y-1.5">
+                    <div className="p-2 md:p-3 space-y-1 md:space-y-1.5">
                       {[
-                        { label: 'API Connection', status: 'passed' },
-                        { label: 'Authentication', status: 'passed' },
-                        { label: 'Webhook Setup', status: 'passed' },
-                        { label: 'Test Message', status: 'passed' },
+                        { label: 'API', status: 'passed' },
+                        { label: 'Auth', status: 'passed' },
+                        { label: 'Webhook', status: 'passed' },
                       ].map((check) => (
-                        <div key={check.label} className="flex items-center gap-2">
-                          <Check className="w-3 h-3 text-emerald-400" />
-                          <span className="text-[10px] text-zinc-400">{check.label}</span>
-                          <span className="text-[9px] text-emerald-400 ml-auto">Passed</span>
+                        <div key={check.label} className="flex items-center gap-1.5 md:gap-2">
+                          <Check className="w-2.5 h-2.5 md:w-3 md:h-3 text-emerald-400" />
+                          <span className="text-[9px] md:text-[10px] text-zinc-400">{check.label}</span>
+                          <span className="text-[8px] md:text-[9px] text-emerald-400 ml-auto">✓</span>
                         </div>
                       ))}
                     </div>
@@ -1808,10 +1803,10 @@ function DeployUI({ progress }: { progress: number }) {
                   {/* Deploy button */}
                   <button 
                     ref={deployButtonRef}
-                    className="w-full py-2.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20"
+                    className="w-full py-2 md:py-2.5 rounded-md md:rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium text-[10px] md:text-xs flex items-center justify-center gap-1.5 md:gap-2 shadow-lg shadow-amber-500/20"
                   >
-                    <Rocket className="w-3.5 h-3.5" />
-                    Deploy to Production
+                    <Rocket className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                    Deploy
                   </button>
                 </div>
               )}
@@ -1820,50 +1815,49 @@ function DeployUI({ progress }: { progress: number }) {
         ) : (
           // Post-deployment live view
           <>
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between px-2 md:px-4 py-2 md:py-2.5 border-b border-white/5">
+              <div className="flex items-center gap-1.5 md:gap-2">
                 <motion.div
                   animate={{ opacity: [1, 0.4, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                   className="w-1.5 h-1.5 rounded-full bg-emerald-400"
                 />
-                <span className="text-xs font-medium text-white">Live</span>
-                <span className="text-[9px] text-zinc-500">Zendesk</span>
+                <span className="text-[10px] md:text-xs font-medium text-white">Live</span>
               </div>
-              <div className="flex items-center gap-3 text-[10px]">
-                <span className="text-zinc-500">Resolved: <span className="text-emerald-400 font-medium">{resolvedTickets.length}</span></span>
-                <span className="text-zinc-500">Avg: <span className="text-white">2.5s</span></span>
+              <div className="flex items-center gap-2 md:gap-3 text-[9px] md:text-[10px]">
+                <span className="text-zinc-500">Done: <span className="text-emerald-400 font-medium">{resolvedTickets.length}</span></span>
+                <span className="hidden md:inline text-zinc-500">Avg: <span className="text-white">2.5s</span></span>
               </div>
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-4 gap-2 p-3 border-b border-white/5">
+            <div className="grid grid-cols-4 gap-1.5 md:gap-2 p-2 md:p-3 border-b border-white/5">
               {[
                 { label: 'Today', value: resolvedTickets.length.toString(), color: 'white' },
                 { label: 'Success', value: '100%', color: 'emerald' },
-                { label: 'Avg Time', value: '2.5s', color: 'white' },
-                { label: 'Escalated', value: '0', color: 'white' },
+                { label: 'Avg', value: '2.5s', color: 'white' },
+                { label: 'Esc', value: '0', color: 'white' },
               ].map((stat) => (
                 <div key={stat.label} className="text-center">
-                  <div className={`text-sm font-bold ${stat.color === 'emerald' ? 'text-emerald-400' : 'text-white'}`}>
+                  <div className={`text-xs md:text-sm font-bold ${stat.color === 'emerald' ? 'text-emerald-400' : 'text-white'}`}>
                     {stat.value}
                   </div>
-                  <div className="text-[8px] text-zinc-500 uppercase">{stat.label}</div>
+                  <div className="text-[7px] md:text-[8px] text-zinc-500 uppercase">{stat.label}</div>
                 </div>
               ))}
             </div>
 
             {/* Live ticket feed */}
-            <div ref={ticketFeedRef} className="flex-1 p-3 overflow-auto" style={scrollbarStyles}>
-              <div className="text-[9px] text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-2">
-                <span>Live Activity</span>
+            <div ref={ticketFeedRef} className="flex-1 p-2 md:p-3 overflow-auto" style={scrollbarStyles}>
+              <div className="text-[8px] md:text-[9px] text-zinc-500 uppercase tracking-wider mb-1.5 md:mb-2 flex items-center gap-1.5 md:gap-2">
+                <span>Live</span>
                 <motion.span
                   animate={{ opacity: [0, 1, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                   className="w-1 h-1 rounded-full bg-emerald-400"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5 md:space-y-2">
                 {liveTickets.map((ticket, idx) => {
                   const isResolved = resolvedTickets.includes(idx)
                   const isActive = activeTicket === idx
@@ -1877,37 +1871,37 @@ function DeployUI({ progress }: { progress: number }) {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                          className={`p-2.5 rounded-lg border transition-colors ${
+                          className={`p-2 md:p-2.5 rounded-md md:rounded-lg border transition-colors ${
                             isResolved 
                               ? 'border-emerald-500/20 bg-emerald-500/5' 
                               : 'border-amber-500/30 bg-amber-500/5'
                           }`}
                         >
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <span className="text-[9px] font-mono text-zinc-600">{ticket.id}</span>
-                            <span className="text-[10px] text-white font-medium">{ticket.customer}</span>
+                          <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-1.5">
+                            <span className="text-[8px] md:text-[9px] font-mono text-zinc-600">{ticket.id}</span>
+                            <span className="text-[9px] md:text-[10px] text-white font-medium">{ticket.customer}</span>
                             {isResolved && (
-                              <span className="text-[9px] text-zinc-500 ml-auto">{ticket.time}</span>
+                              <span className="text-[8px] md:text-[9px] text-zinc-500 ml-auto">{ticket.time}</span>
                             )}
                             {isActive && !isResolved && (
                               <motion.span
                                 animate={{ opacity: [1, 0.3, 1] }}
                                 transition={{ duration: 0.8, repeat: Infinity }}
-                                className="text-[9px] text-amber-400 ml-auto"
+                                className="text-[8px] md:text-[9px] text-amber-400 ml-auto"
                               >
-                                Processing...
+                                ...
                               </motion.span>
                             )}
                           </div>
-                          <div className="text-[10px] text-zinc-400 mb-1">{ticket.query}</div>
+                          <div className="text-[9px] md:text-[10px] text-zinc-400 mb-0.5 md:mb-1 line-clamp-1">{ticket.query}</div>
                           {isResolved && (
                             <motion.div
                               initial={{ opacity: 0, y: 3 }}
                               animate={{ opacity: 1, y: 0 }}
-                              className="text-[10px] text-emerald-400 flex items-center gap-1"
+                              className="text-[9px] md:text-[10px] text-emerald-400 flex items-center gap-0.5 md:gap-1"
                             >
-                              <Check className="w-3 h-3" />
-                              {ticket.response}
+                              <Check className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                              <span className="line-clamp-1">{ticket.response}</span>
                             </motion.div>
                           )}
                         </motion.div>
@@ -1931,6 +1925,7 @@ export function ImplementationContent() {
   const [isHovering, setIsHovering] = useState(false)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const stepsContainerRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(containerRef, { once: false, margin: "-100px" })
   const STEP_DURATION = 9000
 
@@ -1981,6 +1976,20 @@ export function ImplementationContent() {
     setProgress(0)
   }
 
+  // Auto-scroll to active step on mobile
+  useEffect(() => {
+    if (stepsContainerRef.current && typeof window !== 'undefined' && window.innerWidth < 768) {
+      const container = stepsContainerRef.current
+      const activeButton = container.children[activeStep] as HTMLElement
+      if (activeButton) {
+        const containerRect = container.getBoundingClientRect()
+        const buttonRect = activeButton.getBoundingClientRect()
+        const scrollLeft = buttonRect.left - containerRect.left + container.scrollLeft - (containerRect.width / 2) + (buttonRect.width / 2)
+        container.scrollTo({ left: scrollLeft, behavior: 'smooth' })
+      }
+    }
+  }, [activeStep])
+
   const currentStep = steps[Math.max(0, activeStep)]
   const colors = colorMap[currentStep.color as keyof typeof colorMap]
 
@@ -1995,22 +2004,22 @@ export function ImplementationContent() {
   }
 
   return (
-    <div className="relative py-28 lg:py-40">
+    <div className="relative py-16 md:py-28 lg:py-40">
       {/* Inject scrollbar styles */}
       <style dangerouslySetInnerHTML={{ __html: scrollbarCSS }} />
       
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-5 md:px-6">
         {/* Header */}
-        <div className="mb-16 lg:mb-20">
+        <div className="mb-10 md:mb-16 lg:mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease }}
-            className="mb-6"
+            className="mb-4 md:mb-6"
           >
-            <div className="flex items-center gap-4">
-              <span className="text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
+            <div className="flex items-center gap-3 md:gap-4">
+              <span className="text-[10px] md:text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
                 Implementation
               </span>
               <motion.div 
@@ -2018,18 +2027,18 @@ export function ImplementationContent() {
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.3, ease }}
-                className="h-px w-16 bg-gradient-to-r from-zinc-500/60 to-transparent origin-left"
+                className="h-px w-12 md:w-16 bg-gradient-to-r from-zinc-500/60 to-transparent origin-left"
               />
             </div>
           </motion.div>
 
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 lg:gap-8">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 lg:gap-8">
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1, ease }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-medium text-white tracking-[-0.03em] leading-[1.1]"
+              className="text-3xl sm:text-5xl lg:text-6xl font-medium text-white tracking-[-0.03em] leading-[1.1]"
             >
               Enterprise-ready
               <br />
@@ -2041,7 +2050,7 @@ export function ImplementationContent() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2, ease }}
-              className="text-lg text-zinc-400 max-w-md lg:text-right"
+              className="text-base md:text-lg text-zinc-400 max-w-md lg:text-right"
             >
               {content.implementation.subtitle}
             </motion.p>
@@ -2056,8 +2065,12 @@ export function ImplementationContent() {
           viewport={{ once: true }}
           transition={{ duration: 0.7, delay: 0.2, ease }}
         >
-          {/* Step timeline */}
-          <div className="flex items-center gap-2 mb-6">
+          {/* Step timeline - horizontally scrollable on mobile */}
+          <div 
+            ref={stepsContainerRef}
+            className="flex items-center gap-2 md:gap-2 mb-4 md:mb-6 overflow-x-auto pb-2 -mx-5 px-5 md:mx-0 md:px-0 md:overflow-visible scrollbar-hide"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
             {steps.map((step, index) => {
               const stepColors = colorMap[step.color as keyof typeof colorMap]
               const isActive = index === activeStep
@@ -2068,12 +2081,12 @@ export function ImplementationContent() {
                 <button
                   key={step.id}
                   onClick={() => handleStepClick(index)}
-                  className="flex-1 group cursor-pointer"
+                  className="flex-shrink-0 md:flex-1 group cursor-pointer min-w-[100px] md:min-w-0"
                 >
                   <div className="relative">
                     {/* Progress bar background */}
                     <div 
-                      className="h-1.5 rounded-full transition-colors"
+                      className="h-1 md:h-1.5 rounded-full transition-colors"
                       style={{ 
                         background: isPast ? stepColors.border : isActive ? stepColors.bg : 'rgba(255,255,255,0.05)'
                       }}
@@ -2094,31 +2107,31 @@ export function ImplementationContent() {
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 mt-3">
+                  <div className="flex items-center gap-1.5 md:gap-2 mt-2 md:mt-3">
                     <div 
-                      className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+                      className="w-6 h-6 md:w-7 md:h-7 rounded-lg flex items-center justify-center transition-all flex-shrink-0"
                       style={{
                         background: isPast || isActive ? stepColors.bg : 'transparent',
                         boxShadow: isActive ? `0 0 12px ${stepColors.glow}` : 'none',
                       }}
                     >
                       {isPast ? (
-                        <Check className="w-4 h-4" style={{ color: stepColors.text }} />
+                        <Check className="w-3.5 h-3.5 md:w-4 md:h-4" style={{ color: stepColors.text }} />
                       ) : (
                         <Icon 
-                          className="w-4 h-4 transition-colors" 
+                          className="w-3.5 h-3.5 md:w-4 md:h-4 transition-colors" 
                           style={{ color: isActive ? stepColors.text : 'rgb(113, 113, 122)' }} 
                         />
                       )}
                     </div>
                     <div className="text-left">
                       <div 
-                        className="text-sm font-medium transition-colors"
+                        className="text-xs md:text-sm font-medium transition-colors whitespace-nowrap"
                         style={{ color: isPast || isActive ? 'white' : 'rgb(113, 113, 122)' }}
                       >
                         {step.label}
                       </div>
-                      <div className="text-[10px] text-zinc-500">{step.duration}</div>
+                      <div className="text-[9px] md:text-[10px] text-zinc-500">{step.duration}</div>
                     </div>
                   </div>
                 </button>
@@ -2130,12 +2143,12 @@ export function ImplementationContent() {
       
       {/* Sky background section - full width with padding */}
       <div 
-        className="relative px-4"
+        className="relative px-3 md:px-4"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
         {/* Rounded container for sky background */}
-        <div className="relative rounded-3xl overflow-hidden">
+        <div className="relative rounded-2xl md:rounded-3xl overflow-hidden">
           {/* Background sky images - crossfade on step change */}
           {[1, 2, 3, 4, 5].map((num, index) => (
             <motion.div
@@ -2161,9 +2174,9 @@ export function ImplementationContent() {
           />
           
           {/* Product mockup card floating on top */}
-          <div className="relative py-10 lg:py-16 flex justify-center">
+          <div className="relative py-5 md:py-10 lg:py-16 flex justify-center px-5 md:px-6">
             <div 
-              className="rounded-2xl border border-white/10 overflow-hidden w-full max-w-4xl"
+              className="rounded-xl md:rounded-2xl border border-white/10 overflow-hidden w-full max-w-4xl"
               style={{ 
                 background: '#141417',
                 boxShadow: '0 0 0 1px rgba(255,255,255,0.08), 0 4px 24px rgba(0,0,0,0.4), 0 12px 48px rgba(0,0,0,0.3), 0 24px 80px rgba(0,0,0,0.25)',
@@ -2190,23 +2203,24 @@ export function ImplementationContent() {
               )}
             </AnimatePresence>
             {/* Browser chrome */}
-            <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2 bg-black/30">
-              <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-red-500/60" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
-                <div className="w-3 h-3 rounded-full bg-green-500/60" />
+            <div className="px-3 md:px-4 py-2 md:py-3 border-b border-white/5 flex items-center gap-2 bg-black/30">
+              <div className="flex items-center gap-1 md:gap-1.5">
+                <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-red-500/60" />
+                <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-yellow-500/60" />
+                <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-green-500/60" />
               </div>
               <div className="flex-1 flex justify-center">
-                <div className="px-4 py-1 rounded-lg bg-white/5 text-xs text-zinc-500 flex items-center gap-2">
-                  <Search className="w-3 h-3" />
-                  app.useduckie.ai
+                <div className="px-3 md:px-4 py-1 rounded-lg bg-white/5 text-[10px] md:text-xs text-zinc-500 flex items-center gap-1.5 md:gap-2">
+                  <Search className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                  <span className="hidden xs:inline">app.useduckie.ai</span>
+                  <span className="xs:hidden">duckie.ai</span>
                 </div>
               </div>
-              <div className="w-16" /> {/* Spacer for centering */}
+              <div className="w-10 md:w-16" /> {/* Spacer for centering */}
             </div>
 
             {/* App content */}
-            <div className="h-[420px]">
+            <div className="h-[320px] md:h-[420px]">
               <AnimatePresence mode="wait">
                 {activeStep === 0 && (
                   <motion.div
@@ -2271,15 +2285,15 @@ export function ImplementationContent() {
       </div>
 
       {/* Time indicator */}
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-5 md:px-6">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.5 }}
-          className="flex items-center justify-center gap-3 mt-6 text-sm max-w-5xl mx-auto"
+          className="flex items-center justify-center gap-2 md:gap-3 mt-4 md:mt-6 text-xs md:text-sm max-w-5xl mx-auto"
         >
-          <Clock className="w-4 h-4 text-zinc-500" />
+          <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 text-zinc-500" />
           <span className="text-zinc-500">Time to go live:</span>
           <span className="text-white font-medium tabular-nums">{getTotalDays()} days</span>
           <span className="text-zinc-600">/</span>

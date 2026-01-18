@@ -211,3 +211,20 @@ html {
   color: rgba(255, 255, 255, 0.55) !important;
   opacity: 1 !important;
 }
+
+/* Pond background image positioning */
+.pond-bg-image {
+  object-fit: contain;
+  object-position: center bottom;
+  transform: scale(1.9);
+  transform-origin: center bottom;
+}
+
+@media (min-width: 768px) {
+  .pond-bg-image {
+    object-fit: cover;
+    transform: scale(1);
+    transform-origin: center center;
+    object-position: center top;
+  }
+}

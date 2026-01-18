@@ -51,11 +51,92 @@ export function StatsContent() {
   const stats = content.socialProof.stats
   
   return (
-    <div className="relative pt-10 pb-16 lg:pt-14 lg:pb-24">
-      <div className="container mx-auto px-6 relative z-10">
+    <div className="relative pt-8 pb-12 md:pt-10 md:pb-16 lg:pt-14 lg:pb-24">
+      <div className="container mx-auto px-6 md:px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
-          {/* Two-column layout matching hero */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-0">
+          {/* Mobile layout - 82 on left, 3 stats stacked vertically on right */}
+          <div className="md:hidden">
+            <div className="flex items-start justify-between">
+              {/* Left - Featured stat */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease }}
+                className="flex-shrink-0"
+              >
+                <div className="relative">
+                  <div 
+                    className="text-[4rem] font-bold leading-[0.85] tracking-[-0.04em]"
+                    style={{
+                      background: 'linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,0.7) 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    }}
+                  >
+                    <AnimatedNumber 
+                      value={stats[0].value} 
+                      suffix={stats[0].suffix}
+                    />
+                  </div>
+                  {/* Accent underline */}
+                  <motion.div 
+                    initial={{ scaleX: 0 }}
+                    whileInView={{ scaleX: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.4, ease }}
+                    className="absolute -bottom-1 left-0 h-0.5 w-10 bg-[#FF6B35] origin-left overflow-hidden"
+                  >
+                    <motion.div 
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+                      animate={{ x: ['-100%', '200%', '200%', '-100%'] }}
+                      transition={{ 
+                        duration: 3,
+                        repeat: Infinity,
+                        repeatDelay: 2,
+                        times: [0, 0.45, 0.55, 1],
+                        ease: "easeInOut"
+                      }}
+                    />
+                  </motion.div>
+                </div>
+                <p className="mt-2 text-xs text-zinc-400">
+                  {stats[0].label}
+                </p>
+              </motion.div>
+
+              {/* Right - Secondary stats stacked vertically */}
+              <div className="flex flex-col gap-4">
+                {stats.slice(1).map((stat, i) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, x: 16 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ 
+                      duration: 0.5, 
+                      delay: 0.15 + i * 0.1,
+                      ease,
+                    }}
+                    className="border-l border-white/10 pl-4"
+                  >
+                    <div className="text-xl font-bold tracking-[-0.02em] text-white">
+                      <AnimatedNumber 
+                        value={stat.value} 
+                        suffix={stat.suffix}
+                      />
+                    </div>
+                    <p className="mt-0.5 text-[10px] text-zinc-500 uppercase tracking-[0.06em] leading-tight">
+                      {stat.label}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop layout - Two-column layout matching hero */}
+          <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-0">
             {/* Left column - Featured stat */}
             <div className="flex items-center justify-start lg:pl-6">
               <motion.div
