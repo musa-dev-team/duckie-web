@@ -7,9 +7,9 @@ export function Footer() {
   const { brand, footer, navigation } = content
 
   return (
-    <footer className="relative px-4 pt-16 pb-24">
+    <footer className="relative px-4 pt-24 pb-36">
       {/* Footer card with rounded corners sitting on blue background */}
-      <div className="max-w-6xl mx-auto bg-[#faf9f7]/100 backdrop-blur-sm rounded-[2rem] overflow-hidden shadow-[0_-8px_30px_rgba(0,0,0,0.12),0_4px_20px_rgba(0,0,0,0.08)]">
+      <div className="max-w-6xl mx-auto bg-[#faf9f7] backdrop-blur-sm rounded-[2.5rem] overflow-hidden shadow-[0_-20px_60px_rgba(0,0,0,0.15),0_-8px_25px_rgba(0,0,0,0.1),0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-white/50 ring-inset transform -translate-y-4">
         <div className="px-8 lg:px-16">
           {/* Top Section - Logo, Tagline & Stats */}
           <div className="pt-12 lg:pt-16 pb-10 lg:pb-12 border-b border-[#e5e5e5]">

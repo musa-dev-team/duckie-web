@@ -329,7 +329,7 @@ export function Hero() {
               filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.15))',
             }}
           >
-            AI agents<br />that close tickets
+            AI agents that<br /><span className="text-[#FF8558]" style={{ textShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>close tickets</span>
           </motion.h1>
           
           {/* Subheadline */}
@@ -338,9 +338,8 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4, ease }}
             className="mt-8 text-lg sm:text-xl md:text-2xl text-white/90 font-light tracking-wide"
-            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.3)' }}
           >
-            Not just answers · <span className="font-medium">real actions</span>
+            <span className="text-white font-semibold">Not just answers</span> · <span className="text-[#FF8558] font-semibold" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.2)' }}>real actions</span>
           </motion.p>
           </div>
           

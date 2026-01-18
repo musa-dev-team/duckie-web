@@ -8,7 +8,7 @@ const ease = [0.22, 1, 0.36, 1] as const
 
 export function CtaContent() {
   return (
-    <div className="relative pt-24 pb-16 lg:pt-12 lg:pb-48">
+    <div className="relative pt-24 pb-16 lg:pt-1 lg:pb-96">
       <div className="container mx-auto px-6 pt-0 relative">
         <div className="max-w-3xl mx-auto text-center">
           {/* Headline */}
@@ -17,7 +17,7 @@ export function CtaContent() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1, ease }}
-            className="text-4xl sm:text-5xl lg:text-[3.5rem] font-semibold text-[#1a1a1a] leading-[1.1] tracking-[-0.02em] mb-5"
+            className="text-4xl sm:text-5xl lg:text-[3.5rem] font-semibold text-[#1a1a1a] leading-[1.1] tracking-[-0.02em] mb-4"
           >
             Ready to transform your support?
           </motion.h2>
@@ -28,9 +28,9 @@ export function CtaContent() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2, ease }}
-            className="text-lg text-[#666] mb-10 leading-relaxed max-w-xl mx-auto"
+            className="text-lg text-[#666] mb-6 leading-relaxed max-w-xl mx-auto"
           >
-            Join teams resolving 80%+ of tickets automatically. See results in your first week.
+            Join teams resolving 80%+ of tickets automatically.
           </motion.p>
 
           {/* CTA buttons */}
