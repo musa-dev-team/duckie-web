@@ -632,12 +632,12 @@ export function HowItWorksContent() {
                   <div 
                     className="h-full flex flex-col rounded-xl overflow-hidden"
                     style={{
-                      background: '#0a0a0c',
-                      boxShadow: '0 30px 60px -15px rgba(0,0,0,0.8), 0 15px 30px -10px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)',
+                      background: '#141417',
+                      boxShadow: '0 0 0 1px rgba(255,255,255,0.08), 0 4px 24px rgba(0,0,0,0.4), 0 12px 48px rgba(0,0,0,0.3), 0 24px 80px rgba(0,0,0,0.25)',
                     }}
                   >
                 {/* Document header */}
-                <div className="px-5 py-3 flex items-center justify-between border-b border-white/5 shrink-0 bg-white/[0.01]">
+                <div className="px-5 py-3 flex items-center justify-between border-b border-white/5 shrink-0 bg-black/30">
                   <div className="flex items-center gap-3">
                     <FileText className="w-4 h-4 text-zinc-500" />
                     <span className="text-sm font-medium text-zinc-300">Runbook: Refund Request</span>

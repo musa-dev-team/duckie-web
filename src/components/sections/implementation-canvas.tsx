@@ -7,7 +7,7 @@ import {
 } from "@/components/icons"
 import { content } from "@/config/content"
 import { AnimatePresence, motion, useInView } from "framer-motion"
-import { Check, ChevronRight, Clock, FileText, FlaskConical, GitBranch, Link2, MessageSquare, Pause, Play, Plus, Rocket, Search, Workflow } from "lucide-react"
+import { Check, ChevronRight, Clock, FileText, FlaskConical, GitBranch, Link2, Mail, MessageSquare, Pause, Play, Plus, Rocket, Search, Workflow, Zap } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { SiHubspot, SiIntercom, SiZendesk } from "react-icons/si"
 
@@ -1670,201 +1670,256 @@ function DeployUI({ progress }: { progress: number }) {
     <div ref={containerRef} className="h-full flex relative">
       <DeployCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
 
-      {!isDeployed ? (
-        // Pre-deployment view
-        <div className="flex-1 flex flex-col">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded bg-amber-500/20 flex items-center justify-center">
-                <Rocket className="w-3.5 h-3.5 text-amber-400" />
-              </div>
-              <span className="text-sm font-medium text-white">Deploy Agent</span>
+      {/* Sidebar */}
+      <div className="w-44 border-r border-white/5 flex flex-col bg-black/20">
+        <div className="p-3 border-b border-white/5">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+              <Rocket className="w-3.5 h-3.5 text-white" />
             </div>
-          </div>
-
-          <div className="flex-1 p-4 flex flex-col justify-center items-center">
-            {isDeploying ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center"
-              >
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                  className="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mx-auto mb-4"
-                >
-                  <Rocket className="w-8 h-8 text-amber-400" />
-                </motion.div>
-                <div className="text-sm text-white mb-2">Deploying to Zendesk...</div>
-                <div className="text-xs text-zinc-500">Connecting agent to live support channel</div>
-              </motion.div>
-            ) : (
-              <div className="w-full max-w-xs space-y-4">
-                {/* Channel */}
-                <div className="p-3 rounded-xl border border-amber-500/20 bg-amber-500/5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#03363D] flex items-center justify-center">
-                      <SiZendesk className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-sm font-medium text-white">Zendesk</div>
-                      <div className="text-[10px] text-zinc-500">Support tickets</div>
-                    </div>
-                    <Check className="w-5 h-5 text-amber-400" />
-                  </div>
-                </div>
-
-                {/* Mode */}
-                <div className="p-3 rounded-xl border border-amber-500/30 bg-amber-500/5">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">⚡</span>
-                    <span className="text-sm font-medium text-white">Live Mode</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 ml-auto">Active</span>
-                  </div>
-                </div>
-
-                {/* Deploy button */}
-                <button 
-                  ref={deployButtonRef}
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium text-sm flex items-center justify-center gap-2"
-                >
-                  <Rocket className="w-4 h-4" />
-                  Deploy to Zendesk
-                </button>
-              </div>
-            )}
+            <span className="text-xs font-semibold text-white">Deployments</span>
           </div>
         </div>
-      ) : (
-        // Post-deployment live view
-        <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center">
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
+        <div className="flex-1 p-2 space-y-1">
+          <div className="px-2.5 py-2 rounded-lg bg-white/5 border border-white/10">
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded bg-[#03363D] flex items-center justify-center">
+                <SiZendesk className="w-3 h-3 text-white" />
               </div>
-              <span className="text-sm font-medium text-white">Duckie is Live</span>
-              <span className="flex items-center gap-1.5 text-[10px] text-emerald-400">
-                <motion.span
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] font-medium text-white truncate">Zendesk</div>
+                <div className="text-[8px] text-zinc-500">Support</div>
+              </div>
+              {isDeployed && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="w-1.5 h-1.5 rounded-full bg-emerald-400"
+                />
+              )}
+            </div>
+          </div>
+          <div className="px-2.5 py-2 rounded-lg hover:bg-white/5 transition-colors opacity-40">
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded bg-zinc-700 flex items-center justify-center">
+                <MessageSquare className="w-3 h-3 text-zinc-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] font-medium text-zinc-400 truncate">Intercom</div>
+                <div className="text-[8px] text-zinc-600">Not configured</div>
+              </div>
+            </div>
+          </div>
+          <div className="px-2.5 py-2 rounded-lg hover:bg-white/5 transition-colors opacity-40">
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded bg-zinc-700 flex items-center justify-center">
+                <Mail className="w-3 h-3 text-zinc-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] font-medium text-zinc-400 truncate">Email</div>
+                <div className="text-[8px] text-zinc-600">Not configured</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1 flex flex-col">
+        {!isDeployed ? (
+          // Pre-deployment view
+          <>
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5">
+              <div className="flex items-center gap-2">
+                <SiZendesk className="w-4 h-4 text-[#03363D]" />
+                <span className="text-xs font-medium text-white">Zendesk Deployment</span>
+              </div>
+              <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">Ready</span>
+            </div>
+
+            <div className="flex-1 p-4 overflow-auto">
+              {isDeploying ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="h-full flex flex-col items-center justify-center"
+                >
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                    className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mb-3"
+                  >
+                    <Rocket className="w-6 h-6 text-amber-400" />
+                  </motion.div>
+                  <div className="text-sm text-white mb-1">Deploying...</div>
+                  <div className="text-[10px] text-zinc-500">Connecting to Zendesk API</div>
+                </motion.div>
+              ) : (
+                <div className="space-y-3">
+                  {/* Configuration summary */}
+                  <div className="rounded-lg border border-white/5 overflow-hidden">
+                    <div className="px-3 py-2 bg-white/[0.02] border-b border-white/5">
+                      <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wider">Configuration</span>
+                    </div>
+                    <div className="p-3 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] text-zinc-500">Agent</span>
+                        <span className="text-[10px] text-white">Support Agent v1.2</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] text-zinc-500">Mode</span>
+                        <span className="text-[10px] text-amber-400 flex items-center gap-1">
+                          <Zap className="w-3 h-3" />
+                          Auto-respond
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] text-zinc-500">Guardrails</span>
+                        <span className="text-[10px] text-emerald-400">3 active</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] text-zinc-500">Escalation</span>
+                        <span className="text-[10px] text-white">Enabled</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Pre-flight checks */}
+                  <div className="rounded-lg border border-white/5 overflow-hidden">
+                    <div className="px-3 py-2 bg-white/[0.02] border-b border-white/5">
+                      <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wider">Pre-flight Checks</span>
+                    </div>
+                    <div className="p-3 space-y-1.5">
+                      {[
+                        { label: 'API Connection', status: 'passed' },
+                        { label: 'Authentication', status: 'passed' },
+                        { label: 'Webhook Setup', status: 'passed' },
+                        { label: 'Test Message', status: 'passed' },
+                      ].map((check) => (
+                        <div key={check.label} className="flex items-center gap-2">
+                          <Check className="w-3 h-3 text-emerald-400" />
+                          <span className="text-[10px] text-zinc-400">{check.label}</span>
+                          <span className="text-[9px] text-emerald-400 ml-auto">Passed</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Deploy button */}
+                  <button 
+                    ref={deployButtonRef}
+                    className="w-full py-2.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20"
+                  >
+                    <Rocket className="w-3.5 h-3.5" />
+                    Deploy to Production
+                  </button>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          // Post-deployment live view
+          <>
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5">
+              <div className="flex items-center gap-2">
+                <motion.div
                   animate={{ opacity: [1, 0.4, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                   className="w-1.5 h-1.5 rounded-full bg-emerald-400"
                 />
-                Active on Zendesk
-              </span>
+                <span className="text-xs font-medium text-white">Live</span>
+                <span className="text-[9px] text-zinc-500">Zendesk</span>
+              </div>
+              <div className="flex items-center gap-3 text-[10px]">
+                <span className="text-zinc-500">Resolved: <span className="text-emerald-400 font-medium">{resolvedTickets.length}</span></span>
+                <span className="text-zinc-500">Avg: <span className="text-white">2.5s</span></span>
+              </div>
             </div>
-            <div className="text-xs text-zinc-500">
-              <span className="text-emerald-400 font-medium">{resolvedTickets.length}</span> resolved
+
+            {/* Stats row */}
+            <div className="grid grid-cols-4 gap-2 p-3 border-b border-white/5">
+              {[
+                { label: 'Today', value: resolvedTickets.length.toString(), color: 'white' },
+                { label: 'Success', value: '100%', color: 'emerald' },
+                { label: 'Avg Time', value: '2.5s', color: 'white' },
+                { label: 'Escalated', value: '0', color: 'white' },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <div className={`text-sm font-bold ${stat.color === 'emerald' ? 'text-emerald-400' : 'text-white'}`}>
+                    {stat.value}
+                  </div>
+                  <div className="text-[8px] text-zinc-500 uppercase">{stat.label}</div>
+                </div>
+              ))}
             </div>
-          </div>
 
-          {/* Live ticket feed */}
-          <div ref={ticketFeedRef} className="flex-1 p-3 overflow-auto custom-scrollbar" style={scrollbarStyles}>
-            <div className="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Live Activity</div>
-            <div className="space-y-2">
-              {liveTickets.map((ticket, idx) => {
-                const isResolved = resolvedTickets.includes(idx)
-                const isActive = activeTicket === idx
-                const isVisible = isResolved || isActive
+            {/* Live ticket feed */}
+            <div ref={ticketFeedRef} className="flex-1 p-3 overflow-auto" style={scrollbarStyles}>
+              <div className="text-[9px] text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <span>Live Activity</span>
+                <motion.span
+                  animate={{ opacity: [0, 1, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="w-1 h-1 rounded-full bg-emerald-400"
+                />
+              </div>
+              <div className="space-y-2">
+                {liveTickets.map((ticket, idx) => {
+                  const isResolved = resolvedTickets.includes(idx)
+                  const isActive = activeTicket === idx
+                  const isVisible = isResolved || isActive
 
-                return (
-                  <AnimatePresence key={ticket.id}>
-                    {isVisible && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                        className={`p-3 rounded-xl border transition-colors ${
-                          isResolved 
-                            ? 'border-emerald-500/20 bg-emerald-500/5' 
-                            : 'border-amber-500/30 bg-amber-500/5'
-                        }`}
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                            isResolved ? 'bg-emerald-500/20' : 'bg-amber-500/20'
-                          }`}>
-                            {isResolved ? (
-                              <Check className="w-4 h-4 text-emerald-400" />
-                            ) : (
-                              <motion.div
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                                className="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full"
-                              />
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-[10px] font-mono text-zinc-500">{ticket.id}</span>
-                              <span className="text-xs text-white">{ticket.customer}</span>
-                              {isResolved && (
-                                <span className="text-[10px] text-zinc-500 ml-auto">{ticket.time}</span>
-                              )}
-                            </div>
-                            <div className="text-[11px] text-zinc-400 mb-1 truncate">{ticket.query}</div>
+                  return (
+                    <AnimatePresence key={ticket.id}>
+                      {isVisible && (
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                          className={`p-2.5 rounded-lg border transition-colors ${
+                            isResolved 
+                              ? 'border-emerald-500/20 bg-emerald-500/5' 
+                              : 'border-amber-500/30 bg-amber-500/5'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="text-[9px] font-mono text-zinc-600">{ticket.id}</span>
+                            <span className="text-[10px] text-white font-medium">{ticket.customer}</span>
                             {isResolved && (
-                              <motion.div
-                                initial={{ opacity: 0, y: 5 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="text-[11px] text-emerald-400 flex items-center gap-1"
-                              >
-                                <Check className="w-3 h-3" />
-                                {ticket.response}
-                              </motion.div>
+                              <span className="text-[9px] text-zinc-500 ml-auto">{ticket.time}</span>
                             )}
                             {isActive && !isResolved && (
-                              <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="text-[11px] text-amber-400 flex items-center gap-1"
+                              <motion.span
+                                animate={{ opacity: [1, 0.3, 1] }}
+                                transition={{ duration: 0.8, repeat: Infinity }}
+                                className="text-[9px] text-amber-400 ml-auto"
                               >
-                                <motion.span
-                                  animate={{ opacity: [1, 0.3, 1] }}
-                                  transition={{ duration: 0.8, repeat: Infinity }}
-                                >
-                                  Processing...
-                                </motion.span>
-                              </motion.div>
+                                Processing...
+                              </motion.span>
                             )}
                           </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Stats bar */}
-          <div className="px-4 py-3 border-t border-white/5 bg-emerald-500/5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="text-center">
-                  <div className="text-lg font-bold text-white">{resolvedTickets.length}</div>
-                  <div className="text-[9px] text-zinc-500 uppercase">Resolved</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-lg font-bold text-emerald-400">2.5s</div>
-                  <div className="text-[9px] text-zinc-500 uppercase">Avg Time</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-lg font-bold text-emerald-400">100%</div>
-                  <div className="text-[9px] text-zinc-500 uppercase">Success</div>
-                </div>
-              </div>
-              <div className="text-[10px] text-emerald-400 flex items-center gap-1">
-                <Rocket className="w-3.5 h-3.5" />
-                Duckie handling tickets
+                          <div className="text-[10px] text-zinc-400 mb-1">{ticket.query}</div>
+                          {isResolved && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 3 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="text-[10px] text-emerald-400 flex items-center gap-1"
+                            >
+                              <Check className="w-3 h-3" />
+                              {ticket.response}
+                            </motion.div>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  )
+                })}
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </div>
     </div>
   )
 }
@@ -2083,46 +2138,50 @@ export function ImplementationContent() {
               )
             })}
           </div>
-
-          {/* Sky background section - fills section width */}
-          <div 
-            className="relative rounded-2xl overflow-hidden"
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-          >
-            {/* Background sky images - crossfade on step change */}
-            {[1, 2, 3, 4, 5].map((num, index) => (
-              <motion.div
-                key={`sky-bg-${num}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: activeStep === index ? 1 : 0 }}
-                transition={{ duration: 1.5, ease: "easeInOut" }}
-                className="absolute inset-0"
-                style={{
-                  backgroundImage: `url(/images/sky-${num}.jpg)`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              />
-            ))}
-            
-            {/* Subtle vignette overlay for depth */}
-            <div 
-              className="absolute inset-0 pointer-events-none"
+        </motion.div>
+      </div>
+      
+      {/* Sky background section - full width with padding */}
+      <div 
+        className="relative px-4"
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
+        {/* Rounded container for sky background */}
+        <div className="relative rounded-3xl overflow-hidden">
+          {/* Background sky images - crossfade on step change */}
+          {[1, 2, 3, 4, 5].map((num, index) => (
+            <motion.div
+              key={`sky-bg-${num}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: activeStep === index ? 1 : 0 }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+              className="absolute inset-0"
               style={{
-                background: 'radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.4) 100%)',
+                backgroundImage: `url(/images/sky-${num}.jpg)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
               }}
             />
-            
-            {/* Product mockup card floating on top */}
-            <div className="relative px-20 py-10 lg:px-80 lg:py-16">
-              <div 
-                className="rounded-2xl border border-white/10 overflow-hidden"
-                style={{ 
-                  background: '#0a0a0c',
-                  boxShadow: '0 30px 60px -15px rgba(0,0,0,0.8), 0 15px 30px -10px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)',
-                }}
-              >
+          ))}
+          
+          {/* Subtle vignette overlay for depth */}
+          <div 
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.4) 100%)',
+            }}
+          />
+          
+          {/* Product mockup card floating on top */}
+          <div className="relative py-10 lg:py-16 flex justify-center">
+            <div 
+              className="rounded-2xl border border-white/10 overflow-hidden w-full max-w-4xl"
+              style={{ 
+                background: '#141417',
+                boxShadow: '0 0 0 1px rgba(255,255,255,0.08), 0 4px 24px rgba(0,0,0,0.4), 0 12px 48px rgba(0,0,0,0.3), 0 24px 80px rgba(0,0,0,0.25)',
+              }}
+            >
             {/* Pause/Play button - appears on hover */}
             <AnimatePresence>
               {isHovering && (
@@ -2144,7 +2203,7 @@ export function ImplementationContent() {
               )}
             </AnimatePresence>
             {/* Browser chrome */}
-            <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
+            <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2 bg-black/30">
               <div className="flex items-center gap-1.5">
                 <div className="w-3 h-3 rounded-full bg-red-500/60" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
@@ -2153,7 +2212,7 @@ export function ImplementationContent() {
               <div className="flex-1 flex justify-center">
                 <div className="px-4 py-1 rounded-lg bg-white/5 text-xs text-zinc-500 flex items-center gap-2">
                   <Search className="w-3 h-3" />
-                  app.duckie.ai
+                  app.useduckie.ai
                 </div>
               </div>
               <div className="w-16" /> {/* Spacer for centering */}
@@ -2239,23 +2298,24 @@ export function ImplementationContent() {
               </AnimatePresence>
             </div>
           </div>
-          </div>
-          </div>
+        </div>
+        </div>
+      </div>
 
-          {/* Time indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
-            className="flex items-center justify-center gap-3 mt-6 text-sm max-w-5xl mx-auto"
-          >
-            <Clock className="w-4 h-4 text-zinc-500" />
-            <span className="text-zinc-500">Time to go live:</span>
-            <span className="text-white font-medium tabular-nums">{getTotalDays()} days</span>
-            <span className="text-zinc-600">/</span>
-            <span className="text-zinc-500">~14 days total</span>
-          </motion.div>
+      {/* Time indicator */}
+      <div className="container mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5 }}
+          className="flex items-center justify-center gap-3 mt-6 text-sm max-w-5xl mx-auto"
+        >
+          <Clock className="w-4 h-4 text-zinc-500" />
+          <span className="text-zinc-500">Time to go live:</span>
+          <span className="text-white font-medium tabular-nums">{getTotalDays()} days</span>
+          <span className="text-zinc-600">/</span>
+          <span className="text-zinc-500">~14 days total</span>
         </motion.div>
       </div>
     </div>

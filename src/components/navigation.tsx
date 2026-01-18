@@ -113,8 +113,22 @@ export function Navigation({ variant = "transparent" }: { variant?: "transparent
     : null
   
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
-      <nav className="container mx-auto flex h-16 items-center justify-between px-6 gap-4">
+    <header 
+      className="fixed left-0 right-0 z-50"
+      style={{
+        top: scrolled ? '0.5rem' : '1rem',
+        transition: 'top 1s cubic-bezier(0.4, 0, 0.2, 1)',
+      }}
+    >
+      <div 
+        className="w-full"
+        style={{
+          paddingLeft: scrolled ? 'max(1.5rem, calc((100vw - 1536px) / 2 + 1.5rem))' : '2.5rem',
+          paddingRight: scrolled ? 'max(1.5rem, calc((100vw - 1536px) / 2 + 1.5rem))' : '1.5rem',
+          transition: 'padding 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
+      >
+        <nav className="flex h-16 items-center justify-between gap-4">
         {/* Logo + Nav Links Container */}
         <div 
           className="relative"
@@ -223,7 +237,8 @@ export function Navigation({ variant = "transparent" }: { variant?: "transparent
             </motion.div>
           )}
         </AnimatePresence>
-      </nav>
+        </nav>
+      </div>
     </header>
   )
 }

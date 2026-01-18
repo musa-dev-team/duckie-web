@@ -7,30 +7,69 @@ export function Footer() {
   const { brand, footer, navigation } = content
 
   return (
-    <footer className="relative bg-white border-t border-[#e5e5e5]">
-      <div className="container mx-auto px-6 py-16">
-        <div className="flex flex-col lg:flex-row lg:justify-between gap-12">
-          {/* Brand Column */}
-          <div className="max-w-xs">
-            <Link href="/" className="inline-block">
-              <span 
-                className="text-xl font-semibold tracking-tight text-[#1a1a1a]"
-                style={{ fontFamily: "var(--font-helvetica)" }}
-              >
-                {brand.name}<span className="text-[#FF6B35]">.</span>
-              </span>
-            </Link>
-            <p className="mt-4 text-sm text-[#666] leading-relaxed">
-              {brand.description}
-            </p>
+    <footer className="relative px-4 pt-16 pb-24">
+      {/* Footer card with rounded corners sitting on blue background */}
+      <div className="max-w-6xl mx-auto bg-[#faf9f7]/100 backdrop-blur-sm rounded-[2rem] overflow-hidden shadow-[0_-8px_30px_rgba(0,0,0,0.12),0_4px_20px_rgba(0,0,0,0.08)]">
+        <div className="px-8 lg:px-16">
+          {/* Top Section - Logo, Tagline & Stats */}
+          <div className="pt-12 lg:pt-16 pb-10 lg:pb-12 border-b border-[#e5e5e5]">
+            <div className="flex flex-col lg:flex-row lg:justify-between gap-10 lg:gap-16">
+              {/* Left: Logo, Tagline & CTA */}
+              <div className="flex-1">
+                <Link href="/" className="inline-block mb-8">
+                  <span 
+                    className="text-3xl font-semibold tracking-tight text-[#1a1a1a]"
+                    style={{ fontFamily: "var(--font-helvetica)" }}
+                  >
+                    {brand.name}<span className="text-[#FF6B35]">.</span>
+                  </span>
+                </Link>
+
+                <div className="max-w-md">
+                  <p className="text-2xl lg:text-3xl font-medium text-[#1a1a1a] leading-tight mb-6">
+                    AI-powered support that actually resolves tickets.
+                  </p>
+                  <Link
+                    href="/demo"
+                    className="inline-flex items-center justify-center h-11 px-6 rounded-full text-sm font-medium text-white bg-[#1a1a1a] hover:bg-[#333] transition-colors"
+                  >
+                    Book a demo
+                    <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Right: Stats */}
+              <div className="lg:max-w-sm">
+                <p className="text-xs font-semibold tracking-wider text-[#666] uppercase mb-6">
+                  Average Customer Results
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-baseline gap-4">
+                    <span className="text-4xl lg:text-5xl font-bold text-[#1a1a1a]">82%</span>
+                    <span className="text-sm text-[#666]">Tickets resolved automatically</span>
+                  </div>
+                  <div className="flex items-baseline gap-4">
+                    <span className="text-4xl lg:text-5xl font-bold text-[#1a1a1a]">3.2x</span>
+                    <span className="text-sm text-[#666]">Faster response times</span>
+                  </div>
+                  <div className="flex items-baseline gap-4">
+                    <span className="text-4xl lg:text-5xl font-bold text-[#1a1a1a]">47%</span>
+                    <span className="text-sm text-[#666]">Reduction in support costs</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Navigation Links */}
-          <div className="flex flex-wrap gap-12 lg:gap-16">
+          <div className="py-10 lg:py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-12">
             {/* Product Links */}
             <div>
-              <h3 className="text-xs font-semibold text-[#999] uppercase tracking-[0.1em]">Product</h3>
-              <ul className="mt-4 space-y-3">
+              <h3 className="text-sm font-semibold text-[#1a1a1a] mb-4">Product</h3>
+              <ul className="space-y-3">
                 {navigation.links.map((link) => (
                   <li key={link.href}>
                     <Link
@@ -46,10 +85,10 @@ export function Footer() {
 
             {/* Company Links */}
             <div>
-              <h3 className="text-xs font-semibold text-[#999] uppercase tracking-[0.1em]">
+              <h3 className="text-sm font-semibold text-[#1a1a1a] mb-4">
                 {footer.company.title}
               </h3>
-              <ul className="mt-4 space-y-3">
+              <ul className="space-y-3">
                 {footer.company.links.map((link) => (
                   <li key={link.href}>
                     <Link
@@ -65,10 +104,10 @@ export function Footer() {
 
             {/* Legal Links */}
             <div>
-              <h3 className="text-xs font-semibold text-[#999] uppercase tracking-[0.1em]">
+              <h3 className="text-sm font-semibold text-[#1a1a1a] mb-4">
                 {footer.legal.title}
               </h3>
-              <ul className="mt-4 space-y-3">
+              <ul className="space-y-3">
                 {footer.legal.links.map((link) => (
                   <li key={link.href}>
                     <Link
@@ -82,26 +121,24 @@ export function Footer() {
               </ul>
             </div>
           </div>
-        </div>
 
-        {/* Bottom Section */}
-        <div className="mt-16 pt-8 border-t border-[#e0e0e0] flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-[#999]">{brand.copyright}</p>
-
-          {/* Social Links */}
-          <div className="flex items-center gap-1">
-            {footer.social.map((social) => (
-              <a
-                key={social.name}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center w-10 h-10 rounded-full text-[#999] hover:text-[#1a1a1a] hover:bg-[#e8e8e8] transition-all"
-              >
-                <span className="sr-only">{social.name}</span>
-                <SocialIcon name={social.name} />
-              </a>
-            ))}
+          {/* Bottom Section */}
+          <div className="py-6 border-t border-[#e5e5e5] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <p className="text-sm text-[#999]">{brand.copyright}</p>
+            <div className="flex items-center gap-2">
+              {footer.social.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-9 h-9 rounded-full bg-white border border-[#e5e5e5] text-[#666] hover:text-[#1a1a1a] hover:border-[#ccc] transition-all"
+                >
+                  <span className="sr-only">{social.name}</span>
+                  <SocialIcon name={social.name} />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </div>

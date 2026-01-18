@@ -243,15 +243,15 @@ function ApprovalDashboard({ isPaused }: { isPaused: boolean }) {
       ref={containerRef}
       className="rounded-2xl overflow-hidden border border-white/10 flex-1 min-h-0 relative"
       style={{
-        background: '#0a0a0c',
-        boxShadow: '0 30px 60px -15px rgba(0,0,0,0.8), 0 15px 30px -10px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)',
+        background: '#141417',
+        boxShadow: '0 0 0 1px rgba(255,255,255,0.08), 0 4px 24px rgba(0,0,0,0.4), 0 12px 48px rgba(0,0,0,0.3), 0 24px 80px rgba(0,0,0,0.25)',
       }}
     >
       {/* Cursor */}
       <AnimatedCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
 
       {/* Browser chrome */}
-      <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
+      <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2 bg-black/30">
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
           <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />

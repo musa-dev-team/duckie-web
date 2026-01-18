@@ -2,15 +2,15 @@
 
 import { AnimatePresence, motion } from "framer-motion"
 import {
-    Check,
-    CreditCard,
-    FileText,
-    Key,
-    MessageSquare,
-    Package,
-    RefreshCcw,
-    ShieldCheck,
-    UserCog,
+  Check,
+  CreditCard,
+  FileText,
+  Key,
+  MessageSquare,
+  Package,
+  RefreshCcw,
+  ShieldCheck,
+  UserCog,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 
@@ -277,14 +277,21 @@ function AnimatedCounter({
   intervalMs: number
   color: string
 }) {
-  // Initialize with time-based count so refreshing maintains continuity
-  const [count, setCount] = useState(() => 
-    getTimeBasedCount(baseCount, increment, intervalMs)
-  )
+  // Initialize with baseCount for SSR, then update to time-based count on client
+  const [count, setCount] = useState(baseCount)
   const [isIncrementing, setIsIncrementing] = useState(false)
+  const [hasMounted, setHasMounted] = useState(false)
   const colors = colorMap[color]
   
+  // Set time-based count after hydration
   useEffect(() => {
+    setCount(getTimeBasedCount(baseCount, increment, intervalMs))
+    setHasMounted(true)
+  }, [baseCount, increment, intervalMs])
+  
+  useEffect(() => {
+    if (!hasMounted) return
+    
     const interval = setInterval(() => {
       const inc = Math.floor(Math.random() * (increment.max - increment.min + 1)) + increment.min
       setCount(prev => prev + inc)
@@ -293,10 +300,11 @@ function AnimatedCounter({
     }, intervalMs)
     
     return () => clearInterval(interval)
-  }, [increment, intervalMs])
+  }, [increment, intervalMs, hasMounted])
   
   return (
     <span 
+      suppressHydrationWarning
       className="tabular-nums font-semibold text-2xl transition-all duration-300"
       style={{ 
         color: colors.text,
@@ -346,10 +354,10 @@ function ActionCard({
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
       className="relative"
-      layout
     >
       <motion.div 
-        layout
+        animate={{ height: 'auto' }}
+        transition={{ duration: 0.5, ease }}
         className="relative rounded-2xl overflow-hidden transition-shadow duration-500"
         style={{
           background: isExpanded ? colors.bg : 'rgba(255,255,255,0.02)',
@@ -359,7 +367,7 @@ function ActionCard({
         }}
       >
         {/* Compact header - always visible */}
-        <motion.div layout="position" className="p-5">
+        <div className="p-5">
           <div className="flex items-start justify-between mb-3">
             <div 
               className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300"
@@ -394,7 +402,7 @@ function ActionCard({
           <div className="text-xs text-zinc-600 mt-1">
             {action.detail}
           </div>
-        </motion.div>
+        </div>
 
         {/* Expanded content */}
         <AnimatePresence>
@@ -403,7 +411,7 @@ function ActionCard({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease }}
+              transition={{ duration: 0.5, ease }}
               className="overflow-hidden"
             >
               <div 

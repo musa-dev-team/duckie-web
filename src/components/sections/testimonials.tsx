@@ -185,7 +185,7 @@ export function TestimonialsContent() {
               
               {/* Image */}
               <img 
-                src="/images/testimonial-2.png" 
+                src="/images/Woman with Beverages.webp" 
                 alt="Customer testimonial"
                 className="absolute inset-0 w-full h-full object-contain object-bottom scale-105"
               />
@@ -198,6 +198,14 @@ export function TestimonialsContent() {
                     linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.08) 100%),
                     radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%)
                   `.trim().replace(/\s+/g, ' '),
+                }}
+              />
+              
+              {/* Vignette effect */}
+              <div 
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: 'radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.5) 100%)',
                 }}
               />
             </div>
