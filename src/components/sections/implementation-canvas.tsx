@@ -1925,7 +1925,7 @@ function DeployUI({ progress }: { progress: number }) {
 }
 
 export function ImplementationContent() {
-  const [activeStep, setActiveStep] = useState(-1)
+  const [activeStep, setActiveStep] = useState(0)
   const [progress, setProgress] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
@@ -1943,17 +1943,6 @@ export function ImplementationContent() {
     setProgress(0)
   }, [])
 
-  // Handle initial load
-  useEffect(() => {
-    if (activeStep === -1) {
-      if (!isInView) return
-      timerRef.current = setTimeout(() => {
-        setActiveStep(0)
-        setProgress(0)
-      }, 600)
-      return () => { if (timerRef.current) clearTimeout(timerRef.current) }
-    }
-  }, [activeStep, isInView])
 
   // Track progress for resuming
   const progressRef = useRef(0)
@@ -1961,7 +1950,6 @@ export function ImplementationContent() {
 
   // Main animation loop
   useEffect(() => {
-    if (activeStep === -1) return
     if (isPaused || !isInView) return
     if (timerRef.current) clearTimeout(timerRef.current)
 
@@ -1999,7 +1987,6 @@ export function ImplementationContent() {
   // Calculate total days progress
   // Connect: 1 day, Build: 4 days, Train: 3 days, Test: 5 days, Deploy: 1 day = 14 total
   const getTotalDays = () => {
-    if (activeStep < 0) return 0
     const daysByStep = [1, 5, 8, 13, 14] // Cumulative days
     const currentDays = daysByStep[activeStep] || 0
     const prevDays = activeStep > 0 ? daysByStep[activeStep - 1] : 0
@@ -2074,7 +2061,7 @@ export function ImplementationContent() {
             {steps.map((step, index) => {
               const stepColors = colorMap[step.color as keyof typeof colorMap]
               const isActive = index === activeStep
-              const isPast = index < activeStep && activeStep >= 0
+              const isPast = index < activeStep
               const Icon = step.icon
 
               return (
@@ -2274,25 +2261,6 @@ export function ImplementationContent() {
                     className="h-full"
                   >
                     <DeployUI progress={progress} />
-                  </motion.div>
-                )}
-                {activeStep === -1 && (
-                  <motion.div
-                    key="initial"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="h-full flex items-center justify-center"
-                  >
-                    <div className="text-center">
-                      <motion.div
-                        animate={{ scale: [1, 1.05, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4"
-                      >
-                        <Clock className="w-8 h-8 text-zinc-500" />
-                      </motion.div>
-                      <p className="text-zinc-500 text-sm">Loading setup journey...</p>
-                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
