@@ -74,12 +74,23 @@ export function Footer() {
               <ul className="space-y-2 md:space-y-3">
                 {navigation.links.map((link) => (
                   <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-xs md:text-sm text-[#666] hover:text-[#1a1a1a] transition-colors"
-                    >
-                      {link.label}
-                    </Link>
+                    {'external' in link && link.external ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs md:text-sm text-[#666] hover:text-[#1a1a1a] transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className="text-xs md:text-sm text-[#666] hover:text-[#1a1a1a] transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

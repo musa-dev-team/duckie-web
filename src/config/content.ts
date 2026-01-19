@@ -404,6 +404,7 @@ export const content = {
       { label: "Quality & Control", href: "/#quality-control" },
       { label: "Go Live", href: "/#go-live" },
       { label: "Integrations", href: "/integrations" },
+      { label: "Docs", href: "https://docs.duckie.ai", external: true },
     ],
   },
 

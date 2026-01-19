@@ -665,6 +665,35 @@ export function HowItWorksContent() {
                   className={`flex-1 p-4 md:p-6 ${isPaused ? 'overflow-y-auto' : 'overflow-y-hidden'}`}
                   style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}
                 >
+                  {/* Waiting state while message is streaming in */}
+                  {activeStep >= 0 && elapsedTime <= MESSAGE_STREAM_DONE && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="flex flex-col items-center justify-center h-full text-center"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <motion.div
+                          animate={{ opacity: [0.3, 1, 0.3] }}
+                          transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut", delay: 0 }}
+                          className="w-1.5 h-1.5 rounded-full bg-sky-400"
+                        />
+                        <motion.div
+                          animate={{ opacity: [0.3, 1, 0.3] }}
+                          transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+                          className="w-1.5 h-1.5 rounded-full bg-sky-400"
+                        />
+                        <motion.div
+                          animate={{ opacity: [0.3, 1, 0.3] }}
+                          transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
+                          className="w-1.5 h-1.5 rounded-full bg-sky-400"
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+
                   {/* Timeline starts after message streams in (step 0 starts at 0ms) */}
                   {activeStep >= 0 && elapsedTime > MESSAGE_STREAM_DONE && (
                     <div key={understandKey} className="space-y-4">
