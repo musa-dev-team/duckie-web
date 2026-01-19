@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Geist, Playfair_Display } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Navigation } from "@/components/navigation";
 import { HashScrollHandler } from "@/components/hash-scroll-handler";
@@ -108,11 +109,159 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* Google Analytics (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-3Z5N0SJWWY"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-3Z5N0SJWWY');
+          `}
+        </Script>
+
+        {/* Hotjar Tracking Code */}
+        <Script id="hotjar" strategy="afterInteractive">
+          {`
+            (function(h,o,t,j,a,r){
+              h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+              h._hjSettings={hjid:5081920,hjsv:6};
+              a=o.getElementsByTagName('head')[0];
+              r=o.createElement('script');r.async=1;
+              r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+              a.appendChild(r);
+            })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+          `}
+        </Script>
+
+        {/* Warmly Tracking Code */}
+        <Script
+          id="warmly-script-loader"
+          src="https://opps-widget.getwarmly.com/warmly.js?clientId=72152a822ef7873448ea3e74c5ef5728"
+          strategy="lazyOnload"
+        />
+
+        {/* Apollo Tracking */}
+        <Script id="apollo-tracking" strategy="afterInteractive">
+          {`
+            function initApollo(){
+              var n=Math.random().toString(36).substring(7),o=document.createElement("script");
+              o.src="https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache="+n,o.async=!0,o.defer=!0,
+              o.onload=function(){window.trackingFunctions.onLoad({appId:"6635558ab53bbe01c7cad0cf"})},
+              document.head.appendChild(o)
+            }
+            initApollo();
+          `}
+        </Script>
+
+        {/* reb2b Tracking */}
+        <Script id="reb2b-tracking" strategy="afterInteractive">
+          {`
+            !function(key) {
+              if (window.reb2b) return;
+              window.reb2b = {loaded: true};
+              var s = document.createElement("script");
+              s.async = true;
+              s.src = "https://ddwl4m2hdecbv.cloudfront.net/b/" + key + "/" + key + ".js.gz";
+              document.getElementsByTagName("script")[0].parentNode.insertBefore(s, document.getElementsByTagName("script")[0]);
+            }("EN4M0H10D8OM");
+          `}
+        </Script>
+      </head>
       <body className={`${satoshi.variable} ${geist.variable} ${playfair.variable} font-sans antialiased`}>
         <HashScrollHandler />
         <Navigation />
         {children}
         <Analytics />
+
+        {/* Beehiiv Email Subscription */}
+        <Script id="beehiiv-subscription" strategy="afterInteractive">
+          {`
+            document.addEventListener("DOMContentLoaded", function () {
+              const emailField = document.querySelector("input[type='email']");
+              let lastSent = "";
+
+              function isValidEmail(email) {
+                return /\\S+@\\S+\\.\\S+/.test(email);
+              }
+
+              function debounce(fn, delay) {
+                let timeout;
+                return (...args) => {
+                  clearTimeout(timeout);
+                  timeout = setTimeout(() => fn.apply(this, args), delay);
+                };
+              }
+
+              const sendToBeehiiv = debounce((email) => {
+                if (!isValidEmail(email) || email === lastSent) return;
+
+                lastSent = email;
+
+                fetch("https://applogic.app.duckie.ai/webapp/beehiiv/subscribe", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify({email})
+                }).then(async res => {
+                  try {
+                    const text = await res.text();
+                  } catch (error) {
+                    console.error("❌ Error:", error);
+                  }
+                }).catch(error => {
+                  console.error("❌ Fetch error:", error);
+                });
+              }, 1500);
+
+              if (emailField) {
+                emailField.addEventListener("input", function () {
+                  const email = emailField.value.trim();
+                  
+                  if (isValidEmail(email)) {
+                    sendToBeehiiv(email);
+                  }
+                });
+              }
+            });
+          `}
+        </Script>
+
+        {/* LinkedIn Insight Tag */}
+        <Script id="linkedin-partner" strategy="afterInteractive">
+          {`
+            _linkedin_partner_id = "7568066";
+            window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+            window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+          `}
+        </Script>
+        <Script id="linkedin-insight" strategy="afterInteractive">
+          {`
+            (function(l) {
+              if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+              window.lintrk.q=[]}
+              var s = document.getElementsByTagName("script")[0];
+              var b = document.createElement("script");
+              b.type = "text/javascript";b.async = true;
+              b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+              s.parentNode.insertBefore(b, s);
+            })(window.lintrk);
+          `}
+        </Script>
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: "none" }}
+            alt=""
+            src="https://px.ads.linkedin.com/collect/?pid=7568066&fmt=gif"
+          />
+        </noscript>
       </body>
     </html>
   );
