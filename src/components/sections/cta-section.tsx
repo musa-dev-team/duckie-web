@@ -41,14 +41,17 @@ export function CtaContent() {
             transition={{ duration: 0.5, delay: 0.3, ease }}
             className="flex justify-center"
           >
-            <motion.button
+            <motion.a
+              href={content.links.demoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center justify-center h-10 md:h-12 px-5 md:px-6 rounded-full text-xs md:text-sm font-semibold text-white bg-[#1a1a1a] hover:bg-[#333] transition-colors shadow-lg"
             >
               {content.finalCta.cta}
               <ArrowRight className="ml-1.5 md:ml-2 w-3.5 h-3.5 md:w-4 md:h-4" />
-            </motion.button>
+            </motion.a>
           </motion.div>
         </div>
       </div>

@@ -1,33 +1,33 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { content } from "@/config/content"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 
 const navigation = {
-  platform: {
-    label: "Platform",
-    href: "/platform",
+  product: {
+    label: "Product",
+    href: "/",
     items: [
-      { label: "Agents", href: "/platform#agents" },
-      { label: "Guardrails", href: "/platform#guardrails" },
-      { label: "Knowledge", href: "/platform#knowledge" },
-      { label: "Runbooks", href: "/platform#runbooks" },
-      { label: "Analytics", href: "/platform#analytics" },
+      { label: "What Duckie Does", href: "/#what-duckie-does" },
+      { label: "How Duckie Works", href: "/#how-it-works" },
+      { label: "Quality & Control", href: "/#quality-control" },
+      { label: "Go Live", href: "/#go-live" },
+      { label: "Integrations", href: "/integrations" },
     ],
   },
-  howItWorks: {
-    label: "How It Works",
-    href: "/how-it-works",
+  company: {
+    label: "Company",
+    href: "/about",
     items: [
-      { label: "Understand", href: "/how-it-works#understand" },
-      { label: "Check Guardrails", href: "/how-it-works#check-guardrails" },
-      { label: "Gather Context", href: "/how-it-works#gather-context" },
-      { label: "Take Action", href: "/how-it-works#take-action" },
-      { label: "Log & Learn", href: "/how-it-works#log-learn" },
+      { label: "About", href: "/about" },
+      { label: "Blog", href: "/blog" },
+      { label: "Careers", href: "https://www.workatastartup.com/companies/duckie" },
     ],
   },
 }
@@ -73,6 +73,7 @@ export function Navigation({ variant = "transparent" }: { variant?: "transparent
   const [scrolled, setScrolled] = useState(false)
   const [isOverLightSection, setIsOverLightSection] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const pathname = usePathname()
   
   // Detect scroll position and check if over light sections
   useEffect(() => {
@@ -82,14 +83,16 @@ export function Navigation({ variant = "transparent" }: { variant?: "transparent
       setScrolled(window.scrollY > heroHeight)
       
       // Check if navigation is over any light section
+      // We check at a point further down (150px) to account for pages with
+      // white padding around dark hero images (like the blog page)
       const lightSections = document.querySelectorAll('[data-theme="light"]')
-      const navHeight = 80 // Height of navigation
+      const checkPoint = 150 // Check at this Y position to determine theme
       
       let isOverLight = false
       lightSections.forEach((section) => {
         const rect = section.getBoundingClientRect()
-        // Check if this section is covering the navigation area
-        if (rect.top <= navHeight && rect.bottom > navHeight) {
+        // Check if this section is covering the check point
+        if (rect.top <= checkPoint && rect.bottom > checkPoint) {
           isOverLight = true
         }
       })
@@ -97,12 +100,17 @@ export function Navigation({ variant = "transparent" }: { variant?: "transparent
       setIsOverLightSection(isOverLight)
     }
     
-    // Run on mount and scroll
+    // Run on mount, route change, and scroll
+    // Small delay to ensure DOM has updated after route change
+    const timeoutId = setTimeout(handleScroll, 50)
     handleScroll()
     window.addEventListener("scroll", handleScroll, { passive: true })
     
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    return () => {
+      clearTimeout(timeoutId)
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [pathname])
   
   const isLight = variant === "solid" || scrolled
   const isDark = isOverLightSection // Dark mode when over light sections
@@ -141,7 +149,7 @@ export function Navigation({ variant = "transparent" }: { variant?: "transparent
             isDark && "backdrop-blur-sm"
           )}>
             {/* Logo */}
-            <Link href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <span 
                 className={cn(
                   "text-xl font-semibold tracking-tight transition-colors duration-300",
@@ -159,18 +167,18 @@ export function Navigation({ variant = "transparent" }: { variant?: "transparent
             {/* Nav Links */}
             <div className="hidden md:flex items-center gap-1">
               <NavLink 
-                {...navigation.platform} 
+                {...navigation.product} 
                 isLight={scrolled} 
                 isDark={isDark}
-                isActive={activeDropdown === 'platform'}
-                onHover={() => setActiveDropdown('platform')}
+                isActive={activeDropdown === 'product'}
+                onHover={() => setActiveDropdown('product')}
               />
               <NavLink 
-                {...navigation.howItWorks} 
+                {...navigation.company} 
                 isLight={scrolled} 
                 isDark={isDark}
-                isActive={activeDropdown === 'howItWorks'}
-                onHover={() => setActiveDropdown('howItWorks')}
+                isActive={activeDropdown === 'company'}
+                onHover={() => setActiveDropdown('company')}
               />
             </div>
           </div>
@@ -225,6 +233,7 @@ export function Navigation({ variant = "transparent" }: { variant?: "transparent
             >
               <Button 
                 size="sm"
+                asChild
                 className={cn(
                   "transition-colors duration-300",
                   isDark
@@ -232,7 +241,9 @@ export function Navigation({ variant = "transparent" }: { variant?: "transparent
                     : "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
                 )}
               >
-                Book a demo
+                <a href={content.links.demoUrl} target="_blank" rel="noopener noreferrer">
+                  Book a demo
+                </a>
               </Button>
             </motion.div>
           )}

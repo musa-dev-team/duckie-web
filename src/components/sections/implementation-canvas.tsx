@@ -2004,7 +2004,7 @@ export function ImplementationContent() {
   }
 
   return (
-    <div className="relative py-16 md:py-28 lg:py-40">
+    <div id="go-live" className="relative py-16 md:py-28 lg:py-40 scroll-mt-24">
       {/* Inject scrollbar styles */}
       <style dangerouslySetInnerHTML={{ __html: scrollbarCSS }} />
       
@@ -2020,7 +2020,7 @@ export function ImplementationContent() {
           >
             <div className="flex items-center gap-3 md:gap-4">
               <span className="text-[10px] md:text-xs font-medium text-zinc-400 uppercase tracking-[0.2em]">
-                Implementation
+                Go Live
               </span>
               <motion.div 
                 initial={{ scaleX: 0 }}

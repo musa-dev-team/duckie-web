@@ -1,5 +1,6 @@
 "use client"
 
+import { content } from "@/config/content"
 import { mobileHeroContent, mobileMessageSequences, type Message, type MessageType } from "@/config/hero-mobile-content"
 import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
@@ -388,7 +389,10 @@ export function Hero() {
               placeholder={mobileHeroContent.cta.placeholder}
               className="hero-email-input bg-transparent border-none outline-none text-white text-sm flex-1 min-w-0 focus:ring-0 placeholder:text-white/50"
             />
-            <motion.button
+            <motion.a
+              href={content.links.demoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               whileTap={{ scale: 0.96 }}
               transition={{ duration: 0.15 }}
               className="inline-flex items-center gap-1 justify-center rounded-full h-9 px-4 text-sm font-medium text-zinc-900 flex-shrink-0"
@@ -401,7 +405,7 @@ export function Hero() {
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-            </motion.button>
+            </motion.a>
           </div>
         </motion.div>
       </div>
@@ -456,7 +460,10 @@ export function Hero() {
                 placeholder="Enter your work email"
                 className="hero-email-input bg-transparent border-none outline-none text-white text-sm w-56 focus:ring-0"
               />
-              <motion.button
+              <motion.a
+                href={content.links.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.2 }}
@@ -470,7 +477,7 @@ export function Hero() {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
-              </motion.button>
+              </motion.a>
             </div>
           </motion.div>
         </div>

@@ -29,15 +29,17 @@ export function Footer() {
                   <p className="text-xl md:text-2xl lg:text-3xl font-medium text-[#1a1a1a] leading-tight mb-0 md:mb-6">
                     AI-powered support that actually resolves tickets.
                   </p>
-                  <Link
-                    href="/demo"
+                  <a
+                    href={content.links.demoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="hidden md:inline-flex items-center justify-center h-10 md:h-11 px-5 md:px-6 rounded-full text-xs md:text-sm font-medium text-white bg-[#1a1a1a] hover:bg-[#333] transition-colors"
                   >
                     Book a demo
                     <svg className="ml-1.5 md:ml-2 w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
-                  </Link>
+                  </a>
                 </div>
               </div>
 

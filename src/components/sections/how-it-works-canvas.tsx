@@ -316,7 +316,7 @@ export function HowItWorksContent() {
   }
 
   return (
-    <div className="relative py-16 md:py-28 lg:py-40">
+    <div id="how-it-works" className="relative py-16 md:py-28 lg:py-40 scroll-mt-24">
       <div className="container mx-auto px-5 md:px-6">
         {/* Header */}
         <div className="mb-10 md:mb-16 lg:mb-20">

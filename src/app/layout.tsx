@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Geist, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/navigation";
+import { HashScrollHandler } from "@/components/hash-scroll-handler";
 
 const satoshi = localFont({
   src: "../fonts/Satoshi-Variable.woff2",
@@ -107,6 +108,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${satoshi.variable} ${geist.variable} ${playfair.variable} font-sans antialiased`}>
+        <HashScrollHandler />
         <Navigation />
         {children}
       </body>

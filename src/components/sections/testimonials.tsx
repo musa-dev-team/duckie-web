@@ -122,28 +122,6 @@ export function TestimonialsContent() {
               </div>
             </div>
 
-            {/* CTA */}
-            <motion.a
-              href="/case-studies/grid"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.5, ease }}
-              className="inline-flex items-center gap-2 md:gap-3 mt-6 md:mt-8 text-xs md:text-sm font-semibold text-[#1a1a1a] group"
-            >
-              <span>Read the case study</span>
-              <span className="flex items-center justify-center w-7 h-7 md:w-8 md:h-8 rounded-full bg-[#1a1a1a] group-hover:bg-[#333] transition-colors">
-                <svg 
-                  className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </span>
-            </motion.a>
           </motion.div>
 
           {/* Right column - Image */}

@@ -376,6 +376,14 @@ export const content = {
   },
 
   // ============================================
+  // LINKS
+  // Centralized URLs for easy updates
+  // ============================================
+  links: {
+    demoUrl: "https://calendly.com/d/cs8k-789-7kg/duckie-intro-call",
+  },
+
+  // ============================================
   // FINAL CTA SECTION
   // The closing section on pages
   // ============================================
@@ -390,10 +398,11 @@ export const content = {
   // ============================================
   navigation: {
     links: [
-      { label: "Platform", href: "/platform" },
-      { label: "How it Works", href: "/how-it-works" },
+      { label: "What Duckie Does", href: "/#what-duckie-does" },
+      { label: "How Duckie Works", href: "/#how-it-works" },
+      { label: "Quality & Control", href: "/#quality-control" },
+      { label: "Go Live", href: "/#go-live" },
       { label: "Integrations", href: "/integrations" },
-      { label: "Blog", href: "/blog" },
     ],
   },
 
@@ -406,8 +415,7 @@ export const content = {
       links: [
         { label: "About", href: "/about" },
         { label: "Blog", href: "/blog" },
-        { label: "Careers", href: "/careers" },
-        { label: "Contact", href: "/contact" },
+        { label: "Careers", href: "https://www.workatastartup.com/companies/duckie" },
       ],
     },
     legal: {
@@ -419,9 +427,8 @@ export const content = {
       ],
     },
     social: [
-      { name: "Twitter", href: "https://twitter.com/duckieai" },
-      { name: "LinkedIn", href: "https://linkedin.com/company/duckieai" },
-      { name: "GitHub", href: "https://github.com/duckieai" },
+      { name: "Twitter", href: "https://x.com/duckie_ai" },
+      { name: "LinkedIn", href: "https://www.linkedin.com/company/duckie-ai/" },
     ],
   },
 

@@ -756,7 +756,7 @@ export function QualityContent() {
   const [isHovering, setIsHovering] = useState(false)
 
   return (
-    <div className="relative py-12 sm:py-16 lg:py-24">
+    <div id="quality-control" className="relative py-12 sm:py-16 lg:py-24 scroll-mt-24">
       <div className="container mx-auto px-5 md:px-6">
         {/* Header with eyebrow */}
         <motion.div

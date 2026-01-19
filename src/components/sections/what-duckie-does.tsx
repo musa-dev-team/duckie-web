@@ -524,7 +524,7 @@ export function WhatDuckiesDoesContent() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   
   return (
-    <div className="relative py-16 md:py-28 lg:py-40">
+    <div id="what-duckie-does" className="relative py-16 md:py-28 lg:py-40 scroll-mt-24">
       <div className="container mx-auto px-5 md:px-6 relative z-10">
         {/* Header */}
         <div className="mb-10 md:mb-12 lg:mb-16">
