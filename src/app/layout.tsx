@@ -4,6 +4,7 @@ import { Geist, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/navigation";
 import { HashScrollHandler } from "@/components/hash-scroll-handler";
+import { Analytics } from "@vercel/analytics/next";
 
 const satoshi = localFont({
   src: "../fonts/Satoshi-Variable.woff2",
@@ -111,6 +112,7 @@ export default function RootLayout({
         <HashScrollHandler />
         <Navigation />
         {children}
+        <Analytics />
       </body>
     </html>
   );
