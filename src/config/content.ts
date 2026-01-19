@@ -255,22 +255,39 @@ export const content = {
   socialProof: {
     title: "Results that speak for themselves",
     stats: [
-      { value: "82", suffix: "%", label: "Resolution rate" },
+      { value: "87", suffix: "%", label: "Resolution rate" },
       { value: "76", suffix: "%", label: "Faster handle time" },
-      { value: "<2", suffix: "min", label: "First response" },
+      { value: "29", suffix: "s", label: "First response" },
       { value: "4.8", suffix: "/5", label: "CSAT maintained" },
     ],
     featuredTestimonial: {
-      title: "From 40% to 82% automation in weeks",
-      description: "TechScale's support team was drowning in repetitive tickets. With Duckie handling refunds, account updates, and common questions, their agents now focus on complex issues that actually need human attention.",
-      author: "Sarah Chen",
-      role: "VP of Customer Experience",
-      company: "TechScale",
+      title: "From 24-hour SLA to 5-minute resolutions",
+      quote: "Once your workflows are fine-tuned, you can sit back and watch open inquiries fly in and out of your queue.",
+      description: "Before Duckie, Grid's support team faced a 24-hour SLA and would need to expand 1:1 with customer growth. Now, Duckie resolves 82% of daily inquiries — 75% in under 5 minutes. Users often mistake Duckie for a human, thanking it for prompt, polite service.",
+      author: "Matthew Kim",
+      role: "Support Manager",
+      company: "Grid",
       logo: "/images/grid-logo.png",
-      avatar: "", // Author photo URL
-      stat: { value: "82%", label: "Resolution rate" }, // Optional highlight stat
+      avatar: "/images/matthew-grid.jpeg",
+      stat: { value: "87%", label: "Resolved by Duckie" },
     },
     testimonials: [
+      {
+        quote: "Duckie does an amazing job at blending customizable workflows with hands-off-keyboard customer support.",
+        author: "Matthew Kim",
+        role: "Support Manager",
+        company: "Grid",
+        logo: "/images/grid-logo.png",
+        avatar: "/images/matthew-grid.jpeg",
+      },
+      {
+        quote: "Duckie's team will work day and night to customize their product to your needs. They're not a company that says 'no' — they come right back with an ETA.",
+        author: "Matthew Kim",
+        role: "Support Manager",
+        company: "Grid",
+        logo: "/images/grid-logo.png",
+        avatar: "/images/matthew-grid.jpeg",
+      },
       {
         quote: "The audit trail is essential for our compliance requirements.",
         author: "Marcus Johnson",
@@ -292,22 +309,6 @@ export const content = {
         author: "David Kim",
         role: "Support Team Lead",
         company: "GrowthLabs",
-        logo: "",
-        avatar: "",
-      },
-      {
-        quote: "", // TBD
-        author: "",
-        role: "",
-        company: "",
-        logo: "",
-        avatar: "",
-      },
-      {
-        quote: "", // TBD
-        author: "",
-        role: "",
-        company: "",
         logo: "",
         avatar: "",
       },
@@ -463,7 +464,7 @@ export const content = {
     },
     analytics: {
       id: "analytics",
-      description: "The analytics dashboard. Show: resolution rate (82%), average response time (<2 min), CSAT score (4.8), maybe a chart of tickets over time, and a breakdown by category (Billing, Technical, Account). Should feel insightful, not overwhelming.",
+      description: "The analytics dashboard. Show: resolution rate (87%), average response time (29s), CSAT score (4.8), maybe a chart of tickets over time, and a breakdown by category (Billing, Technical, Account). Should feel insightful, not overwhelming.",
     },
     channels: {
       id: "channels",

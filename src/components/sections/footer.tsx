@@ -50,7 +50,7 @@ export function Footer() {
                 </p>
                 <div className="space-y-3 md:space-y-4">
                   <div className="flex items-baseline gap-3 md:gap-4">
-                    <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a1a1a]">82%</span>
+                    <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a1a1a]">87%</span>
                     <span className="text-xs md:text-sm text-[#666]">Tickets resolved automatically</span>
                   </div>
                   <div className="flex items-baseline gap-3 md:gap-4">

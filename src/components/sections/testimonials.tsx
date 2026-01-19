@@ -92,26 +92,44 @@ export function TestimonialsContent() {
               />
             )}
 
-            {/* Title/Quote */}
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-medium leading-[1.15] tracking-[-0.025em] text-[#1a1a1a] mb-5 md:mb-8">
+            {/* Title - Short highlight */}
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-medium leading-[1.15] tracking-[-0.025em] text-[#1a1a1a] mb-5 md:mb-6">
               {featuredTestimonial.title}
             </h2>
 
+            {/* Quote */}
+            {featuredTestimonial.quote && (
+              <blockquote className="relative mb-5 md:mb-6">
+                <span className="absolute -left-2 md:-left-3 -top-2 text-4xl md:text-5xl text-[#ddd] font-serif leading-none select-none">"</span>
+                <p className="text-lg md:text-xl text-[#333] leading-relaxed italic pl-4 md:pl-6">
+                  {featuredTestimonial.quote}
+                </p>
+              </blockquote>
+            )}
+
             {/* Description */}
-            <p className="text-base md:text-lg text-[#555] leading-relaxed mb-6 md:mb-10 max-w-xl">
+            <p className="text-sm md:text-base text-[#666] leading-relaxed mb-6 md:mb-10 max-w-xl">
               {featuredTestimonial.description}
             </p>
 
             {/* Author */}
             <div className="flex items-center gap-3 md:gap-5 pb-6 md:pb-8 border-b border-[#e5e5e5]">
-              <div 
-                className="flex h-11 w-11 md:h-14 md:w-14 items-center justify-center rounded-full text-base md:text-lg font-medium text-white"
-                style={{
-                  background: '#1a1a1a',
-                }}
-              >
-                {featuredTestimonial.author.charAt(0)}
-              </div>
+              {featuredTestimonial.avatar ? (
+                <img 
+                  src={featuredTestimonial.avatar}
+                  alt={featuredTestimonial.author}
+                  className="h-11 w-11 md:h-14 md:w-14 rounded-full object-cover"
+                />
+              ) : (
+                <div 
+                  className="flex h-11 w-11 md:h-14 md:w-14 items-center justify-center rounded-full text-base md:text-lg font-medium text-white"
+                  style={{
+                    background: '#1a1a1a',
+                  }}
+                >
+                  {featuredTestimonial.author.charAt(0)}
+                </div>
+              )}
               <div>
                 <div className="text-sm md:text-base font-semibold text-[#1a1a1a]">
                   {featuredTestimonial.author}

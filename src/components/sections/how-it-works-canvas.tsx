@@ -445,14 +445,14 @@ export function HowItWorksContent() {
                         className="w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center text-white text-[10px] md:text-xs font-semibold"
                         style={{ background: 'linear-gradient(135deg, rgb(180, 160, 175) 0%, rgb(160, 150, 170) 100%)' }}
                       >
-                        JD
+                        SM
                       </motion.div>
                       <motion.div
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4, duration: 0.3 }}
                       >
-                        <div className="text-xs md:text-sm font-medium text-white">Jane Doe</div>
+                        <div className="text-xs md:text-sm font-medium text-white">Sarah Miller</div>
                         <div className="text-[10px] md:text-xs text-zinc-500">Order #12345</div>
                       </motion.div>
                       <motion.span 
@@ -765,7 +765,7 @@ export function HowItWorksContent() {
                             {elapsedTime > 7600 && (
                               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="text-xs space-y-0.5 pt-1">
                                 <div className="text-purple-400/60 text-[10px] uppercase tracking-wider">Customer</div>
-                                <LoadingLine label="Name" value="Jane Doe" showAt={7800} currentTime={elapsedTime} loadDuration={200} />
+                                <LoadingLine label="Name" value="Sarah Miller" showAt={7800} currentTime={elapsedTime} loadDuration={200} />
                                 <LoadingLine label="Tier" value="VIP" showAt={8100} currentTime={elapsedTime} loadDuration={200} color="amber" />
                               </motion.div>
                             )}
@@ -801,7 +801,7 @@ export function HowItWorksContent() {
                                 <div className="rounded-lg p-2.5 bg-white/[0.02] border border-white/5">
                                   <p className="text-xs text-zinc-300 leading-relaxed">
                                     "<StreamingText 
-                                      text="Hi Jane! I'm so sorry your package never arrived — that's really frustrating, especially after waiting two weeks. I've gone ahead and processed a full refund of $49.99 to your card ending in 4242. You should see it within 3-5 business days. Is there anything else I can help you with today?"
+                                      text="Hi Sarah! I'm so sorry your package never arrived — that's really frustrating, especially after waiting two weeks. I've gone ahead and processed a full refund of $49.99 to your card ending in 4242. You should see it within 3-5 business days. Is there anything else I can help you with today?"
                                       isActive={activeStep >= 3 && elapsedTime > 10800}
                                       delay={0}
                                     />"
