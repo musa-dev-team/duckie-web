@@ -104,10 +104,15 @@ export const metadata: Metadata = {
     },
   },
 
-  // Verification (add your IDs when you have them)
-  // verification: {
-  //   google: "your-google-verification-code",
-  // },
+  // Canonical URL
+  alternates: {
+    canonical: "https://duckie.ai",
+  },
+
+  // Verification
+  verification: {
+    google: "FEAgqW0_raEer_7z7Rl7U1Y9hCO-5-DEWuQlp1Me564",
+  },
 };
 
 export default function RootLayout({
@@ -118,6 +123,33 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Structured Data (JSON-LD) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  "@id": "https://duckie.ai/#organization",
+                  name: "Duckie",
+                  url: "https://duckie.ai",
+                  logo: "https://duckie.ai/logo.svg",
+                  sameAs: ["https://twitter.com/duckieai"],
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": "https://duckie.ai/#website",
+                  url: "https://duckie.ai",
+                  name: "Duckie",
+                  publisher: { "@id": "https://duckie.ai/#organization" },
+                },
+              ],
+            }),
+          }}
+        />
+
         {/* Google Analytics (gtag.js) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-3Z5N0SJWWY"
