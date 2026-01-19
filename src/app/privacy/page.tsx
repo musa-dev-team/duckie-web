@@ -1,8 +1,12 @@
-"use client"
-
+import type { Metadata } from "next";
 import { Footer } from "@/components/sections/footer"
 import Image from "next/image"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "How Duckie collects, uses, and protects your personal information. Read our privacy practices and your data rights.",
+};
 
 export default function PrivacyPage() {
   return (

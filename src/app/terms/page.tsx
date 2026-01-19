@@ -1,8 +1,12 @@
-"use client"
-
+import type { Metadata } from "next";
 import { Footer } from "@/components/sections/footer"
 import Image from "next/image"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "Terms and Conditions",
+  description: "Legal terms and conditions for using Duckie's AI support services.",
+};
 
 export default function TermsPage() {
   return (

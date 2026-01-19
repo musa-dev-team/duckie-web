@@ -617,7 +617,7 @@ export function HowItWorksContent() {
                     transition={{ duration: 1.5, ease: "easeInOut" }}
                     className="absolute inset-0"
                     style={{
-                      backgroundImage: `url(/images/trees-${num}.jpg)`,
+                      backgroundImage: `url(/images/trees-${num}.webp)`,
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                     }}

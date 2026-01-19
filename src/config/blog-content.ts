@@ -21,7 +21,7 @@ export const blogPosts: BlogPost[] = [
     category: "Insights",
     date: "Jan 2026",
     readTime: "6 min read",
-    image: "/images/ocean-bg-3.jpg",
+    image: "/images/ocean-bg-3.webp",
     featured: true,
     content: `For the last decade, support automation focused on how to talk to customers — not how to actually help them. Teams bought chatbots hoping they'd reduce workload. Instead, they created more of it.
 
@@ -119,7 +119,7 @@ If your team is ready to move from talking to resolving — that's where Duckie 
     category: "Case Studies",
     date: "Jan 2026",
     readTime: "5 min read",
-    image: "/images/sky-2.jpg",
+    image: "/images/sky-2.webp",
     featured: true,
     content: `## How Duckie Transformed Customer Support at Grid
 
@@ -166,7 +166,7 @@ Grid continues to expand Duckie's capabilities, adding new workflows and integra
     category: "Guides",
     date: "Jan 2026",
     readTime: "5 min read",
-    image: "/images/trees-3.jpg",
+    image: "/images/trees-3.webp",
     featured: true,
     content: `## What is Duckie's no-code workflow builder?
 
@@ -223,7 +223,7 @@ Book a demo today with the founding team to get started!`,
     category: "Insights",
     date: "Dec 2025",
     readTime: "5 min read",
-    image: "/images/sky-4.jpg",
+    image: "/images/sky-4.webp",
     featured: false,
     content: `Customer support is evolving. The growing use of AI agents has shifted how businesses operate, promising efficiency, cost savings, and round-the-clock availability. But there's one significant roadblock: unpredictability.
 
@@ -282,7 +282,7 @@ Duckie is designed from the ground up to give support teams the predictability t
     category: "Guides",
     date: "Dec 2025",
     readTime: "5 min read",
-    image: "/images/ocean-bg-5.jpg",
+    image: "/images/ocean-bg-5.webp",
     featured: false,
     content: `I get the temptation. You're smart. You've got great engineers. You read a few LangChain tutorials and now you're 3 prompts away from "revolutionizing customer support."
 
@@ -353,7 +353,7 @@ P.S. If you're still considering building your own AI agent, I'd genuinely love 
     category: "Guides",
     date: "Dec 2025",
     readTime: "5 min read",
-    image: "/images/trees-2.jpg",
+    image: "/images/trees-2.webp",
     featured: false,
     content: `Let's be honest—"AI agent" is such an overloaded buzzword. When you hear it, you're probably thinking, ugh, not another one.
 
@@ -396,7 +396,7 @@ Book a demo and meet your next support teammate.`,
     category: "Comparisons",
     date: "Nov 2025",
     readTime: "4-5 min read",
-    image: "/images/sky-3.jpg",
+    image: "/images/sky-3.webp",
     featured: false,
     content: `Choosing the right AI support tool can make or break your customer experience. In this comparison, we break down Duckie and Intercom Fin to help you make an informed decision.
 
@@ -460,7 +460,7 @@ Book a demo to see Duckie in action.`,
     category: "Insights",
     date: "Nov 2025",
     readTime: "5 min read",
-    image: "/images/ocean-bg-4.jpg",
+    image: "/images/ocean-bg-4.webp",
     featured: false,
     content: `Customer experience is evolving faster than ever. Here are the key trends shaping support in 2025.
 
@@ -509,7 +509,7 @@ The question isn't whether to adopt AI—it's how fast you can get there.`,
     category: "Guides",
     date: "Oct 2025",
     readTime: "5 min read",
-    image: "/images/trees-4.jpg",
+    image: "/images/trees-4.webp",
     featured: false,
     content: `In the early days, founders doing support isn't just necessary—it's a superpower. Here's how to make the most of it.
 
@@ -572,7 +572,7 @@ Founder-led support isn't a phase to get through—it's a competitive advantage 
     category: "Insights",
     date: "Oct 2025",
     readTime: "3 min read",
-    image: "/images/sky-5.jpg",
+    image: "/images/sky-5.webp",
     featured: false,
     content: `Let's cut through the hype. AI in B2B support isn't magic—but it's also not useless. Here's the honest truth.
 
@@ -620,7 +620,7 @@ The companies winning with AI support are the ones who understand its limits AND
     category: "Guides",
     date: "Sep 2025",
     readTime: "10 min read",
-    image: "/images/ocean-bg-6.jpg",
+    image: "/images/ocean-bg-6.webp",
     featured: false,
     content: `Implementing AI in B2B support is a journey. Here's your roadmap to success.
 
@@ -707,7 +707,7 @@ The key is to approach AI as a tool to make your team better, not a replacement 
     category: "Insights",
     date: "Sep 2025",
     readTime: "6 min read",
-    image: "/images/trees-5.jpg",
+    image: "/images/trees-5.webp",
     featured: false,
     content: `Garry, the CEO of YC, put it in a very precise way - "The artistry of creating software or technology products is actually in that interface between the human and technology itself."
 

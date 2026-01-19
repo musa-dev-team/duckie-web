@@ -1,11 +1,11 @@
+import { HashScrollHandler } from "@/components/hash-scroll-handler";
+import { Navigation } from "@/components/navigation";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import { Geist, Playfair_Display } from "next/font/google";
+import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
-import { Navigation } from "@/components/navigation";
-import { HashScrollHandler } from "@/components/hash-scroll-handler";
-import { Analytics } from "@vercel/analytics/next";
 
 const satoshi = localFont({
   src: "../fonts/Satoshi-Variable.woff2",
@@ -60,7 +60,6 @@ export const metadata: Metadata = {
       { url: "/favicon.ico", sizes: "any" },
       { url: "/icon.svg", type: "image/svg+xml" },
     ],
-    apple: "/apple-touch-icon.png",
   },
 
   // Open Graph (Facebook, LinkedIn, etc.)
@@ -72,15 +71,24 @@ export const metadata: Metadata = {
     title: "Duckie - AI Support Agents",
     description:
       "AI support agents that resolve tickets end to end. Autonomous customer support that learns from your knowledge base.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Duckie - AI Support Agents",
+      },
+    ],
   },
 
   // Twitter Card
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Duckie - AI Support Agents",
     description:
       "AI support agents that resolve tickets end to end. Autonomous customer support that learns from your knowledge base.",
     creator: "@duckieai",
+    images: ["/og-image.png"],
   },
 
   // Robots

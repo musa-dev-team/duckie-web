@@ -807,7 +807,7 @@ export function QualityContent() {
               <div 
                 className="absolute inset-0"
                 style={{
-                  backgroundImage: 'url(/images/ocean-bg-4.jpg)',
+                  backgroundImage: 'url(/images/ocean-bg-4.webp)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}

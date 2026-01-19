@@ -1,8 +1,12 @@
-"use client"
-
+import type { Metadata } from "next";
 import { Footer } from "@/components/sections/footer"
 import Image from "next/image"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "Security",
+  description: "Learn about Duckie's security practices, data protection, compliance certifications, and enterprise-grade infrastructure.",
+};
 
 export default function SecurityPage() {
   return (

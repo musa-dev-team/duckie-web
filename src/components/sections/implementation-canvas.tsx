@@ -2158,7 +2158,7 @@ export function ImplementationContent() {
               transition={{ duration: 1.5, ease: "easeInOut" }}
               className="absolute inset-0"
               style={{
-                backgroundImage: `url(/images/sky-${num}.jpg)`,
+                backgroundImage: `url(/images/sky-${num}.webp)`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
