@@ -137,7 +137,16 @@ export function Footer() {
 
           {/* Bottom Section */}
           <div className="py-4 md:py-6 border-t border-[#e5e5e5] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
-            <p className="text-xs md:text-sm text-[#999]">{brand.copyright}</p>
+            <div className="flex items-center gap-3 md:gap-4">
+              <p className="text-xs md:text-sm text-[#999]">{brand.copyright}</p>
+              <Link href="/security" className="flex items-center hover:opacity-80 transition-opacity" title="SOC 2 Type II Certified">
+                <img 
+                  src="/images/delve-soc2-type2.svg" 
+                  alt="SOC 2 Type II Certified" 
+                  className="h-8 md:h-10 w-auto"
+                />
+              </Link>
+            </div>
             <div className="flex items-center gap-2">
               {footer.social.map((social) => (
                 <a

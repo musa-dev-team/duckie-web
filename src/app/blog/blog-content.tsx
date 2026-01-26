@@ -1,7 +1,6 @@
 "use client"
 
-import { CtaContent } from "@/components/sections/cta-section"
-import { Footer } from "@/components/sections/footer"
+import { CtaFooterSection } from "@/components/sections/cta-footer-section"
 import { blogCategories, blogPosts } from "@/config/blog-content"
 import { motion } from "framer-motion"
 import Image from "next/image"
@@ -183,35 +182,7 @@ export default function BlogContent() {
       </div>
 
       {/* CTA + Footer section with pond background */}
-      <div className="relative overflow-hidden bg-[#FFFFFF] pt-0 md:pt-4">
-        {/* Background image */}
-        <img 
-          src="/images/pond-3.webp"
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover pond-bg-image"
-          style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.15))" }}
-        />
-        {/* Vignette overlay for bottom corners */}
-        <div 
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `
-              radial-gradient(ellipse 50% 40% at 0% 100%, rgba(0,0,0,0.35) 0%, transparent 70%),
-              radial-gradient(ellipse 50% 40% at 100% 100%, rgba(0,0,0,0.35) 0%, transparent 70%)
-            `,
-          }}
-          aria-hidden="true"
-        />
-        {/* Content */}
-        <div className="relative">
-          <div data-theme="light">
-            <CtaContent />
-          </div>
-          <div className="h-32 md:h-0" aria-hidden="true" />
-          <Footer />
-        </div>
-      </div>
+      <CtaFooterSection />
     </main>
   )
 }
