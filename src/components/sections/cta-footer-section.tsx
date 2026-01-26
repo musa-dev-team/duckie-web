@@ -48,7 +48,6 @@ export function CtaFooterSection({ includeCta = true, className = "" }: CtaFoote
         {!includeCta && (
           <div className="pt-24 md:pt-32" aria-hidden="true" />
         )}
-        <div className="pt-24 md:pt-32" aria-hidden="true" />
         <Footer />
       </div>
     </div>

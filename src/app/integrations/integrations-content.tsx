@@ -642,8 +642,11 @@ export default function IntegrationsContent() {
         </div>
       </div>
 
+      {/* Spacer before CTA */}
+      <div className="h-16 md:h-64 bg-[#FFFFFF]" aria-hidden="true" />
+
       {/* CTA + Footer section with pond background */}
-      <CtaFooterSection className="mt-16 md:mt-48" />
+      <CtaFooterSection />
     </main>
   )
 }
